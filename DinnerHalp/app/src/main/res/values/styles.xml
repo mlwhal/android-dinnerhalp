@@ -1,0 +1,43 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:actionModeBackground">@color/colorPrimaryHighlight</item>
+        <item name="android:actionModeShareDrawable" tools:targetApi="lollipop">@drawable/ic_action_share</item>
+    </style>
+
+        <style name="HeaderText">
+            <item name="android:textSize">25sp</item>
+            <item name="android:textColor">@color/colorPrimaryHighlight</item>
+            <item name="android:textIsSelectable">true</item>
+            <item name="android:clickable">false</item>
+        </style>
+
+        <style name="ListText">
+            <item name="android:textSize">25sp</item>
+            <item name="android:textColor">@color/colorDefaultText</item>
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:paddingTop">8dp</item>
+            <item name="android:paddingBottom">8dp</item>
+        </style>
+
+    <style name="DinnerListText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorDefaultText</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="ViewDinnerText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorDefaultText</item>
+    </style>
+
+    <style name="ViewDinnerRecipeText" parent="ViewDinnerText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+</resources>

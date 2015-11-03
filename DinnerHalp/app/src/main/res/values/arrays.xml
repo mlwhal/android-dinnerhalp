@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="search_icon_array">
+        <item>@drawable/ic_keyword050</item>
+        <item>@drawable/ic_method050</item>
+        <item>@drawable/ic_time050</item>
+        <item>@drawable/ic_servings050</item>
+        <item>@drawable/ic_select_all050</item>
+    </array>
+
+    <array name="manage_dinner_icon_array">
+        <item>@drawable/ic_add_dinner050</item>
+        <item>@drawable/ic_explore_list050</item>
+    </array>
+
+    <array name="manage_db_icon_array">
+        <item>@drawable/ic_delete050</item>
+    </array>
+
+</resources>

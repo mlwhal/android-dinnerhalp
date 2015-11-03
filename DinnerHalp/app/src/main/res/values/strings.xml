@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name">DinnerHalp</string>
+
+    <!--Action bar items  -->
+    <string name="action_about">About</string>
+    <string name="action_add_dinner">Add dinner</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_manage">Manage dinners</string>
+    <string name="action_save">Save</string>
+    <string name="action_search">New search</string>
+    <string name="action_share">Share</string>
+    <string name="action_settings">Settings</string>
+
+    <!--MainActivity tabs  -->
+    <string name="title_section1">Search</string>
+    <string name="title_section2">Manage</string>
+
+    <!--Search fragment  -->
+    <string name="search_title">Search dinners by</string>
+    <string-array name="search_array">
+        <item>Keyword</item>
+        <item>Cooking method</item>
+        <item>Prep/cook time</item>
+        <item>Servings</item>
+        <item>Show all</item>
+    </string-array>
+    <string name="image_item_icon">List item icon</string>
+
+    <!--Manage DB fragment  -->
+    <string name="manage_dinners_title">Manage dinners</string>
+    <string-array name="manage_dinners_array">
+        <item>Add</item>
+        <item>View/edit/delete</item>
+    </string-array>
+    <string name="manage_db_title">Manage database</string>
+    <string-array name="manage_db_array">
+        <item>Delete</item>
+    </string-array>
+
+    <string name="delete_db_alert_title">Delete the database file? There\'s no turning back!</string>
+
+    <!--Keyword alert dialog  -->
+    <string name="keyword_alert_title">Search for &#8230;</string>
+    <string name="keyword_hint">Keyword</string>
+
+    <!--Cook method alert dialog  -->
+    <string name="method_alert_title">Method</string>
+    <string-array name="method_array">
+        <item>Stovetop</item>
+        <item>Oven</item>
+        <item>Slow cooker</item>
+    </string-array>
+
+    <!--Cook time alert dialog  -->
+    <string name="time_alert_title">Prep/cook time</string>
+    <string-array name="time_array">
+        <item>Quick (&lt;30 min)</item>
+        <item>Slow (&gt;30 min)</item>
+    </string-array>
+
+    <!--Servings alert dialog  -->
+    <string name="servings_alert_title">Number of meals</string>
+    <string-array name="servings_array">
+        <item>One meal</item>
+        <item>Multiple meals</item>
+    </string-array>
+    <string name="title_activity_add_dinner">AddDinnerActivity</string>
+
+    <!--Keyword search dialog >
+    <string name="keyword_search_title">Search for &#8230;</string>
+    <string name="keyword_hint">Keyword</string>  -->
+
+    <!--AddDinnerActivity  -->
+    <string name="add_dinner_title">Add a dinner</string>
+    <string name="dinner_name_hint">Dinner name</string>
+    <!--Label for keyboard completion button -->
+    <string name="button_done">Done</string>
+    <string name="image_add_picture">Add picture</string>
+    <string name="recipe_hint">Recipe or keywords</string>
+
+    <!--Action buttons-->
+    <string name="button_cancel">Cancel</string>
+    <string name="button_search">Search</string>
+    <string name="button_save">Save</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_keyword_search">KeywordSearchActivity</string>
+    <string name="title_activity_dinner_list">DinnerListActivity</string>
+
+    <!--DinnerListActivity  -->
+    <string name="dinner_list_title">Dinners</string>
+    <string name="no_dinners">No dinners found! Tap to add.</string>
+    <string name="title_activity_view_dinner">ViewDinnerActivity</string>
+    <string name="intent_share_subject">Recipes from DinnerHalp</string>
+    <string name="intent_share_dialog_title">Share to &#8230;</string>
+
+    <!--ViewDinnerActivity-->
+    <string name="view_dinner_title">Dinner name here</string>
+    <string name="image_dinner_picture">Picture of current dinner</string>
+    <string name="text_no_recipe">No recipe or keywords</string>
+    <string name="intent_share_recipe">Share recipe to &#8230;</string>
+
+    <!--Delete dinner alert dialogs  -->
+    <string name="delete_alert_title">Delete this dinner?</string>
+    <string name="alert_dialog_delete_ok">Delete</string>
+    <string name="batch_delete_alert_title">Delete selected dinners?</string>
+    <string name="title_activity_about_app">AboutAppActivity</string>
+
+    <!--AboutAppActivity  -->
+    <string name="about_app_title">About DinnerHalp</string>
+    <!--string name="text_about_app"><![CDATA[DinnerHalp by Marika Whaley <br>copyright 2015]]></string-->
+    <string name="text_about_app">DinnerHalp by Marika Whaley \ncopyright 2015</string>
+    <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
+
+</resources>
