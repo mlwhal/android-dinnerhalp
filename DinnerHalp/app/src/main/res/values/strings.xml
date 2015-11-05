@@ -51,6 +51,7 @@
         <item>Stovetop</item>
         <item>Oven</item>
         <item>Slow cooker</item>
+        <item>Grill</item>
     </string-array>
 
     <!--Cook time alert dialog  -->

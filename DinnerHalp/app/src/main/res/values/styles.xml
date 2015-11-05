@@ -5,6 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="android:actionModeBackground">@color/colorPrimaryHighlight</item>
         <item name="android:actionModeShareDrawable" tools:targetApi="lollipop">@drawable/ic_action_share</item>
+        <!--item name="homeAsUpIndicator">@drawable/ic_dinnerhalp096</item-->
+        <item name="homeAsUpIndicator">@drawable/ic_action_previous_item</item>
     </style>
 
         <style name="HeaderText">
