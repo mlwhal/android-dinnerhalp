@@ -11,6 +11,7 @@
     <array name="manage_dinner_icon_array">
         <item>@drawable/ic_add_dinner050</item>
         <item>@drawable/ic_explore_list050</item>
+        <item>@drawable/ic_delete050</item>
     </array>
 
     <array name="manage_db_icon_array">

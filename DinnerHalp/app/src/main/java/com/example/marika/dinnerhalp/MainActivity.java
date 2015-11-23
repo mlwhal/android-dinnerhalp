@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 mFragmentTracker = extras.getInt("FRAGMENT_TRACKER");
             }
         } else {
-            mFragmentTracker = (Integer) savedInstanceState.getSerializable("FRAGMENT_TRACKER");
+            mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
         }
 
         // Set up the action bar.
@@ -146,8 +146,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        //mFragmentTracker = tab.getPosition();
+        mFragmentTracker = tab.getPosition();
         Log.d(MainActivity.class.getSimpleName(), "Tab position is " + tab.getPosition());
+        Log.d(MainActivity.class.getSimpleName(), "mFragmentTracker is " + mFragmentTracker);
     }
 
     @Override
@@ -198,6 +199,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+    //Todo: Add an onSaveInstanceState() method to save currently selected tab?
+    @Override
+    public void onSaveInstanceState(Bundle outstate) {
+        super.onSaveInstanceState(outstate);
+
+        outstate.putInt("FRAGMENT_TRACKER", mFragmentTracker);
+
+    }
+
     //Method to track which tab to load when navigating from other activities
     @Override
     public void onResume() {
@@ -207,7 +217,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         mViewPager.setCurrentItem(mFragmentTracker);
     }
 
-    //Todo: Add an onPause() method to save currently selected tab?
 
     /**
      * A fragment containing the search screen view.
@@ -281,10 +290,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             //Create ListView and add ArrayAdapter to display search options
             final ListView listView = (ListView)rootView.findViewById(R.id.list);
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//                    getActivity(),
-//                    R.array.search_array,
-//                    android.R.layout.simple_list_item_1);
+
             //Get list item names and image ids from array resources
             Resources res = getResources();
             String[] itemName = res.getStringArray(R.array.search_array);
@@ -509,6 +515,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         public static class ManageOnItemClickListener implements AdapterView.OnItemClickListener {
 
+            //Todo: If I end up with one ListView, then the listName string is unneeded.
             ManageOnItemClickListener(MainActivity activity,
                                       ManageDBFragment frag,
                                       String listName) {
@@ -534,6 +541,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         case 1:
                             Intent intent2 = new Intent(theActivity, DinnerListActivity.class);
                             theFragment.startActivity(intent2);
+                            break;
+                        //Delete all records in database
+                        case 2:
+                            theActivity.showDeleteDialog();
+                            Log.d(MainActivity.class.getSimpleName(), "Manage db position 0 clicked");
+                            Log.d(MainActivity.class.getSimpleName(), "mListName = " + mListName);
                             break;
                     }
                 } else {
@@ -600,23 +613,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             this, "MANAGE_DINNERS"));
 
             //Second is the manage database listView
-            ListView listView2 = (ListView)rootView.findViewById(R.id.list2);
-            itemName = res.getStringArray(R.array.manage_db_array);
-            imageResArray = res.obtainTypedArray(R.array.manage_db_icon_array);
-            lgth = imageResArray.length();
-            Integer[] dbImageId = new Integer[lgth];
-            for (int i = 0; i < lgth; i++) {
-                dbImageId[i] = imageResArray.getResourceId(i, 0);
-            }
-            imageResArray.recycle();
-
-            CustomListAdapter adapter2 = new CustomListAdapter(this.getActivity(), itemName,
-                    dbImageId);
-
-            listView2.setAdapter(adapter2);
-            listView2.setOnItemClickListener(
-                    new ManageOnItemClickListener((MainActivity) getActivity(),
-                            this, "MANAGE_DB"));
+//            ListView listView2 = (ListView)rootView.findViewById(R.id.list2);
+//            itemName = res.getStringArray(R.array.manage_db_array);
+//            imageResArray = res.obtainTypedArray(R.array.manage_db_icon_array);
+//            lgth = imageResArray.length();
+//            Integer[] dbImageId = new Integer[lgth];
+//            for (int i = 0; i < lgth; i++) {
+//                dbImageId[i] = imageResArray.getResourceId(i, 0);
+//            }
+//            imageResArray.recycle();
+//
+//            CustomListAdapter adapter2 = new CustomListAdapter(this.getActivity(), itemName,
+//                    dbImageId);
+//
+//            listView2.setAdapter(adapter2);
+//            listView2.setOnItemClickListener(
+//                    new ManageOnItemClickListener((MainActivity) getActivity(),
+//                            this, "MANAGE_DB"));
 
             return rootView;
         }
