@@ -1,14 +1,18 @@
 package com.example.marika.dinnerhalp;
 
+import java.io.File;
 import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -515,56 +519,62 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         public static class ManageOnItemClickListener implements AdapterView.OnItemClickListener {
 
-            //Todo: If I end up with one ListView, then the listName string is unneeded.
             ManageOnItemClickListener(MainActivity activity,
-                                      ManageDBFragment frag,
-                                      String listName) {
+                                      ManageDBFragment frag) {
                 theActivity = activity;
                 theFragment = frag;
-                mListName = listName;
             }
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
                 Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
-                Log.d(MainActivity.class.getSimpleName(), "mListName = " + mListName);
-                if (mListName.equalsIgnoreCase("MANAGE_DINNERS")) {
-                    switch (position) {
-                        //Add dinner
-                        case 0:
-                            Intent intent1 = new Intent(theActivity, AddDinnerActivity.class);
-                            //Let next activity know we came from ManageFragment
-                            //intent1.putExtra("FRAGMENT_TRACKER", 1);
-                            theFragment.startActivity(intent1);
-                            break;
-                        //Get dinner list in order to edit or delete
-                        case 1:
-                            Intent intent2 = new Intent(theActivity, DinnerListActivity.class);
-                            theFragment.startActivity(intent2);
-                            break;
-                        //Delete all records in database
-                        case 2:
-                            theActivity.showDeleteDialog();
-                            Log.d(MainActivity.class.getSimpleName(), "Manage db position 0 clicked");
-                            Log.d(MainActivity.class.getSimpleName(), "mListName = " + mListName);
-                            break;
-                    }
-                } else {
-                    switch (position) {
-                        //Add dinner
-                        case 0:
-                            //delete database file, or whatever option 1 is
-                            theActivity.showDeleteDialog();
-                            Log.d(MainActivity.class.getSimpleName(), "Manage db position 0 clicked");
-                            Log.d(MainActivity.class.getSimpleName(), "mListName = " + mListName);
-                            break;
-                    }
+
+                switch (position) {
+                    //Add dinner
+                    case 0:
+                        Intent intent1 = new Intent(theActivity, AddDinnerActivity.class);
+                        //Let next activity know we came from ManageFragment
+                        //intent1.putExtra("FRAGMENT_TRACKER", 1);
+                        theFragment.startActivity(intent1);
+                        break;
+                    //Get dinner list in order to edit or delete
+                    case 1:
+                        Intent intent2 = new Intent(theActivity, DinnerListActivity.class);
+                        theFragment.startActivity(intent2);
+                        break;
+                    //Delete all records in database
+                    case 2:
+                        theActivity.showDeleteDialog();
+                        break;
+                    //Todo: Share database file as attachment
+                    //Todo: Right now file is not being written/sent; error in Gmail
+                    //"Can't attach empty file" - file path is unknown while running in debug mode
+                    case 3:
+                        String pathName = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        String fileName = theActivity.getString(R.string.filename_sharedb_test);
+                        File file = new File(pathName,fileName);
+                        String internalPath = theActivity.getFilesDir().getAbsolutePath();
+                        Log.d(MainActivity.class.getSimpleName(), "internalPath is " + internalPath);
+                        Log.d(MainActivity.class.getSimpleName(), "pathName is " + pathName);
+
+//                            String emailSubject = theActivity.getString(R.string.intent_sharedb_subject);
+//                            String emailMessage = theActivity.getString(R.string.intent_sharedb_message);
+//
+//                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+//                            emailIntent.setType("text/plain");
+//                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+//                            emailIntent.putExtra(Intent.EXTRA_TEXT, emailMessage);
+//                            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+//                            Intent chooser = Intent.createChooser(emailIntent,
+//                                    theActivity.getString(R.string.intent_share_dialog_title));
+//                            if (emailIntent.resolveActivity(theActivity.getPackageManager()) != null) {
+//                                theActivity.startActivity(chooser);
+//                            }
                 }
 
             }
             private MainActivity theActivity;
             private ManageDBFragment theFragment;
-            private String mListName;
         }
 
         /**
@@ -587,11 +597,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
 
-            //Create ListViews and add CustomListAdapters to display manage dinner and DB options
-            //First is the Manage dinners listView
+            //Create ListView and add CustomListAdapter to display manage dinner and DB options
             ListView listView1 = (ListView)rootView.findViewById(R.id.list);
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-//                    R.array.manage_dinners_array, android.R.layout.simple_list_item_1);
 
             Resources res = getResources();
             String[] itemName = res.getStringArray(R.array.manage_dinners_array);
@@ -610,28 +617,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             listView1.setAdapter(adapter1);
             listView1.setOnItemClickListener(
                     new ManageOnItemClickListener((MainActivity) getActivity(),
-                            this, "MANAGE_DINNERS"));
+                            this));
 
-            //Second is the manage database listView
-//            ListView listView2 = (ListView)rootView.findViewById(R.id.list2);
-//            itemName = res.getStringArray(R.array.manage_db_array);
-//            imageResArray = res.obtainTypedArray(R.array.manage_db_icon_array);
-//            lgth = imageResArray.length();
-//            Integer[] dbImageId = new Integer[lgth];
-//            for (int i = 0; i < lgth; i++) {
-//                dbImageId[i] = imageResArray.getResourceId(i, 0);
-//            }
-//            imageResArray.recycle();
-//
-//            CustomListAdapter adapter2 = new CustomListAdapter(this.getActivity(), itemName,
-//                    dbImageId);
-//
-//            listView2.setAdapter(adapter2);
-//            listView2.setOnItemClickListener(
-//                    new ManageOnItemClickListener((MainActivity) getActivity(),
-//                            this, "MANAGE_DB"));
-
-            return rootView;
+               return rootView;
         }
 
     }

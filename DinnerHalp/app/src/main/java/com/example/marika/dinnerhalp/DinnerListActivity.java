@@ -340,6 +340,7 @@ public class DinnerListActivity extends AppCompatActivity {
         } else {
             //Get titles/recipes from all dinners in mIdList
             //and build a big string for all of it
+            //Todo: Move builder and dinnerTextString creation here; not needed outside of else clause
             for (int i = 0; i < size; i++) {
                 dinnerCursor = mDbHelper.fetchDinner(mIdList.get(i));
                 startManagingCursor(dinnerCursor);

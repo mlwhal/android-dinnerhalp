@@ -34,12 +34,17 @@
         <item>Add</item>
         <item>View/edit/delete</item>
         <item>Delete all</item>
+        <item>Share database</item>
     </string-array>
     <string name="manage_db_title">Manage database</string>
     <string-array name="manage_db_array">
         <item>Delete</item>
     </string-array>
 
+    <string name="filename_sharedb">/DinnerHalp/dinnerData.db</string>
+    <string name="filename_sharedb_test">/keepass/keepass.kdb</string>
+    <string name="intent_sharedb_subject">DinnerHalp database file</string>
+    <string name="intent_sharedb_message">Here\'s the database file from my DinnerHalp app.</string>
     <string name="delete_db_alert_title">Delete all dinners? There\'s no turning back!</string>
 
     <!--Keyword alert dialog  -->
