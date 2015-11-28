@@ -332,6 +332,7 @@ public class DinnerListActivity extends AppCompatActivity {
                     DinnersDbAdapter.KEY_NAME));
             dinnerRecipe = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_RECIPE));
+            stopManagingCursor(dinnerCursor);
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, dinnerTitle);
             shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerRecipe);
             Log.d(DinnerListActivity.class.getSimpleName(), "Title to share is " + dinnerTitle);
@@ -348,6 +349,7 @@ public class DinnerListActivity extends AppCompatActivity {
                         DinnersDbAdapter.KEY_NAME));
                 dinnerRecipe = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
                         DinnersDbAdapter.KEY_RECIPE));
+                stopManagingCursor(dinnerCursor);
                 builder.append(dinnerTitle).append("\n").append(dinnerRecipe).append("\n\n");
 
             }
@@ -374,7 +376,6 @@ public class DinnerListActivity extends AppCompatActivity {
     }
 
     //Todo: Add onPause() and onResume() methods to recreate list after share dialog is used.
-    //Right now I'm getting an error because the cursor was closed and doesn't get reopened onResume.
     //Probably need to save info in order to call fillData().
 
 //    @Override

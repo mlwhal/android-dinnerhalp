@@ -548,7 +548,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         break;
                     //Todo: Share database file as attachment
                     //Todo: Right now file is not being written/sent; error in Gmail
-                    //"Can't attach empty file" - file path is unknown while running in debug mode
+                    //"Can't attach empty file" - file path is unknown while running in debug mode.
+                    //It's working in principle with a file whose path I know.
                     case 3:
                         String pathName = Environment.getExternalStorageDirectory().getAbsolutePath();
                         String fileName = theActivity.getString(R.string.filename_sharedb_test);
