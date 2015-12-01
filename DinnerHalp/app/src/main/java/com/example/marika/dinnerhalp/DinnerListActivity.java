@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ActionMode;
@@ -47,17 +48,12 @@ public class DinnerListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dinner_list);
 
         mDbHelper = new DinnersDbAdapter(this);
-        //Todo: Move open() to fillData() so that the db can be closed after Cursor is populated?
-//        mDbHelper.open();
 
         /* Get extras:
          * Was there a keyword search? (boolean)
          * Is there a where clause from the SearchFragment?
          * Is there a where argument from the SearchFragment?
          */
-//        Boolean keywordSearch;
-//        String searchColumn;
-//        String searchString;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
@@ -166,6 +162,7 @@ public class DinnerListActivity extends AppCompatActivity {
 //            dinnerCursor.close();
 //        }
 //
+        //Todo: Test whether to un-comment this close() method; otherwise it doesn't get closed?!
 //        mDbHelper.close();
 
         //Handle what to show when the database is empty or there are no search results
@@ -203,6 +200,7 @@ public class DinnerListActivity extends AppCompatActivity {
                 i.putExtra(DinnersDbAdapter.KEY_ROWID, id);
                 i.putExtra("QUERY_DINNERS", queryDinnerList);
                 //Todo: Add info to track whether dinner list is all, or just a search result.
+                //Todo: Might not need queryDinnerList now that onSaveInstanceState is working.
                 //Right now the ViewDinnerActivity back button always goes back to fetchAllDinners().
                 //Or that might be the home button causing that trouble.
                 startActivity(i);
@@ -313,10 +311,8 @@ public class DinnerListActivity extends AppCompatActivity {
         Cursor dinnerCursor;
         String dinnerTitle;
         String dinnerRecipe;
-        StringBuilder builder = new StringBuilder();
-        String dinnerTextString;
 
-        //Build shareIntent
+        //Set up shareIntent
         Intent shareIntent = new Intent();
         shareIntent.setType("text/plain");
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -341,7 +337,8 @@ public class DinnerListActivity extends AppCompatActivity {
         } else {
             //Get titles/recipes from all dinners in mIdList
             //and build a big string for all of it
-            //Todo: Move builder and dinnerTextString creation here; not needed outside of else clause
+            StringBuilder builder = new StringBuilder();
+
             for (int i = 0; i < size; i++) {
                 dinnerCursor = mDbHelper.fetchDinner(mIdList.get(i));
                 startManagingCursor(dinnerCursor);
@@ -355,7 +352,7 @@ public class DinnerListActivity extends AppCompatActivity {
             }
 
             CharSequence multiDinnerSubject = getResources().getText(R.string.intent_share_subject);
-            dinnerTextString = builder.toString();
+            String dinnerTextString = builder.toString();
 
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, multiDinnerSubject);
             shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerTextString);
@@ -375,36 +372,40 @@ public class DinnerListActivity extends AppCompatActivity {
 
     }
 
-    //Todo: Add onPause() and onResume() methods to recreate list after share dialog is used.
-    //Probably need to save info in order to call fillData().
+    //Lifecycle methods to recreate list after share dialog is used or other interruptions happen
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle savedInstanceState) {
-//        savedInstanceState.putBoolean(KEYWORD_SEARCH, mKeywordSearch);
-//        savedInstanceState.putString(SEARCH_COLUMN, mSearchColumn);
-//        savedInstanceState.putString(SEARCH_STRING, mSearchString);
-//
-//        super.onSaveInstanceState(savedInstanceState);
-//
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        mKeywordSearch = savedInstanceState.getBoolean(KEYWORD_SEARCH);
-//        mSearchColumn = savedInstanceState.getString(SEARCH_COLUMN);
-//        mSearchString = savedInstanceState.getString(SEARCH_STRING);
-//        Log.d(DinnerListActivity.class.getSimpleName(), "Restore state! KeywordSearch is " + mKeywordSearch);
-//        fillData(mKeywordSearch, mSearchColumn, mSearchString);
-//    }
+    //Save search parameters that led to current list of dinners so back navigation remembers
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(KEYWORD_SEARCH, mKeywordSearch);
+        savedInstanceState.putString(SEARCH_COLUMN, mSearchColumn);
+        savedInstanceState.putString(SEARCH_STRING, mSearchString);
+
+        Log.d(DinnerListActivity.class.getSimpleName(), "SaveInstanceState! KeywordSearch is " + mKeywordSearch);
+        Log.d(DinnerListActivity.class.getSimpleName(), "SaveInstanceState! mSearchString is " + mSearchString);
+
+        super.onSaveInstanceState(savedInstanceState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+
+        mKeywordSearch = savedInstanceState.getBoolean(KEYWORD_SEARCH);
+        mSearchColumn = savedInstanceState.getString(SEARCH_COLUMN);
+        mSearchString = savedInstanceState.getString(SEARCH_STRING);
+        Log.d(DinnerListActivity.class.getSimpleName(), "RestoreInstanceState! KeywordSearch is " + mKeywordSearch);
+        Log.d(DinnerListActivity.class.getSimpleName(), "RestoreInstanceState! mSearchString is " + mSearchString);
+        fillData(mKeywordSearch, mSearchColumn, mSearchString);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        Log.d(DinnerListActivity.class.getSimpleName(), "Restore state! KeywordSearch is " + mKeywordSearch);
+        Log.d(DinnerListActivity.class.getSimpleName(), "onResume! KeywordSearch is " + mKeywordSearch);
+        Log.d(DinnerListActivity.class.getSimpleName(), "onResume! mSearchString is " + mSearchString);
         fillData(mKeywordSearch, mSearchColumn, mSearchString);
-
-//        mDbHelper.open();
     }
 
     public static class DeleteDialogFragment extends DialogFragment {
