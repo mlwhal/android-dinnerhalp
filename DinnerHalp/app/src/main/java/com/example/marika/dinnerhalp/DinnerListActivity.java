@@ -158,12 +158,9 @@ public class DinnerListActivity extends AppCompatActivity {
         final ListView lv = (ListView) findViewById(R.id.listview_dinners);
         lv.setAdapter(dinners);
 
-//        if (dinnerCursor != null) {
-//            dinnerCursor.close();
-//        }
-//
-        //Todo: Test whether to un-comment this close() method; otherwise it doesn't get closed?!
-//        mDbHelper.close();
+        //Housekeeping: Close down dinnerCursor and mDbHelper
+        stopManagingCursor(dinnerCursor);
+        mDbHelper.close();
 
         //Handle what to show when the database is empty or there are no search results
         View empty = findViewById(R.id.listview_empty);
