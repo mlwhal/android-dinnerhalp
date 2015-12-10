@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -68,6 +69,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 mFragmentTracker = 0;
             } else {
                 mFragmentTracker = extras.getInt("FRAGMENT_TRACKER");
+                Log.d(MainActivity.class.getSimpleName(), "Extras not null, mFragmentTracker = " + mFragmentTracker);
+                //Todo: mFragmentTracker gives correct value but is not used to create initial view
             }
         } else {
             mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
@@ -106,6 +109,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+        mViewPager.setCurrentItem(mFragmentTracker);
+
     }
 
 
@@ -150,8 +155,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        mFragmentTracker = tab.getPosition();
-        Log.d(MainActivity.class.getSimpleName(), "Tab position is " + tab.getPosition());
+        final int tabPosition = tab.getPosition();
+        Log.d(MainActivity.class.getSimpleName(), "onTabSelected");
+        Log.d(MainActivity.class.getSimpleName(), "tabPosition = " + tabPosition);
         Log.d(MainActivity.class.getSimpleName(), "mFragmentTracker is " + mFragmentTracker);
     }
 
@@ -203,13 +209,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    //Todo: Add an onSaveInstanceState() method to save currently selected tab?
+    //Add an onSaveInstanceState() method to save currently selected tab
     @Override
     public void onSaveInstanceState(Bundle outstate) {
         super.onSaveInstanceState(outstate);
 
+        //Set mFragmentTracker to current tab in order to save info to outstate
+        mFragmentTracker = mViewPager.getCurrentItem();
         outstate.putInt("FRAGMENT_TRACKER", mFragmentTracker);
+        Log.d(MainActivity.class.getSimpleName(), "Save state! mFragmentTracker = " + mFragmentTracker);
+    }
 
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
+        Log.d(MainActivity.class.getSimpleName(), "Restore state! mFragmentTracker = " + mFragmentTracker);
     }
 
     //Method to track which tab to load when navigating from other activities
@@ -219,6 +235,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //Todo: This next line doesn't seem to be working as hoped.
         mViewPager.setCurrentItem(mFragmentTracker);
+        Log.d(MainActivity.class.getSimpleName(), "onResume");
     }
 
 
