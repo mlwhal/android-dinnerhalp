@@ -45,7 +45,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
         mDbHelper = new DinnersDbAdapter(this);
         //Todo: Move mDbHelper.open(); to where it's used so it can also be closed properly.
-        mDbHelper.open();
+//        mDbHelper.open();
 
         mTitleText = (TextView) findViewById(R.id.section_label);
         mMethodText = (TextView) findViewById(R.id.textview_method);
@@ -135,7 +135,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
     private void populateDinnerText() {
 
         if (mRowId != null) {
+            mDbHelper.open();
             Cursor dinner = mDbHelper.fetchDinner(mRowId);
+            mDbHelper.close();
             startManagingCursor(dinner);
 
             mTitleText.setText(dinner.getString(
@@ -168,6 +170,8 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
             mRecipeText.setText(dinner.getString(
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_RECIPE)));
+            stopManagingCursor(dinner);
+            dinner.close();
         }
     }
 
@@ -267,7 +271,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
     public void doPositiveClick() {
 
         //deleteDinner() will return true if successful
+        mDbHelper.open();
         boolean deleteSuccess = mDbHelper.deleteDinner(mRowId);
+        mDbHelper.close();
         if (deleteSuccess) {
             Context context = getApplicationContext();
             CharSequence text = mTitleText.getText() + " deleted";

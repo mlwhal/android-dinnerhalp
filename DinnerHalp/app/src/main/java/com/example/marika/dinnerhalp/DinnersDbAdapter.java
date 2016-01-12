@@ -15,7 +15,6 @@ import java.io.File;
  * Based on the Notepad Tutorial from developer.android.com.
  */
 
-//Todo: Remove keywords column and all accompanying code; redundant with recipe column.
 
 public class DinnersDbAdapter {
 
