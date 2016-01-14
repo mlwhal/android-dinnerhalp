@@ -32,7 +32,7 @@ public class DinnersDbAdapter {
 
     /**
      * Database creation sql statement
-     * Todo: Ensure that dinner name cannot be null or identical to other records
+     * Todo: Ensure that dinner name cannot be identical to other records
      * I think I do this by putting "unique" after "name text not null"
      */
     private static final String DATABASE_CREATE =
@@ -105,15 +105,15 @@ public class DinnersDbAdapter {
      * @param name the name of the dinner
      * @param method the cooking method of the dinner (stovetop, oven, slow cooker)
      * @param time the cook time
-     * @param servings the number of servings (0 = one meal, 1 = multiple meals)
+     * @param servings the number of servings
      * @param picpath file path for photo (not implemented yet)
      * @param recipe text of recipe
      * @return rowId or -1 if failed
      */
     public long createDinner(String name, String method, String time, String servings,
                              String picpath, String recipe) {
-        //Todo: Add if statement that specifies that the name must not be blank
-        //Although right now I handle this in AddDinnerActivity
+        //If the user tries to create a dinner with no name, this is handled
+        //in AddDinnerActivity
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_NAME, name);
         initialValues.put(KEY_METHOD, method);
@@ -123,6 +123,7 @@ public class DinnersDbAdapter {
         initialValues.put(KEY_RECIPE, recipe);
 
         //Todo: Put inside a try/catch statement to catch duplicate name fields?
+        //Maybe insertOrThrow rather than just insert?
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 
@@ -145,22 +146,37 @@ public class DinnersDbAdapter {
      * whereArgs, groupBy, having, orderBy
      */
 
-    //Todo: Return only name (and rowID?) columns, since that's what is needed in DinnerListActivity?
+    //fetchAllDinners only fetches rowID and name columns, since that's what is needed in
+    //DinnerListActivity.
     //It's not recommended to return all columns because that loads more data than needed.
 
     public Cursor fetchAllDinners() {
-        return mDb.query(DATABASE_TABLE, null, null, null,
+
+        //Create string array to hold names of columns to be fetched
+        String[] tableColumns = new String[] {
+                KEY_ROWID,
+                KEY_NAME
+        };
+
+        return mDb.query(DATABASE_TABLE, tableColumns, null, null,
                 null, null, KEY_NAME + " ASC");
     }
 
     /**
      * Return a Cursor with all dinners that match a query on a particular column
      */
-    //Todo: Return only name (and rowID?) columns, since that's what is needed in DinnerListActivity?
+    //fetchDinnerSearch returns only rowID and name columns, since that's what is needed in
+    //DinnerListActivity.
     //It's not recommended to return all columns because that loads more data than needed.
     //Todo: Also, shouldn't this throw SQLException?
 
     public Cursor fetchDinnerSearch(boolean keywordSearch, String whereClause, String searchString) {
+
+        //Create string array to hold names of columns to be fetched
+        String[] tableColumns = new String[] {
+                KEY_ROWID,
+                KEY_NAME
+        };
 
         String[] whereArgs;
 
@@ -177,7 +193,7 @@ public class DinnersDbAdapter {
             };
         }
 
-        return mDb.query(DATABASE_TABLE, null, whereClause, whereArgs, null, null,
+        return mDb.query(DATABASE_TABLE, tableColumns, whereClause, whereArgs, null, null,
                 KEY_NAME + " ASC");
     }
 
@@ -189,8 +205,8 @@ public class DinnersDbAdapter {
      * @throws SQLException if dinner could not be found/retrieved
      */
 
-    //Todo: Return only name (and rowID?) columns, since that's what is needed in DinnerListActivity?
-    //It's not recommended to return all columns because that loads more data than needed.
+    //fetchDinner returns all columns (third parameter of query) because all are needed for
+    //ViewDinnerActivity.
 
     public Cursor fetchDinner(long rowId) throws SQLException {
 

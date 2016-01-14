@@ -44,8 +44,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_dinner);
 
         mDbHelper = new DinnersDbAdapter(this);
-        //Todo: Move mDbHelper.open(); to where it's used so it can also be closed properly.
-//        mDbHelper.open();
 
         mTitleText = (TextView) findViewById(R.id.section_label);
         mMethodText = (TextView) findViewById(R.id.textview_method);
