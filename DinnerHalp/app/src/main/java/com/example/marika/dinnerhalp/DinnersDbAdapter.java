@@ -37,7 +37,7 @@ public class DinnersDbAdapter {
      */
     private static final String DATABASE_CREATE =
             "create table dinners (_id integer primary key autoincrement, "
-                    + "name text not null, method text not null, time text not null, "
+                    + "name text unique not null, method text not null, time text not null, "
                     + "servings text not null, picpath text, recipe text);";
 
     private static final String DATABASE_NAME = "dinnerData";

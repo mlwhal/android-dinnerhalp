@@ -390,20 +390,34 @@ public class AddDinnerActivity extends ActionBarActivity {
                 if (mRowId == null) {
                     long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
                     //Todo: manually close the db? mDbHelper.close();
-                    Log.d(AddDinnerActivity.class.getSimpleName(), "Dinner created");
+                    Log.d(AddDinnerActivity.class.getSimpleName(), "id = " + id);
+                    //Todo: if id == -1 the dinner hasn't been saved; should toast this and remain
+                    //in AddDinnerActivity. Right now we go to DinnerListActivity.
                     if (id > 0) {
+                        Log.d(AddDinnerActivity.class.getSimpleName(), "Dinner created");
                         mRowId = id;
+                        saveSuccessToast(name);
                     }
                 } else {
                     mDbHelper.updateDinner(mRowId, name, method, time, servings, picpath, recipe);
+                    saveSuccessToast(name);
                     //Todo: manually close the db? mDbHelper.close();
                 }
 
-                Context context = getApplicationContext();
-                CharSequence text = name + " saved";
-                int duration = Toast.LENGTH_SHORT;
-                Toast.makeText(context, text, duration).show();
+//                Context context = getApplicationContext();
+//                CharSequence text = name + " saved";
+//                int duration = Toast.LENGTH_SHORT;
+//                Toast.makeText(context, text, duration).show();
             }
         }
+    }
+
+    public void saveSuccessToast(CharSequence name) {
+
+        Context context = getApplicationContext();
+        CharSequence text = name + " saved";
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
+
     }
 }
