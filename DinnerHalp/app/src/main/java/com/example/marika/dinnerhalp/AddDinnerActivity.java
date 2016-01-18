@@ -3,6 +3,7 @@ package com.example.marika.dinnerhalp;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import java.io.FileNotFoundException;
 
 public class AddDinnerActivity extends ActionBarActivity {
 
+    //Todo: check whether mFragmentTracker is even needed
     public int mFragmentTracker;
     private DinnersDbAdapter mDbHelper;
     private EditText mEditNameText;
@@ -41,6 +43,7 @@ public class AddDinnerActivity extends ActionBarActivity {
     private Long mRowId;
 
     //Track whether cancel or save button is clicked to finish Activity
+    //Todo: Don't need this anymore if I've fixed the saveState() issue.
     private Boolean mCancelledState = false;
 
     @Override
@@ -64,6 +67,7 @@ public class AddDinnerActivity extends ActionBarActivity {
         }
 
         mDbHelper = new DinnersDbAdapter(this);
+        //Todo: Move this open command down to where it's used
         mDbHelper.open();
 
         //setContentView(R.layout.activity_add_dinner_noscroll);
@@ -157,12 +161,12 @@ public class AddDinnerActivity extends ActionBarActivity {
         switch (id) {
 
             case android.R.id.home:
-                mCancelledState = true;
+//                mCancelledState = true;
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
 
             case R.id.action_cancel:
-                mCancelledState = true;
+//                mCancelledState = true;
                 finish();
                 return true;
 
@@ -174,37 +178,38 @@ public class AddDinnerActivity extends ActionBarActivity {
                             Toast.LENGTH_LONG).show();
                 } else {
                     setResult(RESULT_OK);
-                    //After adding new dinner, go to DinnerListActivity
-                    //If updating existing dinner, reload ViewDinnerActivity to show update
-                    if (mRowId == null) {
-                        Intent intent1 = new Intent(this, DinnerListActivity.class);
-                        this.startActivity(intent1);
-                        finish();
-                    } else {
-                        Intent intent2 = new Intent(this, ViewDinnerActivity.class);
-                        intent2.putExtra(DinnersDbAdapter.KEY_ROWID, mRowId);
-                        this.startActivity(intent2);
-                        finish();
-                    }
+                    saveDinner();
+//                    //After adding new dinner, go to DinnerListActivity
+//                    //If updating existing dinner, reload ViewDinnerActivity to show update
+//                    if (mRowId == null) {
+//                        Intent intent1 = new Intent(this, DinnerListActivity.class);
+//                        this.startActivity(intent1);
+//                        finish();
+//                    } else {
+//                        Intent intent2 = new Intent(this, ViewDinnerActivity.class);
+//                        intent2.putExtra(DinnersDbAdapter.KEY_ROWID, mRowId);
+//                        this.startActivity(intent2);
+//                        finish();
+//                    }
                 }
                 return true;
 
             case R.id.action_search:
-                mCancelledState = true;
+//                mCancelledState = true;
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.putExtra("FRAGMENT_TRACKER", 0);
                 this.startActivity(intent);
                 return true;
 
             case R.id.action_manage:
-                mCancelledState = true;
+//                mCancelledState = true;
                 Intent intent2 = new Intent(this, MainActivity.class);
                 intent2.putExtra("FRAGMENT_TRACKER", 1);
                 this.startActivity(intent2);
                 return true;
 
             case R.id.action_about:
-                mCancelledState = true;
+//                mCancelledState = true;
                 Intent intent3 = new Intent(this, AboutAppActivity.class);
                 this.startActivity(intent3);
                 return true;
@@ -248,7 +253,7 @@ public class AddDinnerActivity extends ActionBarActivity {
 
             //Change section label if dinner is being updated rather than created
             TextView sectionLabel = (TextView) findViewById(R.id.section_label);
-            sectionLabel.setText("Update dinner");
+            sectionLabel.setText(getResources().getString(R.string.update_dinner_title));
             mEditNameText.setText(dinner.getString(
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_NAME)));
             //Set spinners to correct index for existing dinner
@@ -277,9 +282,13 @@ public class AddDinnerActivity extends ActionBarActivity {
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_RECIPE)));
 
         } else {
+            mEditNameText.requestFocus();
+
             //If another app sent in text via an intent, put that in the recipe EditText
             mEditRecipe.setText(mRecipeText);
         }
+
+        //Todo: Close mDbHelper and dinner cursor
 
     }
 
@@ -331,7 +340,7 @@ public class AddDinnerActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        saveState();
+//        saveState();
         outState.putSerializable(DinnersDbAdapter.KEY_ROWID, mRowId);
     }
 
@@ -342,74 +351,82 @@ public class AddDinnerActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        saveState();
+//        saveState();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateFields();
+//        populateFields();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-////        mDbHelper.close();
-//        Log.d(AddDinnerActivity.class.getSimpleName(), "mDbHelper is now closed");
-//    }
+    private void saveDinner() {
 
-    private void saveState() {
+        //Collect values from input fields
+        String name = mEditNameText.getText().toString();
+        String method = mMethodSpinner.getSelectedItem().toString();
+        String time = mTimeSpinner.getSelectedItem().toString();
+        String servings = mServingsSpinner.getSelectedItem().toString();
+        String picpath;
 
-        //Check mCancelledState to determine whether to save state or not
-        if (!mCancelledState) {
-            String name = mEditNameText.getText().toString();
-            if (name.matches("")) {
-                //Don't save the dinner
-            } else {
-                //Go ahead and save the dinner
-                setResult(RESULT_OK);
-                String method = mMethodSpinner.getSelectedItem().toString();
-                String time = mTimeSpinner.getSelectedItem().toString();
-                String servings = mServingsSpinner.getSelectedItem().toString();
-                String picpath;
-
-                //Set picpath depending on whether there is a selected image
-                if (mSelectedImageUri != null) {
-                    picpath = mSelectedImageUri.toString();
-                    Log.d(AddDinnerActivity.class.getSimpleName(), "Picpath will be " + picpath);
-                } else {
-                    picpath = null;
-                }
-
-                String recipe = mEditRecipe.getText().toString();
-
-                Log.d(AddDinnerActivity.class.getSimpleName(), "mRowId = " + mRowId);
-
-                //Create dinner or update existing record depending on the value
-                //returned by createDinner()
-                if (mRowId == null) {
-                    long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
-                    //Todo: manually close the db? mDbHelper.close();
-                    Log.d(AddDinnerActivity.class.getSimpleName(), "id = " + id);
-                    //Todo: if id == -1 the dinner hasn't been saved; should toast this and remain
-                    //in AddDinnerActivity. Right now we go to DinnerListActivity.
-                    if (id > 0) {
-                        Log.d(AddDinnerActivity.class.getSimpleName(), "Dinner created");
-                        mRowId = id;
-                        saveSuccessToast(name);
-                    }
-                } else {
-                    mDbHelper.updateDinner(mRowId, name, method, time, servings, picpath, recipe);
-                    saveSuccessToast(name);
-                    //Todo: manually close the db? mDbHelper.close();
-                }
-
-//                Context context = getApplicationContext();
-//                CharSequence text = name + " saved";
-//                int duration = Toast.LENGTH_SHORT;
-//                Toast.makeText(context, text, duration).show();
-            }
+        //Set picpath depending on whether there is a selected image
+        if (mSelectedImageUri != null) {
+            picpath = mSelectedImageUri.toString();
+            Log.d(AddDinnerActivity.class.getSimpleName(), "Picpath will be " + picpath);
+        } else {
+            picpath = null;
         }
+
+        String recipe = mEditRecipe.getText().toString();
+
+        Log.d(AddDinnerActivity.class.getSimpleName(), "mRowId = " + mRowId);
+
+        //Create dinner or update existing record depending on the value of mRowId
+//            mDbHelper.open();
+        if (mRowId == null) {
+            //Todo: Does it ever crash on a new dinner when name is not unique?
+            long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
+            //Todo: manually close the db? mDbHelper.close();
+            Log.d(AddDinnerActivity.class.getSimpleName(), "id = " + id);
+            //Todo: if id == -1 the dinner hasn't been saved; should toast this and remain
+            //in AddDinnerActivity. Right now we go to DinnerListActivity.
+            if (id == -1) {
+                notUniqueName();
+            } else if (id > 0) {
+                Log.d(AddDinnerActivity.class.getSimpleName(), "Dinner created");
+                mRowId = id;
+                saveSuccessToast(name);
+
+                //Launch DinnerListActivity to display updated dinner list
+                Intent intent1 = new Intent(this, DinnerListActivity.class);
+                this.startActivity(intent1);
+                finish();
+            }
+        } else {
+            //Todo: Need to add unique constraint exception handling here; getting crashes.
+//            mDbHelper.open();
+            boolean updateSuccess = false;
+            try {
+                updateSuccess = mDbHelper.updateDinner(
+                        mRowId, name, method, time, servings, picpath, recipe);
+            } catch (SQLiteConstraintException e) {
+                Log.d(AddDinnerActivity.class.getSimpleName(), "Exception caught: " + e.toString());
+                notUniqueName();
+            }
+            if (updateSuccess) {
+                saveSuccessToast(name);
+
+                //Launch ViewDinnerActivity to see updated dinner
+                Intent intent2 = new Intent(this, ViewDinnerActivity.class);
+                intent2.putExtra(DinnersDbAdapter.KEY_ROWID, mRowId);
+                this.startActivity(intent2);
+                finish();
+            }
+            //Todo: manually close the db?
+//            mDbHelper.close();
+
+        }
+
     }
 
     public void saveSuccessToast(CharSequence name) {
@@ -418,6 +435,20 @@ public class AddDinnerActivity extends ActionBarActivity {
         CharSequence text = name + " saved";
         int duration = Toast.LENGTH_SHORT;
         Toast.makeText(context, text, duration).show();
+
+    }
+
+    public void notUniqueName() {
+
+        //Toast that name must be unique
+        Context context = getApplicationContext();
+        CharSequence text = getResources().getString(R.string.toast_not_unique);
+        int duration = Toast.LENGTH_LONG;
+        Toast.makeText(context, text, duration).show();
+
+        //Put user back into editText to rename dinner
+        mEditNameText.setSelectAllOnFocus(true);
+        mEditNameText.requestFocus();
 
     }
 }

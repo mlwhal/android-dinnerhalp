@@ -81,11 +81,14 @@
 
     <!--AddDinnerActivity  -->
     <string name="add_dinner_title">Add a dinner</string>
+    <string name="update_dinner_title">Update dinner</string>
     <string name="dinner_name_hint">Dinner name</string>
     <!--Label for keyboard completion button -->
     <string name="button_done">Done</string>
     <string name="image_add_picture">Add picture</string>
     <string name="recipe_hint">Recipe or keywords</string>
+    <!--String if user has not chosen unique dinner name  -->
+    <string name="toast_not_unique">Dinner name must be unique to be saved!</string>
 
     <!--Action buttons-->
     <string name="button_cancel">Cancel</string>
