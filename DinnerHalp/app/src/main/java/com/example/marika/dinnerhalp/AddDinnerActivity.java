@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,10 +25,10 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 
-public class AddDinnerActivity extends ActionBarActivity {
+public class AddDinnerActivity extends AppCompatActivity {
 
     //Todo: check whether mFragmentTracker is even needed
-    public int mFragmentTracker;
+//    public int mFragmentTracker;
     private DinnersDbAdapter mDbHelper;
     private EditText mEditNameText;
     private Spinner mMethodSpinner;
@@ -44,7 +45,7 @@ public class AddDinnerActivity extends ActionBarActivity {
 
     //Track whether cancel or save button is clicked to finish Activity
     //Todo: Don't need this anymore if I've fixed the saveState() issue.
-    private Boolean mCancelledState = false;
+//    private Boolean mCancelledState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,6 @@ public class AddDinnerActivity extends ActionBarActivity {
         }
 
         mDbHelper = new DinnersDbAdapter(this);
-        //Todo: Move this open command down to where it's used
-        mDbHelper.open();
 
         //setContentView(R.layout.activity_add_dinner_noscroll);
         setContentView(R.layout.activity_add_dinner);
@@ -247,8 +246,9 @@ public class AddDinnerActivity extends ActionBarActivity {
     private void populateFields() {
 
         if (mRowId != null) {
-//            mDbHelper.open();
+            mDbHelper.open();
             Cursor dinner = mDbHelper.fetchDinner(mRowId);
+            mDbHelper.close();
             startManagingCursor(dinner);
 
             //Change section label if dinner is being updated rather than created
@@ -281,6 +281,10 @@ public class AddDinnerActivity extends ActionBarActivity {
             mEditRecipe.setText(dinner.getString(
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_RECIPE)));
 
+            //Close up cursor
+            stopManagingCursor(dinner);
+            dinner.close();
+
         } else {
             mEditNameText.requestFocus();
 
@@ -288,9 +292,7 @@ public class AddDinnerActivity extends ActionBarActivity {
             mEditRecipe.setText(mRecipeText);
         }
 
-        //Todo: Close mDbHelper and dinner cursor
-
-    }
+     }
 
     //Method to get index of spinner when value is known (thanks StackOverflow)
     //http://stackoverflow.com/questions/29595478/set-spinner-value-based-on-database-record-in-android
@@ -385,11 +387,12 @@ public class AddDinnerActivity extends ActionBarActivity {
 //            mDbHelper.open();
         if (mRowId == null) {
             //Todo: Does it ever crash on a new dinner when name is not unique?
+            mDbHelper.open();
             long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
-            //Todo: manually close the db? mDbHelper.close();
+            mDbHelper.close();
             Log.d(AddDinnerActivity.class.getSimpleName(), "id = " + id);
-            //Todo: if id == -1 the dinner hasn't been saved; should toast this and remain
-            //in AddDinnerActivity. Right now we go to DinnerListActivity.
+            //If id == -1 the dinner hasn't been saved; toast this and remain
+            //in AddDinnerActivity.
             if (id == -1) {
                 notUniqueName();
             } else if (id > 0) {
@@ -397,18 +400,19 @@ public class AddDinnerActivity extends ActionBarActivity {
                 mRowId = id;
                 saveSuccessToast(name);
 
-                //Launch DinnerListActivity to display updated dinner list
+                //After dinner is saved, launch DinnerListActivity to display updated dinner list
                 Intent intent1 = new Intent(this, DinnerListActivity.class);
                 this.startActivity(intent1);
                 finish();
             }
         } else {
-            //Todo: Need to add unique constraint exception handling here; getting crashes.
-//            mDbHelper.open();
+            //updateDinner() returns a boolean indicating whether rows were updated.
             boolean updateSuccess = false;
             try {
+                mDbHelper.open();
                 updateSuccess = mDbHelper.updateDinner(
                         mRowId, name, method, time, servings, picpath, recipe);
+                mDbHelper.close();
             } catch (SQLiteConstraintException e) {
                 Log.d(AddDinnerActivity.class.getSimpleName(), "Exception caught: " + e.toString());
                 notUniqueName();
@@ -422,8 +426,6 @@ public class AddDinnerActivity extends ActionBarActivity {
                 this.startActivity(intent2);
                 finish();
             }
-            //Todo: manually close the db?
-//            mDbHelper.close();
 
         }
 

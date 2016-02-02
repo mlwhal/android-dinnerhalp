@@ -32,8 +32,7 @@ public class DinnersDbAdapter {
 
     /**
      * Database creation sql statement
-     * Todo: Ensure that dinner name cannot be identical to other records
-     * I think I do this by putting "unique" after "name text not null"
+     * Note that the dinner name must be unique for each record.
      */
     private static final String DATABASE_CREATE =
             "create table dinners (_id integer primary key autoincrement, "
@@ -122,8 +121,6 @@ public class DinnersDbAdapter {
         initialValues.put(KEY_PICPATH, picpath);
         initialValues.put(KEY_RECIPE, recipe);
 
-        //Todo: Put inside a try/catch statement to catch duplicate name fields?
-        //Maybe insertOrThrow rather than just insert?
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 
@@ -230,6 +227,7 @@ public class DinnersDbAdapter {
      * @param method value to set cooking method to
      *               etc. etc.
      * @return true if the dinner was successfully updated, false otherwise
+     * mDb.update() returns the number of rows updated in an int. Anything > 0 returns true.
      */
     public boolean updateDinner(long rowId, String name, String method, String time,
                                 String servings, String picpath, String recipe) {
