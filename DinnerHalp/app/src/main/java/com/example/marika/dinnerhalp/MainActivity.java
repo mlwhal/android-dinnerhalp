@@ -572,7 +572,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         String fileName = theActivity.getString(R.string.filename_sharedb_test);
                         File file = new File(pathName,fileName);
                         String internalPath = theActivity.getFilesDir().getAbsolutePath();
+                        String dbPath = theActivity.getDatabasePath("dinnerData.db").toString();
                         Log.d(MainActivity.class.getSimpleName(), "internalPath is " + internalPath);
+                        Log.d(MainActivity.class.getSimpleName(), "dbPath is " + dbPath);
                         Log.d(MainActivity.class.getSimpleName(), "pathName is " + pathName);
 
 //                            String emailSubject = theActivity.getString(R.string.intent_sharedb_subject);
@@ -657,7 +659,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Dialog onCreateDialog (Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
 
-            return new AlertDialog.Builder(getActivity())
+            return new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme)
                     .setTitle(title)
                     .setPositiveButton(R.string.alert_dialog_delete_ok,
                             new DialogInterface.OnClickListener() {

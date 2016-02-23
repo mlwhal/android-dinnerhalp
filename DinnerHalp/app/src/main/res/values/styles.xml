@@ -7,6 +7,11 @@
         <item name="android:actionModeShareDrawable" tools:targetApi="lollipop">@drawable/ic_action_share</item>
         <!--item name="homeAsUpIndicator">@drawable/ic_dinnerhalp096</item-->
         <item name="homeAsUpIndicator">@drawable/ic_action_previous_item</item>
+        <item name="android:colorMultiSelectHighlight">@color/colorCABHighlight</item>
+        <item name="android:colorLongPressedHighlight">@color/colorCABHighlight</item>
+        <item name="android:textColorHighlight">@color/colorCABHighlight</item>
+
+        <item name="android:alertDialogTheme">@style/CustomAlertDialogTheme</item>
     </style>
 
         <style name="HeaderText">
@@ -40,6 +45,14 @@
     <style name="ViewDinnerRecipeText" parent="ViewDinnerText">
         <item name="android:textSize">16sp</item>
         <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="CustomAlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:borderlessButtonStyle">@style/Widget.Custom.Button.Borderless</item>
+    </style>
+
+    <style name="Widget.Custom.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textAppearanceMedium">@color/colorCABHighlight</item>
     </style>
 
 </resources>

@@ -5,5 +5,11 @@
         <!-- Customize your theme here. -->
         <item name="android:actionModeBackground">@color/colorPrimaryHighlight</item>
         <item name="android:actionModeShareDrawable">@drawable/ic_action_share</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="CustomAlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:borderlessButtonStyle">@style/Widget.Custom.Button.Borderless</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
     </style>
 </resources>

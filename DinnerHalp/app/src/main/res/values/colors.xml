@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryHighlight">#0099CC</color>
+    <!--color name="colorPrimaryHighlight">#0099CC</color-->
+    <color name="colorPrimaryHighlight">#cc0000</color>
+    <color name="colorCABHighlight">#cc6666</color>
 
     <color name="colorDefaultText">#333333</color>
     <color name="colorTestText">#FF0000</color>
+    <color name="colorAccent">#cc0000</color>
 
-    
+
 </resources>

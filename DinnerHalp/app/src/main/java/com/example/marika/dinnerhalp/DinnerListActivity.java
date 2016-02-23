@@ -419,7 +419,7 @@ public class DinnerListActivity extends AppCompatActivity {
         public Dialog onCreateDialog (Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
 
-            return new AlertDialog.Builder(getActivity())
+            return new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme)
                     .setTitle(title)
                     .setPositiveButton(R.string.alert_dialog_delete_ok,
                             new DialogInterface.OnClickListener() {
