@@ -453,7 +453,9 @@ public class DinnerListActivity extends AppCompatActivity {
 
         for (int i = 0; i < mIdList.size(); i++) {
             Log.d(DinnerListActivity.class.getSimpleName(), "Id to delete is " + mIdList.get(i));
+            mDbHelper.open();
             mDbHelper.deleteDinner(mIdList.get(i));
+            mDbHelper.close();
         }
         //Happy deletion announcement
         Toast.makeText(getApplicationContext(), "Dinners deleted",
