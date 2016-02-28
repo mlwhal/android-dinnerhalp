@@ -1,6 +1,11 @@
 package com.example.marika.dinnerhalp;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -36,7 +41,7 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
-        //Todo: When launching other activities, track current fragment so that back/cancel
+    //Todo: When launching other activities, track current fragment so that back/cancel
     //returns you to last fragment. Currently always returns to SearchFragment.
 
     /**
@@ -146,7 +151,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             default:
                 return super.onOptionsItemSelected(item);
 
-            }
+        }
 
     }
 
@@ -310,7 +315,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
             //Create ListView and add ArrayAdapter to display search options
-            final ListView listView = (ListView)rootView.findViewById(R.id.list);
+            final ListView listView = (ListView) rootView.findViewById(R.id.list);
 
             //Get list item names and image ids from array resources
             Resources res = getResources();
@@ -328,7 +333,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     imageId);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(
-                    new SearchOnItemClickListener((MainActivity)getActivity(), this));
+                    new SearchOnItemClickListener((MainActivity) getActivity(), this));
             return rootView;
         }
 
@@ -357,7 +362,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             final View dialogView = inflater.inflate(R.layout.dialog_keywordsearch, null);
             builder.setTitle(title)
                     .setView(dialogView)
-                    //Add action buttons
+                            //Add action buttons
                     .setPositiveButton(R.string.button_search,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -418,18 +423,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(title)
-                   .setItems(R.array.method_array, new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int position) {
-                           Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
-                           //Query DB for selected method and display a list of dinners
-                           Intent intent = new Intent(getActivity(), DinnerListActivity.class);
-                           intent.putExtra("SEARCH_COLUMN", "method LIKE ?");
-                           intent.putExtra("SEARCH_STRING", methods[position]);
-                           //intent.putExtra("SEARCH_STRING", "Oven");
-                           startActivity(intent);
-                       }
+                    .setItems(R.array.method_array, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int position) {
+                            Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
+                            //Query DB for selected method and display a list of dinners
+                            Intent intent = new Intent(getActivity(), DinnerListActivity.class);
+                            intent.putExtra("SEARCH_COLUMN", "method LIKE ?");
+                            intent.putExtra("SEARCH_STRING", methods[position]);
+                            //intent.putExtra("SEARCH_STRING", "Oven");
+                            startActivity(intent);
+                        }
 
-                   });
+                    });
             return builder.create();
         }
     }
@@ -500,17 +505,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(title)
-                   .setItems(R.array.servings_array, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int position) {
-                           Log.d(TAG, "Position clicked " + position);
-                           //Query DB for selected no. of servings and display a list of dinners
-                           Intent intent = new Intent(getActivity(), DinnerListActivity.class);
-                           intent.putExtra("SEARCH_COLUMN", "servings LIKE ?");
-                           intent.putExtra("SEARCH_STRING", servings[position]);
-                           startActivity(intent);
-                       }
-                   });
+                    .setItems(R.array.servings_array, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int position) {
+                            Log.d(TAG, "Position clicked " + position);
+                            //Query DB for selected no. of servings and display a list of dinners
+                            Intent intent = new Intent(getActivity(), DinnerListActivity.class);
+                            intent.putExtra("SEARCH_COLUMN", "servings LIKE ?");
+                            intent.putExtra("SEARCH_STRING", servings[position]);
+                            startActivity(intent);
+                        }
+                    });
             return builder.create();
         }
 
@@ -567,34 +572,70 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     //Todo: Right now file is not being written/sent; error in Gmail
                     //"Can't attach empty file" - file path is unknown while running in debug mode.
                     //It's working in principle with a file whose path I know.
+                    //After latest changes: file doesn't meet if statement criteria in line 596.
                     case 3:
-                        String pathName = Environment.getExternalStorageDirectory().getAbsolutePath();
-                        String fileName = theActivity.getString(R.string.filename_sharedb_test);
-                        File file = new File(pathName,fileName);
-                        String internalPath = theActivity.getFilesDir().getAbsolutePath();
-                        String dbPath = theActivity.getDatabasePath("dinnerData.db").toString();
-                        Log.d(MainActivity.class.getSimpleName(), "internalPath is " + internalPath);
-                        Log.d(MainActivity.class.getSimpleName(), "dbPath is " + dbPath);
-                        Log.d(MainActivity.class.getSimpleName(), "pathName is " + pathName);
+//                        String pathName = Environment.getExternalStorageDirectory().getAbsolutePath();
+//                        String fileName = theActivity.getString(R.string.filename_sharedb);
+//                        String dbPath = theActivity.getDatabasePath("dinnerData.db").toString();
+//                        File file = new File(dbPath,fileName);
+//                        String internalPath = theActivity.getFilesDir().getAbsolutePath();
+//                        Log.d(MainActivity.class.getSimpleName(), "internalPath is " + internalPath);
+//                        Log.d(MainActivity.class.getSimpleName(), "dbPath is " + dbPath);
+//                        Log.d(MainActivity.class.getSimpleName(), "pathName is " + pathName);
 
-//                            String emailSubject = theActivity.getString(R.string.intent_sharedb_subject);
-//                            String emailMessage = theActivity.getString(R.string.intent_sharedb_message);
-//
-//                            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-//                            emailIntent.setType("text/plain");
-//                            emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-//                            emailIntent.putExtra(Intent.EXTRA_TEXT, emailMessage);
-//                            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-//                            Intent chooser = Intent.createChooser(emailIntent,
-//                                    theActivity.getString(R.string.intent_share_dialog_title));
-//                            if (emailIntent.resolveActivity(theActivity.getPackageManager()) != null) {
-//                                theActivity.startActivity(chooser);
-//                            }
+                        String emailSubject = theActivity.getString(R.string.intent_sharedb_subject);
+                        String emailMessage = theActivity.getString(R.string.intent_sharedb_message);
+
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setType("text/plain");
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailMessage);
+
+                        File pathName = Environment.getExternalStorageDirectory();
+                        File file = theActivity.getDatabasePath("dinnerData.db");
+                        if (file.exists() && file.canRead()) {
+                            try {
+                                //Make a local copy of the db file on the SD card
+                                File destination = new File(pathName, "dinnerData_copy.db");
+                                this.copyFile(file, destination);
+
+                                //Attach file and send
+                                Uri uri = Uri.fromFile(destination);
+                                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                Intent chooser = Intent.createChooser(emailIntent,
+                                        theActivity.getString(R.string.intent_share_dialog_title));
+                                if (emailIntent.resolveActivity(theActivity.getPackageManager()) != null) {
+                                    theActivity.startActivity(chooser);
+
+                                }
+                            } catch (IOException ioe) {
+                                return;
+
+                            }
+
+                        } else {
+                            Toast.makeText(theActivity, "File error!", Toast.LENGTH_SHORT).show();
+                        }
                 }
 
             }
+
             private MainActivity theActivity;
             private ManageDBFragment theFragment;
+
+            private void copyFile(File src, File dst) throws IOException {
+                InputStream in = new FileInputStream(src);
+                OutputStream out = new FileOutputStream(dst);
+
+                byte buf[] = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+
+            }
         }
 
         /**
@@ -618,7 +659,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
 
             //Create ListView and add CustomListAdapter to display manage dinner and DB options
-            ListView listView1 = (ListView)rootView.findViewById(R.id.list);
+            ListView listView1 = (ListView) rootView.findViewById(R.id.list);
 
             Resources res = getResources();
             String[] itemName = res.getStringArray(R.array.manage_dinners_array);
@@ -639,7 +680,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new ManageOnItemClickListener((MainActivity) getActivity(),
                             this));
 
-               return rootView;
+            return rootView;
         }
 
     }
@@ -656,7 +697,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         @Override
-        public Dialog onCreateDialog (Bundle savedInstanceState) {
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
 
             return new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme)
@@ -665,7 +706,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity)getActivity()).doPositiveClick();
+                                    ((MainActivity) getActivity()).doPositiveClick();
                                 }
                             }
                     )
@@ -673,7 +714,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity)getActivity()).doNegativeClick();
+                                    ((MainActivity) getActivity()).doNegativeClick();
                                 }
                             }
                     )
