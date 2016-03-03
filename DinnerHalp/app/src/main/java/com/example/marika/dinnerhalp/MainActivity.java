@@ -569,53 +569,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         theActivity.showDeleteDialog();
                         break;
                     //Todo: Share database file as attachment
-                    //Todo: Right now file is not being written/sent; error in Gmail
-                    //"Can't attach empty file" - file path is unknown while running in debug mode.
-                    //It's working in principle with a file whose path I know.
-                    //After latest changes: file doesn't meet if statement criteria in line 596.
                     case 3:
-//                        String pathName = Environment.getExternalStorageDirectory().getAbsolutePath();
-//                        String fileName = theActivity.getString(R.string.filename_sharedb);
-//                        String dbPath = theActivity.getDatabasePath("dinnerData.db").toString();
-//                        File file = new File(dbPath,fileName);
-//                        String internalPath = theActivity.getFilesDir().getAbsolutePath();
-//                        Log.d(MainActivity.class.getSimpleName(), "internalPath is " + internalPath);
-//                        Log.d(MainActivity.class.getSimpleName(), "dbPath is " + dbPath);
-//                        Log.d(MainActivity.class.getSimpleName(), "pathName is " + pathName);
-
-                        String emailSubject = theActivity.getString(R.string.intent_sharedb_subject);
-                        String emailMessage = theActivity.getString(R.string.intent_sharedb_message);
-
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.setType("text/plain");
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailMessage);
-
-                        File pathName = Environment.getExternalStorageDirectory();
-                        File file = theActivity.getDatabasePath("dinnerData.db");
-                        if (file.exists() && file.canRead()) {
-                            try {
-                                //Make a local copy of the db file on the SD card
-                                File destination = new File(pathName, "dinnerData_copy.db");
-                                this.copyFile(file, destination);
-
-                                //Attach file and send
-                                Uri uri = Uri.fromFile(destination);
-                                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                                Intent chooser = Intent.createChooser(emailIntent,
-                                        theActivity.getString(R.string.intent_share_dialog_title));
-                                if (emailIntent.resolveActivity(theActivity.getPackageManager()) != null) {
-                                    theActivity.startActivity(chooser);
-
-                                }
-                            } catch (IOException ioe) {
-                                return;
-
-                            }
-
-                        } else {
-                            Toast.makeText(theActivity, "File error!", Toast.LENGTH_SHORT).show();
-                        }
+                        break;
                 }
 
             }
@@ -623,19 +578,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             private MainActivity theActivity;
             private ManageDBFragment theFragment;
 
-            private void copyFile(File src, File dst) throws IOException {
-                InputStream in = new FileInputStream(src);
-                OutputStream out = new FileOutputStream(dst);
-
-                byte buf[] = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-
-            }
         }
 
         /**
