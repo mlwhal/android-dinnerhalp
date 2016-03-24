@@ -40,6 +40,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     private EditText mEditRecipe;
     //Tracker variable in case activity is getting content from another app
     private boolean mSharedContent = false;
+    private String mNameText;
     private String mRecipeText;
     private Long mRowId;
 
@@ -59,11 +60,15 @@ public class AddDinnerActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 //go ahead and prepare to create a new dinner using incoming text as recipe
-                mSharedContent = true;
-                mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
-//                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent to app!");
-//                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent is " + mRecipeText);
+                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent to app!");
 //                Log.d(AddDinnerActivity.class.getSimpleName(), "mRowId is " + mRowId);
+                mSharedContent = true;
+                //Todo: Do I need to load mRecipeText with a value here, or can I just do it in
+                //handleShareString?
+                mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
+                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent is " + mRecipeText);
+
+                handleShareString(shareIntent);
             }
         }
 
@@ -219,6 +224,30 @@ public class AddDinnerActivity extends AppCompatActivity {
         }
     }
 
+    //Lifecycle handling methods
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        saveState();
+        outState.putSerializable(DinnersDbAdapter.KEY_ROWID, mRowId);
+    }
+
+    //onPause() is run even when the activity is ended with finish(),
+    //so the current dinner is always created/updated via saveState().
+    //Todo: Does it make sense to save state onPause(), or onStop()?
+    //You're not supposed to write to databases in onPause().
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        saveState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        populateFields();
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
@@ -289,6 +318,8 @@ public class AddDinnerActivity extends AppCompatActivity {
             mEditNameText.requestFocus();
 
             //If another app sent in text via an intent, put that in the recipe EditText
+            //Todo: Add mNameText part too
+            mEditNameText.setText(mNameText);
             mEditRecipe.setText(mRecipeText);
         }
 
@@ -336,30 +367,6 @@ public class AddDinnerActivity extends AppCompatActivity {
         return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
                 null, o2);
 
-    }
-
-    //Lifecycle handling methods
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        saveState();
-        outState.putSerializable(DinnersDbAdapter.KEY_ROWID, mRowId);
-    }
-
-    //onPause() is run even when the activity is ended with finish(),
-    //so the current dinner is always created/updated via saveState().
-    //Todo: Does it make sense to save state onPause(), or onStop()?
-    //You're not supposed to write to databases in onPause().
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        saveState();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        populateFields();
     }
 
     private void saveDinner() {
@@ -428,6 +435,28 @@ public class AddDinnerActivity extends AppCompatActivity {
             }
 
         }
+
+    }
+
+    private void handleShareString(Intent shareIntent) {
+        String shareString = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 50; i++) {
+            char c = shareString.charAt(i);
+            //Build up a string of chars until a line break is hit
+            if (c != '\n') {
+                builder.append(c);
+            } else {
+                break;
+            }
+        }
+        mNameText = builder.toString();
+        Log.d(AddDinnerActivity.class.getSimpleName(), "Name text is " + mNameText);
+//        Log.d(AddDinnerActivity.class.getSimpleName(), "Recipe text is " + mRecipeText);
+
+        //Todo: Remove mNameText and line break from front of shareString to make mRecipeText.
+            mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
+            Log.d(AddDinnerActivity.class.getSimpleName(), "Truncated recipe is " + mRecipeText);
 
     }
 
