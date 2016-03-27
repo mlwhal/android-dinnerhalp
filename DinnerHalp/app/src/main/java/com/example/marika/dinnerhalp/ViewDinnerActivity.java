@@ -38,6 +38,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
     private TextView mRecipeText;
     private Long mRowId;
 
+    //TAG String used for logging
+    private static final String TAG = ViewDinnerActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +66,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         }
 
         populateDinnerText();
-        Log.d(ViewDinnerActivity.class.getSimpleName(), "RowID onCreate is " + mRowId);
+        Log.d(TAG, "RowID onCreate is " + mRowId);
 
     }
 
@@ -153,7 +156,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
             //Show ImageView only if there is a uri value in the database
             String picPath = dinner.getString(dinner.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_PICPATH));
-            Log.d(ViewDinnerActivity.class.getSimpleName(), "picPath value is " + picPath);
+            Log.d(TAG, "picPath value is " + picPath);
             if (picPath == null || picPath.equalsIgnoreCase("")) {
                 mDinnerImage.setVisibility(View.GONE);
             } else {
@@ -162,7 +165,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 try {
                     mDinnerImage.setImageBitmap(decodeUri(picUri, 192));
                 } catch (FileNotFoundException e) {
-                    Log.d(ViewDinnerActivity.class.getSimpleName(), Log.getStackTraceString(e));
+                    Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
 
@@ -242,7 +245,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Log.d(ViewDinnerActivity.class.getSimpleName(), "Delete button clicked!");
+                                    Log.d(TAG, "Delete button clicked!");
                                     ((ViewDinnerActivity)getActivity()).doPositiveClick();
                                 }
                             }
