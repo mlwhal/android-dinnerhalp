@@ -42,7 +42,9 @@ public class DinnerListActivity extends AppCompatActivity {
     private String mSearchColumn;
     private String mSearchString;
 
-    @Override
+    //TAG String used for logging
+    private static final String TAG = DinnerListActivity.class.getSimpleName();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinner_list);
@@ -70,9 +72,9 @@ public class DinnerListActivity extends AppCompatActivity {
             mSearchColumn = (String) savedInstanceState.getSerializable(SEARCH_COLUMN);
             mSearchString = (String) savedInstanceState.getSerializable(SEARCH_STRING);
         }
-        Log.d(DinnerListActivity.class.getSimpleName(), "Keyword search is " + mKeywordSearch);
-        Log.d(DinnerListActivity.class.getSimpleName(), "Where clause is " + mSearchColumn);
-        Log.d(DinnerListActivity.class.getSimpleName(), "String to search is " + mSearchString);
+        Log.d(TAG, "Keyword search is " + mKeywordSearch);
+        Log.d(TAG, "Where clause is " + mSearchColumn);
+        Log.d(TAG, "String to search is " + mSearchString);
         fillData(mKeywordSearch, mSearchColumn, mSearchString);
     }
 
@@ -133,7 +135,7 @@ public class DinnerListActivity extends AppCompatActivity {
 
         if (searchColumn != null) {
             queryDinnerList = true;
-            Log.d(DinnerListActivity.class.getSimpleName(), "SearchColumn not null, = " + searchColumn);
+            Log.d(TAG, "SearchColumn not null, = " + searchColumn);
             dinnerCursor = mDbHelper.fetchDinnerSearch(keywordSearch, searchColumn, searchString);
             startManagingCursor(dinnerCursor);
         } else {
@@ -191,7 +193,7 @@ public class DinnerListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //launch viewDinner activity
-                Log.d(DinnerListActivity.class.getSimpleName(), "Position clicked " + position +
+                Log.d(TAG, "Position clicked " + position +
                         " and id " + id);
                 Intent i = new Intent(view.getContext(), ViewDinnerActivity.class);
                 i.putExtra(DinnersDbAdapter.KEY_ROWID, id);
@@ -219,12 +221,12 @@ public class DinnerListActivity extends AppCompatActivity {
                 if (checked) {
                     itemId = id;
                     mIdList.add(id);
-                    Log.d(DinnerListActivity.class.getSimpleName(), "Id selected = " + id);
-                    Log.d(DinnerListActivity.class.getSimpleName(), "Current list = " + mIdList);
+                    Log.d(TAG, "Id selected = " + id);
+                    Log.d(TAG, "Current list = " + mIdList);
                     nr++;
                 } else {
                     mIdList.remove(id);
-                    Log.d(DinnerListActivity.class.getSimpleName(), "Current list = " + mIdList);
+                    Log.d(TAG, "Current list = " + mIdList);
                     nr--;
                 }
                 mode.setTitle(nr + " selected");
@@ -249,7 +251,7 @@ public class DinnerListActivity extends AppCompatActivity {
                 // an invalidate() request
 
                 //Hide the edit button if more than one item is selected
-                Log.d(DinnerListActivity.class.getSimpleName(), "nr = " + nr);
+                Log.d(TAG, "nr = " + nr);
                 if (nr == 1) {
                     MenuItem item = menu.findItem(R.id.cab_edit);
                     item.setVisible(true);
@@ -270,7 +272,7 @@ public class DinnerListActivity extends AppCompatActivity {
                         i.putExtra(DinnersDbAdapter.KEY_ROWID, itemId);
                         i.putExtra("QUERY_DINNERS", queryDinnerList);
                         nr = 0;
-                        Log.d(DinnerListActivity.class.getSimpleName(), "CAB Edit clicked, id = " + itemId);
+                        Log.d(TAG, "CAB Edit clicked, id = " + itemId);
                         startActivity(i);
                         mode.finish();
                         finish();
@@ -278,7 +280,7 @@ public class DinnerListActivity extends AppCompatActivity {
 
                     case R.id.cab_delete:
                         showDeleteDialog();
-                        Log.d(DinnerListActivity.class.getSimpleName(), "CAB Delete clicked");
+                        Log.d(TAG, "CAB Delete clicked");
                         return true;
 
                     case R.id.cab_share:
@@ -328,8 +330,8 @@ public class DinnerListActivity extends AppCompatActivity {
             stopManagingCursor(dinnerCursor);
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, dinnerTitle);
             shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerRecipe);
-            Log.d(DinnerListActivity.class.getSimpleName(), "Title to share is " + dinnerTitle);
-            Log.d(DinnerListActivity.class.getSimpleName(), "Recipe to share is " + dinnerRecipe);
+            Log.d(TAG, "Title to share is " + dinnerTitle);
+            Log.d(TAG, "Recipe to share is " + dinnerRecipe);
 
         } else {
             //Get titles/recipes from all dinners in mIdList
@@ -353,8 +355,8 @@ public class DinnerListActivity extends AppCompatActivity {
 
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, multiDinnerSubject);
             shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerTextString);
-            Log.d(DinnerListActivity.class.getSimpleName(), "Title to share is " + multiDinnerSubject);
-            Log.d(DinnerListActivity.class.getSimpleName(), "Text to share is " + dinnerTextString);
+            Log.d(TAG, "Title to share is " + multiDinnerSubject);
+            Log.d(TAG, "Text to share is " + dinnerTextString);
 
         }
 
@@ -378,8 +380,8 @@ public class DinnerListActivity extends AppCompatActivity {
         savedInstanceState.putString(SEARCH_COLUMN, mSearchColumn);
         savedInstanceState.putString(SEARCH_STRING, mSearchString);
 
-        Log.d(DinnerListActivity.class.getSimpleName(), "SaveInstanceState! KeywordSearch is " + mKeywordSearch);
-        Log.d(DinnerListActivity.class.getSimpleName(), "SaveInstanceState! mSearchString is " + mSearchString);
+        Log.d(TAG, "SaveInstanceState! KeywordSearch is " + mKeywordSearch);
+        Log.d(TAG, "SaveInstanceState! mSearchString is " + mSearchString);
 
         super.onSaveInstanceState(savedInstanceState);
 
@@ -391,8 +393,8 @@ public class DinnerListActivity extends AppCompatActivity {
         mKeywordSearch = savedInstanceState.getBoolean(KEYWORD_SEARCH);
         mSearchColumn = savedInstanceState.getString(SEARCH_COLUMN);
         mSearchString = savedInstanceState.getString(SEARCH_STRING);
-        Log.d(DinnerListActivity.class.getSimpleName(), "RestoreInstanceState! KeywordSearch is " + mKeywordSearch);
-        Log.d(DinnerListActivity.class.getSimpleName(), "RestoreInstanceState! mSearchString is " + mSearchString);
+        Log.d(TAG, "RestoreInstanceState! KeywordSearch is " + mKeywordSearch);
+        Log.d(TAG, "RestoreInstanceState! mSearchString is " + mSearchString);
         fillData(mKeywordSearch, mSearchColumn, mSearchString);
     }
 
@@ -400,8 +402,8 @@ public class DinnerListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Log.d(DinnerListActivity.class.getSimpleName(), "onResume! KeywordSearch is " + mKeywordSearch);
-        Log.d(DinnerListActivity.class.getSimpleName(), "onResume! mSearchString is " + mSearchString);
+        Log.d(TAG, "onResume! KeywordSearch is " + mKeywordSearch);
+        Log.d(TAG, "onResume! mSearchString is " + mSearchString);
         fillData(mKeywordSearch, mSearchColumn, mSearchString);
     }
 
@@ -425,7 +427,7 @@ public class DinnerListActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Log.d(ViewDinnerActivity.class.getSimpleName(), "Delete button clicked!");
+                                    Log.d(TAG, "Delete button clicked!");
                                     ((DinnerListActivity)getActivity()).doPositiveClick();
                                 }
                             }
@@ -452,7 +454,7 @@ public class DinnerListActivity extends AppCompatActivity {
     public void doPositiveClick() {
 
         for (int i = 0; i < mIdList.size(); i++) {
-            Log.d(DinnerListActivity.class.getSimpleName(), "Id to delete is " + mIdList.get(i));
+            Log.d(TAG, "Id to delete is " + mIdList.get(i));
             mDbHelper.open();
             mDbHelper.deleteDinner(mIdList.get(i));
             mDbHelper.close();
