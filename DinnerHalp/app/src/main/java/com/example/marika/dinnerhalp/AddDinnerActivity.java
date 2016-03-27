@@ -44,6 +44,9 @@ public class AddDinnerActivity extends AppCompatActivity {
     private String mRecipeText;
     private Long mRowId;
 
+    //TAG String used for logging
+    private static final String TAG = AddDinnerActivity.class.getSimpleName();
+
     //Track whether cancel or save button is clicked to finish Activity
     //Todo: Don't need this anymore if I've fixed the saveState() issue.
 //    private Boolean mCancelledState = false;
@@ -60,13 +63,13 @@ public class AddDinnerActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 //go ahead and prepare to create a new dinner using incoming text as recipe
-                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent to app!");
-//                Log.d(AddDinnerActivity.class.getSimpleName(), "mRowId is " + mRowId);
+                Log.d(TAG, "Text sent to app!");
+//                Log.d(TAG, "mRowId is " + mRowId);
                 mSharedContent = true;
                 //Todo: Do I need to load mRecipeText with a value here, or can I just do it in
                 //handleShareString?
                 mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
-                Log.d(AddDinnerActivity.class.getSimpleName(), "Text sent is " + mRecipeText);
+                Log.d(TAG, "Text sent is " + mRecipeText);
 
                 handleShareString(shareIntent);
             }
@@ -255,12 +258,12 @@ public class AddDinnerActivity extends AppCompatActivity {
             case PICK_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     mSelectedImageUri = imageReturnedIntent.getData();
-                    Log.d(AddDinnerActivity.class.getSimpleName(), "Uri is " + mSelectedImageUri);
+                    Log.d(TAG, "Uri is " + mSelectedImageUri);
                     //Show the image in the ImageView so the user knows this worked.
                     try {
                         mSetPicPath.setImageBitmap(decodeUri(mSelectedImageUri, 192));
                     } catch (FileNotFoundException e) {
-                        Log.d(AddDinnerActivity.class.getSimpleName(), Log.getStackTraceString(e));
+                        Log.d(TAG, Log.getStackTraceString(e));
                     }
                 }
 
@@ -299,11 +302,11 @@ public class AddDinnerActivity extends AppCompatActivity {
             //If there is a picpath in the database, downsample bitmap and display
             if (imageString != null) {
                 Uri imageUri = Uri.parse(imageString);
-                Log.d(AddDinnerActivity.class.getSimpleName(), "Uri from db is " + imageUri);
+                Log.d(TAG, "Uri from db is " + imageUri);
                 try {
                     mSetPicPath.setImageBitmap(decodeUri(imageUri, 192));
                 } catch (FileNotFoundException e) {
-                    Log.d(AddDinnerActivity.class.getSimpleName(), Log.getStackTraceString(e));
+                    Log.d(TAG, Log.getStackTraceString(e));
                 }
             }
 
@@ -381,14 +384,14 @@ public class AddDinnerActivity extends AppCompatActivity {
         //Set picpath depending on whether there is a selected image
         if (mSelectedImageUri != null) {
             picpath = mSelectedImageUri.toString();
-            Log.d(AddDinnerActivity.class.getSimpleName(), "Picpath will be " + picpath);
+            Log.d(TAG, "Picpath will be " + picpath);
         } else {
             picpath = null;
         }
 
         String recipe = mEditRecipe.getText().toString();
 
-        Log.d(AddDinnerActivity.class.getSimpleName(), "mRowId = " + mRowId);
+        Log.d(TAG, "mRowId = " + mRowId);
 
         //Create dinner or update existing record depending on the value of mRowId
 //            mDbHelper.open();
@@ -397,13 +400,13 @@ public class AddDinnerActivity extends AppCompatActivity {
             mDbHelper.open();
             long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
             mDbHelper.close();
-            Log.d(AddDinnerActivity.class.getSimpleName(), "id = " + id);
+            Log.d(TAG, "id = " + id);
             //If id == -1 the dinner hasn't been saved; toast this and remain
             //in AddDinnerActivity.
             if (id == -1) {
                 notUniqueName();
             } else if (id > 0) {
-                Log.d(AddDinnerActivity.class.getSimpleName(), "Dinner created");
+                Log.d(TAG, "Dinner created");
                 mRowId = id;
                 saveSuccessToast(name);
 
@@ -421,7 +424,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                         mRowId, name, method, time, servings, picpath, recipe);
                 mDbHelper.close();
             } catch (SQLiteConstraintException e) {
-                Log.d(AddDinnerActivity.class.getSimpleName(), "Exception caught: " + e.toString());
+                Log.d(TAG, "Exception caught: " + e.toString());
                 notUniqueName();
             }
             if (updateSuccess) {
@@ -451,12 +454,12 @@ public class AddDinnerActivity extends AppCompatActivity {
             }
         }
         mNameText = builder.toString();
-        Log.d(AddDinnerActivity.class.getSimpleName(), "Name text is " + mNameText);
-//        Log.d(AddDinnerActivity.class.getSimpleName(), "Recipe text is " + mRecipeText);
+        Log.d(TAG, "Name text is " + mNameText);
+//        Log.d(TAG, "Recipe text is " + mRecipeText);
 
         //Todo: Remove mNameText and line break from front of shareString to make mRecipeText.
             mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
-            Log.d(AddDinnerActivity.class.getSimpleName(), "Truncated recipe is " + mRecipeText);
+            Log.d(TAG, "Truncated recipe is " + mRecipeText);
 
     }
 
