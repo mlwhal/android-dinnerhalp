@@ -62,19 +62,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     //Track which tab to show when navigating from other activities
     public int mFragmentTracker = 0;
 
+    //TAG String used for logging
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Todo: Get info from extras to determine which tab to show
+        //Get info from extras to determine which tab to show
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 mFragmentTracker = 0;
             } else {
                 mFragmentTracker = extras.getInt("FRAGMENT_TRACKER");
-                Log.d(MainActivity.class.getSimpleName(), "Extras not null, mFragmentTracker = " + mFragmentTracker);
+                Log.d(TAG, "Extras not null, mFragmentTracker = " + mFragmentTracker);
                 //Todo: mFragmentTracker gives correct value but is not used to create initial view
             }
         } else {
@@ -138,8 +141,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case R.id.action_add_dinner:
                 Intent intent = new Intent(this, AddDinnerActivity.class);
                 //intent.putExtra("FRAGMENT_TRACKER", 1);
-                //Log.d(MainActivity.class.getSimpleName(), "fragTracker is " + mFragmentTracker);
-                Log.d(MainActivity.class.getSimpleName(), "getSelNavIndx is " + getSupportActionBar().getSelectedNavigationIndex());
+                //Log.d(TAG, "fragTracker is " + mFragmentTracker);
+                Log.d(TAG, "getSelNavIndx is " + getSupportActionBar().getSelectedNavigationIndex());
                 this.startActivity(intent);
                 return true;
 
@@ -161,9 +164,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
         final int tabPosition = tab.getPosition();
-        Log.d(MainActivity.class.getSimpleName(), "onTabSelected");
-        Log.d(MainActivity.class.getSimpleName(), "tabPosition = " + tabPosition);
-        Log.d(MainActivity.class.getSimpleName(), "mFragmentTracker is " + mFragmentTracker);
+        Log.d(TAG, "onTabSelected");
+        Log.d(TAG, "tabPosition = " + tabPosition);
+        Log.d(TAG, "mFragmentTracker is " + mFragmentTracker);
     }
 
     @Override
@@ -222,7 +225,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //Set mFragmentTracker to current tab in order to save info to outstate
         mFragmentTracker = mViewPager.getCurrentItem();
         outstate.putInt("FRAGMENT_TRACKER", mFragmentTracker);
-        Log.d(MainActivity.class.getSimpleName(), "Save state! mFragmentTracker = " + mFragmentTracker);
+        Log.d(TAG, "Save state! mFragmentTracker = " + mFragmentTracker);
     }
 
     @Override
@@ -230,7 +233,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         super.onRestoreInstanceState(savedInstanceState);
 
         mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
-        Log.d(MainActivity.class.getSimpleName(), "Restore state! mFragmentTracker = " + mFragmentTracker);
+        Log.d(TAG, "Restore state! mFragmentTracker = " + mFragmentTracker);
     }
 
     //Method to track which tab to load when navigating from other activities
@@ -240,7 +243,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //Todo: This next line doesn't seem to be working as hoped.
         mViewPager.setCurrentItem(mFragmentTracker);
-        Log.d(MainActivity.class.getSimpleName(), "onResume");
+        Log.d(TAG, "onResume");
     }
 
 
@@ -264,7 +267,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-                Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
+                Log.d(TAG, "Position clicked " + position);
                 switch (position) {
                     case 0:
                         theActivity.confirmKeyword();
@@ -372,9 +375,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                             R.id.dialog_edittext_keyword);
                                     String keywordInput = keywordEditText.getText().toString();
                                     String whereClause = "name LIKE ? OR recipe LIKE ?";
-                                    Log.d(MainActivity.class.getSimpleName(), "Search column is " +
+                                    Log.d(TAG, "Search column is " +
                                             whereClause);
-                                    Log.d(MainActivity.class.getSimpleName(), "Search string is " +
+                                    Log.d(TAG, "Search string is " +
                                             "%" + keywordInput + "%");
                                     Intent intent = new Intent(getActivity(), DinnerListActivity.class);
                                     /*Flag this as a keyword search so that two WhereArgs are used
@@ -425,7 +428,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             builder.setTitle(title)
                     .setItems(R.array.method_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int position) {
-                            Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
+                            Log.d(TAG, "Position clicked " + position);
                             //Query DB for selected method and display a list of dinners
                             Intent intent = new Intent(getActivity(), DinnerListActivity.class);
                             intent.putExtra("SEARCH_COLUMN", "method LIKE ?");
@@ -465,9 +468,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             builder.setTitle(title)
                     .setItems(R.array.time_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int position) {
-                            Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
-                            Log.d(MainActivity.class.getSimpleName(), "Item clicked " +
-                                    times[position]);
+                            Log.d(TAG, "Position clicked " + position);
+                            Log.d(TAG, "Item clicked " + times[position]);
                             //Query DB for selected cook time and display a list of dinners
                             //Also pass in "time" as column to search
                             Intent intent = new Intent(getActivity(), DinnerListActivity.class);
@@ -526,7 +528,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     void confirmServings() {
         DialogFragment newFragment = ServingsDialogFragment.newInstance(R.string.servings_alert_title);
         newFragment.show(getFragmentManager(), "servingsConfirm");
-        Log.d(MainActivity.class.getSimpleName(), "Servings clicked!");
+        Log.d(TAG, "Servings clicked!");
     }
 
     /**
@@ -549,7 +551,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-                Log.d(MainActivity.class.getSimpleName(), "Position clicked " + position);
+                Log.d(TAG, "Position clicked " + position);
 
                 switch (position) {
                     //Add dinner
@@ -673,7 +675,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public void doPositiveClick() {
         //Open a database object and delete all rows
-        Log.d(MainActivity.class.getSimpleName(), "Positive button clicked");
+        Log.d(TAG, "Positive button clicked");
         DinnersDbAdapter mDbHelper;
         mDbHelper = new DinnersDbAdapter(this);
         mDbHelper.open();
@@ -693,7 +695,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public void doNegativeClick() {
         //Go back to manage fragment
-        Log.d(MainActivity.class.getSimpleName(), "Cancel button clicked");
+        Log.d(TAG, "Cancel button clicked");
         Toast.makeText(getApplicationContext(), "Nothing was deleted",
                 Toast.LENGTH_LONG).show();
     }
