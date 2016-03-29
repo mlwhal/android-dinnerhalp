@@ -377,7 +377,11 @@ public class DinnerListActivity extends AppCompatActivity {
                 dinnerRecipe = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
                         DinnersDbAdapter.KEY_RECIPE));
                 stopManagingCursor(dinnerCursor);
-                builder.append(dinnerTitle).append("\n").append(dinnerRecipe).append("\n\n");
+                builder.append("-----\n")
+                        .append(dinnerTitle)
+                        .append("\n")
+                        .append(dinnerRecipe)
+                        .append("\n\n");
 
             }
 
