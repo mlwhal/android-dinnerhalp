@@ -37,6 +37,28 @@
         <item name="android:paddingBottom">8dp</item>
     </style>
 
+    <style name="HintText">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorHintText</item>
+    </style>
+
+    <style name="SmallButton">
+        <item name="android:background">@color/colorHintText</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorKnockout</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="MedButton">
+        <item name="android:background">@color/colorCABHighlight</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorKnockout</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="ViewDinnerText">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/colorDefaultText</item>

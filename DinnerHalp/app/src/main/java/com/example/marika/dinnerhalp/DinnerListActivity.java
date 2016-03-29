@@ -23,6 +23,8 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 
@@ -48,6 +50,35 @@ public class DinnerListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinner_list);
+
+        //Initialize hint TextView and buttons that show and dismiss it
+        final TextView helpButton = (TextView) findViewById(R.id.button_help);
+        final TextView hintText = (TextView) findViewById(R.id.hint_text);
+        final TextView okButton = (TextView) findViewById(R.id.button_ok);
+
+        //Hint text and button are not shown onCreate
+        hintText.setVisibility(View.GONE);
+        okButton.setVisibility(View.GONE);
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Show hint and OK button; hide help button
+                hintText.setVisibility(View.VISIBLE);
+                okButton.setVisibility(View.VISIBLE);
+                helpButton.setVisibility(View.GONE);
+            }
+        });
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v) {
+                //Hide hint and OK button; show help button
+                hintText.setVisibility(View.GONE);
+                okButton.setVisibility(View.GONE);
+                helpButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         mDbHelper = new DinnersDbAdapter(this);
 
