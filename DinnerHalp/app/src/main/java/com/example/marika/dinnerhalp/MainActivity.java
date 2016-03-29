@@ -355,7 +355,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme);
             //Get the layout inflater
             LayoutInflater inflater = getActivity().getLayoutInflater();
             //Cast the Dialog as a View so I can get text out of the EditText
