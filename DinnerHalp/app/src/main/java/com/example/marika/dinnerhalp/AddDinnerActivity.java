@@ -27,8 +27,6 @@ import java.io.FileNotFoundException;
 
 public class AddDinnerActivity extends AppCompatActivity {
 
-    //Todo: check whether mFragmentTracker is even needed
-//    public int mFragmentTracker;
     private DinnersDbAdapter mDbHelper;
     private EditText mEditNameText;
     private Spinner mMethodSpinner;
@@ -46,10 +44,6 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     //TAG String used for logging
     private static final String TAG = AddDinnerActivity.class.getSimpleName();
-
-    //Track whether cancel or save button is clicked to finish Activity
-    //Todo: Don't need this anymore if I've fixed the saveState() issue.
-//    private Boolean mCancelledState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,24 +225,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        saveState();
         outState.putSerializable(DinnersDbAdapter.KEY_ROWID, mRowId);
-    }
-
-    //onPause() is run even when the activity is ended with finish(),
-    //so the current dinner is always created/updated via saveState().
-    //Todo: Does it make sense to save state onPause(), or onStop()?
-    //You're not supposed to write to databases in onPause().
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        saveState();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        populateFields();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
@@ -320,8 +297,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         } else {
             mEditNameText.requestFocus();
 
-            //If another app sent in text via an intent, put that in the recipe EditText
-            //Todo: Add mNameText part too
+            //If another app sent in text via an intent, put that in the name and recipe EditTexts
             mEditNameText.setText(mNameText);
             mEditRecipe.setText(mRecipeText);
         }
@@ -443,23 +419,26 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     private void handleShareString(Intent shareIntent) {
         String shareString = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 50; i++) {
-            char c = shareString.charAt(i);
-            //Build up a string of chars until a line break is hit
-            if (c != '\n') {
-                builder.append(c);
-            } else {
-                break;
+        //Todo: Experiment with sharing from different apps to test behavior
+        if (shareString != null) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < 50; i++) {
+                char c = shareString.charAt(i);
+                //Build up a string of chars until a line break is hit
+                if (c != '\n') {
+                    builder.append(c);
+                } else {
+                    break;
+                }
             }
-        }
-        mNameText = builder.toString();
-        Log.d(TAG, "Name text is " + mNameText);
+            mNameText = builder.toString();
+            Log.d(TAG, "Name text is " + mNameText);
 //        Log.d(TAG, "Recipe text is " + mRecipeText);
+        }
 
-        //Todo: Remove mNameText and line break from front of shareString to make mRecipeText.
-            mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
-            Log.d(TAG, "Truncated recipe is " + mRecipeText);
+        //Remove mNameText and line break from front of shareString to make mRecipeText.
+        mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
+        Log.d(TAG, "Truncated recipe is " + mRecipeText);
 
     }
 
