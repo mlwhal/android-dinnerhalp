@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        signed1 {
+            keyAlias 'MarikaAndroidKey'
+            keyPassword '[6Mf8b1dmeAe'
+            storeFile file('/Users/marika/Documents/AndroidDev/KeyStores/android.jks')
+            storePassword '[6Mf8b1dmeAe'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
     defaultConfig {
