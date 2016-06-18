@@ -6,10 +6,12 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -18,12 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 //import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 public class ViewDinnerActivity extends AppCompatActivity {
 
@@ -40,6 +44,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
     //TAG String used for logging
     private static final String TAG = ViewDinnerActivity.class.getSimpleName();
+
+    //Todo: Check SharedPreferences inside onCreate() to see whether to keep screen awake
+    //If screen should stay on: getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,22 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
         populateDinnerText();
         Log.d(TAG, "RowID onCreate is " + mRowId);
+
+        //Check SharedPreferences to determine whether to allow screen to sleep
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//        Map<String,?> keys = sharedPref.getAll();
+//        for (Map.Entry<String,?> entry : keys.entrySet()) {
+//            Log.d(TAG, "Pref map values = " + entry.getKey() + ": " + entry.getValue().toString());
+//        }
+//        Log.d(TAG, "sharedPref = " + sharedPref);
+        Boolean timeoutPref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_checkbox_timeout_key), true);
+        if (!timeoutPref) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Log.d(TAG, "Screen timeout disabled");
+        } else {
+            Log.d(TAG, "Screen timeout enabled");
+        }
 
     }
 

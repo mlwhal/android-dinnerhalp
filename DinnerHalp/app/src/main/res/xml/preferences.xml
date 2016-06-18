@@ -8,7 +8,7 @@
     </Preference>
 
     <CheckBoxPreference
-        android:key="pref_checkbox_timeout"
+        android:key="@string/pref_checkbox_timeout_key"
         android:title="@string/pref_checkbox_timeout_title"
         android:summary="@string/pref_checkbox_timeout_sum"
         android:defaultValue="true">

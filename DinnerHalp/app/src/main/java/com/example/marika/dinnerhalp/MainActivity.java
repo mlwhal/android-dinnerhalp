@@ -18,6 +18,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -118,6 +119,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
         mViewPager.setCurrentItem(mFragmentTracker);
+
+        //Initialize PreferenceManager with default values (recommended by
+        //https://developer.android.com/guide/topics/ui/settings.html)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
     }
 
