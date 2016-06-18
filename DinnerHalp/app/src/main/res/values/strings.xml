@@ -133,6 +133,7 @@
     <!--string name="text_about_app"><![CDATA[DinnerHalp by Marika Whaley <br>copyright 2015]]></string-->
     <string name="text_about_app">DinnerHalp 1.0 by Marika Whaley \ncopyright 2015-2016</string>
     <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="title_activity_settings">Settings</string>
 
 </resources>
