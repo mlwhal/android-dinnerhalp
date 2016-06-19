@@ -45,9 +45,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
     //TAG String used for logging
     private static final String TAG = ViewDinnerActivity.class.getSimpleName();
 
-    //Todo: Check SharedPreferences inside onCreate() to see whether to keep screen awake
-    //If screen should stay on: getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,20 +73,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         Log.d(TAG, "RowID onCreate is " + mRowId);
 
         //Check SharedPreferences to determine whether to allow screen to sleep
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-//        Map<String,?> keys = sharedPref.getAll();
-//        for (Map.Entry<String,?> entry : keys.entrySet()) {
-//            Log.d(TAG, "Pref map values = " + entry.getKey() + ": " + entry.getValue().toString());
-//        }
-//        Log.d(TAG, "sharedPref = " + sharedPref);
-        Boolean timeoutPref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_checkbox_timeout_key), true);
-        if (!timeoutPref) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            Log.d(TAG, "Screen timeout disabled");
-        } else {
-            Log.d(TAG, "Screen timeout enabled");
-        }
+        checkSharedPrefs();
 
     }
 
@@ -145,8 +129,8 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 this.startActivity(intent3);
                 return true;
 
-            case R.id.action_about:
-                Intent intent4 = new Intent(this, AboutAppActivity.class);
+            case R.id.action_settings:
+                Intent intent4 = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent4);
                 return true;
 
@@ -197,6 +181,26 @@ public class ViewDinnerActivity extends AppCompatActivity {
             stopManagingCursor(dinner);
             dinner.close();
         }
+    }
+
+    //Method to check SharedPreferences and handle the screen timeout preference
+    private void checkSharedPrefs() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//        Map<String,?> keys = sharedPref.getAll();
+//        for (Map.Entry<String,?> entry : keys.entrySet()) {
+//            Log.d(TAG, "Pref map values = " + entry.getKey() + ": " + entry.getValue().toString());
+//        }
+//        Log.d(TAG, "sharedPref = " + sharedPref);
+        Boolean timeoutPref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_checkbox_timeout_key), true);
+        if (!timeoutPref) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Log.d(TAG, "Screen timeout disabled");
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Log.d(TAG, "Screen timeout enabled");
+        }
+
     }
 
     //Method to downsample large images before loading into ImageView
@@ -312,5 +316,14 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
     public void doNegativeClick() {
         //Todo: Anything needed here? or just dismiss dialog within the click listener?
+    }
+
+    //Lifecycle onResume() method needed in case SharedPreferences have changed
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        Log.d(TAG, "onResume!");
+        checkSharedPrefs();
     }
 }
