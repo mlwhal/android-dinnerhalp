@@ -429,6 +429,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             //Create a string array to hold method values; these will be the db query terms.
             final String[] methods = getResources().getStringArray(R.array.method_array);
 
+//            Todo: Pull array of methods from SharedPreferences rather than hard coded array
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(title)
                     .setItems(R.array.method_array, new DialogInterface.OnClickListener() {

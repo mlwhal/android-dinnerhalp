@@ -14,6 +14,13 @@
         android:defaultValue="true">
     </CheckBoxPreference>
 
+    <CheckBoxPreference
+        android:key="@string/pref_checkbox_promode_key"
+        android:title="@string/pref_checkbox_promode_title"
+        android:summary="@string/pref_checkbox_promode_sum"
+        android:defaultValue="false">
+    </CheckBoxPreference>
+
     <Preference
         android:key="pref_aboutapp"
         android:title="@string/pref_aboutapp_title">

@@ -126,6 +126,9 @@
     <string name="pref_checkbox_timeout_title">Screen timeout</string>
     <string name="pref_checkbox_timeout_sum">Allow screen to timeout when viewing dinner</string>
     <string name="pref_checkbox_timeout_key">pref_checkbox_timeout</string>
+    <string name="pref_checkbox_promode_title">Pro user mode</string>
+    <string name="pref_checkbox_promode_sum">Hide all on-screen tips</string>
+    <string name="pref_checkbox_promode_key">pref_checkbox_promode</string>
     <string name="pref_aboutapp_title">About DinnerHalp</string>
 
     <!--AboutAppActivity  -->

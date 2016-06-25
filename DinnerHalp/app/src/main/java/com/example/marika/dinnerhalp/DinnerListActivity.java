@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -44,6 +46,11 @@ public class DinnerListActivity extends AppCompatActivity {
     private String mSearchColumn;
     private String mSearchString;
 
+    //TextViews for help button and hint text
+    private TextView helpButton;
+    private TextView hintText;
+    private TextView okButton;
+
     //TAG String used for logging
     private static final String TAG = DinnerListActivity.class.getSimpleName();
 
@@ -52,33 +59,16 @@ public class DinnerListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dinner_list);
 
         //Initialize hint TextView and buttons that show and dismiss it
-        final TextView helpButton = (TextView) findViewById(R.id.button_help);
-        final TextView hintText = (TextView) findViewById(R.id.hint_text);
-        final TextView okButton = (TextView) findViewById(R.id.button_ok);
+        helpButton = (TextView) findViewById(R.id.button_help);
+        hintText = (TextView) findViewById(R.id.hint_text);
+        okButton = (TextView) findViewById(R.id.button_ok);
 
-        //Hint text and button are not shown onCreate
+        //Hint text and button are never shown onCreate
         hintText.setVisibility(View.GONE);
         okButton.setVisibility(View.GONE);
 
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Show hint and OK button; hide help button
-                hintText.setVisibility(View.VISIBLE);
-                okButton.setVisibility(View.VISIBLE);
-                helpButton.setVisibility(View.GONE);
-            }
-        });
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-                //Hide hint and OK button; show help button
-                hintText.setVisibility(View.GONE);
-                okButton.setVisibility(View.GONE);
-                helpButton.setVisibility(View.VISIBLE);
-            }
-        });
+        //Todo: Check SharedPreferences for pro mode in order to show helpButton only if false
+        checkSharedPrefs();
 
         mDbHelper = new DinnersDbAdapter(this);
 
@@ -143,8 +133,8 @@ public class DinnerListActivity extends AppCompatActivity {
                 this.startActivity(intent3);
                 return true;
 
-            case R.id.action_about:
-                Intent intent4 = new Intent(this, AboutAppActivity.class);
+            case R.id.action_settings:
+                Intent intent4 = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent4);
                 return true;
 
@@ -329,10 +319,41 @@ public class DinnerListActivity extends AppCompatActivity {
                 // the CAB is removed. By default, selected items are deselected/unchecked.
                 nr = 0;
                 mIdList.clear();
-                //Todo: Repopulate list so that selected dinners are unselected
             }
 
         });
+
+    }
+
+    //Method to find out whether Pro User Mode is on and handle help text accordingly
+    private void checkSharedPrefs() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean proModePref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_checkbox_promode_key), true);
+        if (proModePref) {
+            helpButton.setVisibility(View.GONE);
+        } else {
+            helpButton.setVisibility(View.VISIBLE);
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Show hint and OK button; hide help button
+                    hintText.setVisibility(View.VISIBLE);
+                    okButton.setVisibility(View.VISIBLE);
+                    helpButton.setVisibility(View.GONE);
+                }
+            });
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Hide hint and OK button; show help button
+                    hintText.setVisibility(View.GONE);
+                    okButton.setVisibility(View.GONE);
+                    helpButton.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
     }
 
@@ -440,6 +461,9 @@ public class DinnerListActivity extends AppCompatActivity {
         Log.d(TAG, "onResume! KeywordSearch is " + mKeywordSearch);
         Log.d(TAG, "onResume! mSearchString is " + mSearchString);
         fillData(mKeywordSearch, mSearchColumn, mSearchString);
+
+        //Todo: Recheck SharedPreferences for pro mode value; update helpButton visibility
+        checkSharedPrefs();
     }
 
     public static class DeleteDialogFragment extends DialogFragment {
