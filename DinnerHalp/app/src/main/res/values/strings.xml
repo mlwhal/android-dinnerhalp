@@ -110,6 +110,7 @@
 
     <!--ViewDinnerActivity-->
     <string name="view_dinner_title">Dinner name here</string>
+    <string name="dinner_view_hint">Disable screen timeout in the \nSettings menu</string>
     <string name="image_dinner_picture">Picture of current dinner</string>
     <string name="text_no_recipe">No recipe or keywords</string>
     <string name="intent_share_recipe">Share recipe to &#8230;</string>

@@ -42,6 +42,11 @@ public class ViewDinnerActivity extends AppCompatActivity {
     private TextView mRecipeText;
     private Long mRowId;
 
+    //TextViews for help button and hint text
+    private TextView helpButton;
+    private TextView hintText;
+    private TextView okButton;
+
     //TAG String used for logging
     private static final String TAG = ViewDinnerActivity.class.getSimpleName();
 
@@ -58,6 +63,15 @@ public class ViewDinnerActivity extends AppCompatActivity {
         mServingsText = (TextView) findViewById(R.id.textview_servings);
         mDinnerImage = (ImageView) findViewById(R.id.image_dinner_thumb);
         mRecipeText = (TextView) findViewById(R.id.textview_recipe);
+
+        //Initialize hint TextView and buttons that show and dismiss it
+        helpButton = (TextView) findViewById(R.id.button_help);
+        hintText = (TextView) findViewById(R.id.hint_text);
+        okButton = (TextView) findViewById(R.id.button_ok);
+
+        //Hint text and button are never shown onCreate
+        hintText.setVisibility(View.GONE);
+        okButton.setVisibility(View.GONE);
 
         mRowId =
                 (savedInstanceState == null) ?
@@ -183,14 +197,12 @@ public class ViewDinnerActivity extends AppCompatActivity {
         }
     }
 
-    //Method to check SharedPreferences and handle the screen timeout preference
+    //Method to check SharedPreferences to handle the screen timeout and
+    // pro mode preferences
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-//        Map<String,?> keys = sharedPref.getAll();
-//        for (Map.Entry<String,?> entry : keys.entrySet()) {
-//            Log.d(TAG, "Pref map values = " + entry.getKey() + ": " + entry.getValue().toString());
-//        }
-//        Log.d(TAG, "sharedPref = " + sharedPref);
+
+        //Handle preference for screen timeout
         Boolean timeoutPref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_checkbox_timeout_key), true);
         if (!timeoutPref) {
@@ -199,6 +211,34 @@ public class ViewDinnerActivity extends AppCompatActivity {
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Log.d(TAG, "Screen timeout enabled");
+        }
+
+        //Handle preference for pro mode being on or off
+        Boolean proModePref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_checkbox_promode_key), true);
+        if (proModePref) {
+            helpButton.setVisibility(View.GONE);
+        } else {
+            helpButton.setVisibility(View.VISIBLE);
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Show hint and OK button; hide help button
+                    hintText.setVisibility(View.VISIBLE);
+                    okButton.setVisibility(View.VISIBLE);
+                    helpButton.setVisibility(View.GONE);
+                }
+            });
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Hide hint and OK button; show help button
+                    hintText.setVisibility(View.GONE);
+                    okButton.setVisibility(View.GONE);
+                    helpButton.setVisibility(View.VISIBLE);
+                }
+            });
         }
 
     }
