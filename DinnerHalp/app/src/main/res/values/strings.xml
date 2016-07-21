@@ -124,12 +124,21 @@
     <!--PreferencesFragment  -->
     <string name="pref_change_method_title">Custom categories</string>
     <string name="pref_change_method_sum">Change the list of cooking methods</string>
+
+    <string name="pref_image_size_title">Image size</string>
+    <string name="pref_image_size_sum">Set the size of images when viewing dinner</string>
+    <string name="pref_image_size_key">pref_image_size</string>
+    <string name="pref_image_size_dialog_title">Set image size to &#8230;</string>
+    <string name="pref_image_size_default">192</string>
+
     <string name="pref_checkbox_timeout_title">Screen timeout</string>
     <string name="pref_checkbox_timeout_sum">Allow screen to timeout when viewing dinner</string>
     <string name="pref_checkbox_timeout_key">pref_checkbox_timeout</string>
+
     <string name="pref_checkbox_promode_title">Pro user mode</string>
     <string name="pref_checkbox_promode_sum">Hide all on-screen tips</string>
     <string name="pref_checkbox_promode_key">pref_checkbox_promode</string>
+
     <string name="pref_aboutapp_title">About DinnerHalp</string>
 
     <!--AboutAppActivity  -->

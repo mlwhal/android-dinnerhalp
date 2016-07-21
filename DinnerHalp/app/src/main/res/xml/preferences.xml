@@ -7,6 +7,16 @@
         android:summary="@string/pref_change_method_sum">
     </Preference>
 
+    <ListPreference
+        android:key="@string/pref_image_size_key"
+        android:title="@string/pref_image_size_title"
+        android:summary="@string/pref_image_size_sum"
+        android:dialogTitle="@string/pref_image_size_dialog_title"
+        android:entries="@array/pref_image_size_array"
+        android:entryValues="@array/pref_image_size_values"
+        android:defaultValue="@string/pref_image_size_default">
+    </ListPreference>
+
     <CheckBoxPreference
         android:key="@string/pref_checkbox_timeout_key"
         android:title="@string/pref_checkbox_timeout_title"

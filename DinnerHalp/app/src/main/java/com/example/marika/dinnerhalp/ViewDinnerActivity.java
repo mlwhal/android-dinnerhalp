@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 public class ViewDinnerActivity extends AppCompatActivity {
 
@@ -39,6 +39,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
     private TextView mTimeText;
     private TextView mServingsText;
     private ImageView mDinnerImage;
+    private int mImageScalePref;
     private TextView mRecipeText;
     private Long mRowId;
 
@@ -83,11 +84,12 @@ public class ViewDinnerActivity extends AppCompatActivity {
                     : null;
         }
 
+        //Check SharedPreferences to determine whether to allow screen to sleep, whether promode
+        //is active, and what size images to display
+        checkSharedPrefs();
+
         populateDinnerText();
         Log.d(TAG, "RowID onCreate is " + mRowId);
-
-        //Check SharedPreferences to determine whether to allow screen to sleep
-        checkSharedPrefs();
 
     }
 
@@ -183,10 +185,24 @@ public class ViewDinnerActivity extends AppCompatActivity {
             } else {
                 //Turn picPath into Uri and put downsampled bitmap in ImageView
                 Uri picUri = Uri.parse(picPath);
+                //Calculate display width and multiply by mImageScalePref to get
+                //preferred size for image
+                DisplayMetrics metrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int width = metrics.widthPixels;
+                long imageSizePref = Math.round(width * (mImageScalePref * 0.01));
+                Log.d(TAG, "Screen width is " + width + " pixels");
+                Log.d(TAG, "Scale factor is " + mImageScalePref);
+                Log.d(TAG, "Preferred image width is " + imageSizePref);
+
                 try {
-                    mDinnerImage.setImageBitmap(decodeUri(picUri, 192));
+                    mDinnerImage.setImageBitmap(decodeUri(picUri, imageSizePref));
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
+                    //Notify the user if image path is bad
+                    Toast.makeText(getApplicationContext(),
+                            "Image can't be shown until path is updated",
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -197,8 +213,8 @@ public class ViewDinnerActivity extends AppCompatActivity {
         }
     }
 
-    //Method to check SharedPreferences to handle the screen timeout and
-    // pro mode preferences
+    //Method to check SharedPreferences to handle the screen timeout,
+    // pro mode, and image size preferences
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -241,11 +257,15 @@ public class ViewDinnerActivity extends AppCompatActivity {
             });
         }
 
+        //Check preference for displaying the dinner image
+        String imageScalePrefString = sharedPref.getString(getResources()
+                .getString(R.string.pref_image_size_key), "192");
+        mImageScalePref = Integer.parseInt(imageScalePrefString);
     }
 
     //Method to downsample large images before loading into ImageView
     //http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
-    private Bitmap decodeUri(Uri selectedImage, int REQUIRED_SIZE) throws FileNotFoundException {
+    private Bitmap decodeUri(Uri selectedImage, long REQUIRED_SIZE) throws FileNotFoundException {
 
         //Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -365,5 +385,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         super.onResume();
 //        Log.d(TAG, "onResume!");
         checkSharedPrefs();
+        //Todo: Do I need to re-run populateDinnerText() in case the image size has changed?
+        populateDinnerText();
     }
 }
