@@ -12,7 +12,7 @@
         <item>@drawable/ic_add_dinner050</item>
         <item>@drawable/ic_explore_list050</item>
         <item>@drawable/ic_delete050</item>
-        <!--item>@drawable/ic_share050</item-->
+        <item>@drawable/ic_share050</item>
     </array>
 
     <string-array name="pref_image_size_array">

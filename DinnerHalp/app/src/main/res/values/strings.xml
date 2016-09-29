@@ -35,7 +35,7 @@
         <item>Add</item>
         <item>View/edit/delete</item>
         <item>Delete all</item>
-        <!--item>Share database</item-->
+        <item>Share database</item>
     </string-array>
 
     <string name="delete_db_alert_title">Delete all dinners? There\'s no turning back!</string>

@@ -209,9 +209,9 @@ public class AddDinnerActivity extends AppCompatActivity {
                 this.startActivity(intent2);
                 return true;
 
-            case R.id.action_about:
+            case R.id.action_settings:
 //                mCancelledState = true;
-                Intent intent3 = new Intent(this, AboutAppActivity.class);
+                Intent intent3 = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent3);
                 return true;
 

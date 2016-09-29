@@ -47,6 +47,11 @@ public class AboutAppActivity extends AppCompatActivity {
                 this.startActivity(intent3);
                 return true;
 
+            case R.id.action_settings:
+                Intent intent4 = new Intent(this, SettingsActivity.class);
+                this.startActivity(intent4);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 

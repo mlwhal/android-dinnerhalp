@@ -151,8 +151,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 this.startActivity(intent);
                 return true;
 
-            case R.id.action_about:
-                Intent intent2 = new Intent(this, AboutAppActivity.class);
+            case R.id.action_settings:
+                Intent intent2 = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent2);
                 return true;
 
@@ -579,6 +579,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         break;
                     //Todo: Share database file as attachment
                     case 3:
+                        theActivity.emailDB(theActivity);
                         break;
                 }
 
@@ -705,6 +706,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         Log.d(TAG, "Cancel button clicked");
         Toast.makeText(getApplicationContext(), "Nothing was deleted",
                 Toast.LENGTH_LONG).show();
+    }
+
+    public void emailDB (Context ctx) {
+        File backupDB = null;
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+            Toast.makeText(getApplicationContext(), "Data dir is " + data, Toast.LENGTH_LONG)
+                    .show();
+
+            if (sd.canWrite()) {
+                Log.d(TAG, "Path to sd is " + sd);
+                String currentDBPath = "//data//" + ctx.getPackageName()
+                        + "//databases//" + "dinnerData" + "";
+                Log.d(TAG, "currentDBPath = " + currentDBPath);
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
 }
