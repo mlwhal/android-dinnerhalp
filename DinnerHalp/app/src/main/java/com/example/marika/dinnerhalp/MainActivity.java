@@ -3,9 +3,7 @@ package com.example.marika.dinnerhalp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -579,8 +577,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         break;
                     //Todo: Share database file as attachment
                     case 3:
-                        theActivity.emailDB(theActivity);
+                        theActivity.copyDBtoStorage(theActivity);
                         break;
+                    case 4:
+                        //Launch import alert dialog;
+                        theActivity.showImportDialog();
                 }
 
             }
@@ -653,12 +654,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             int title = getArguments().getInt("title");
 
             return new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme)
-                    .setTitle(title)
+                    .setMessage(title)
                     .setPositiveButton(R.string.alert_dialog_delete_ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity()).doPositiveClick();
+                                    ((MainActivity) getActivity()).delAllDinners();
                                 }
                             }
                     )
@@ -666,7 +667,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity()).doNegativeClick();
+                                    ((MainActivity) getActivity()).doNegativeClick(0);
                                 }
                             }
                     )
@@ -681,7 +682,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    public void doPositiveClick() {
+    public void delAllDinners() {
         //Open a database object and delete all rows
         Log.d(TAG, "Positive button clicked");
         DinnersDbAdapter mDbHelper;
@@ -691,7 +692,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //Method clearAllDinners() returns an int giving the number of rows deleted
         int rowsDeleted = mDbHelper.clearAllDinners();
         if (rowsDeleted == 0) {
-            Toast.makeText(getApplicationContext(), "Nothing was deleted",
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.delete_db_cancel_toast),
                     Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getApplicationContext(), "All " + rowsDeleted + " dinners deleted",
@@ -701,32 +703,127 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    public void doNegativeClick() {
+    public void doNegativeClick(int position) {
         //Go back to manage fragment
         Log.d(TAG, "Cancel button clicked");
-        Toast.makeText(getApplicationContext(), "Nothing was deleted",
-                Toast.LENGTH_LONG).show();
+        switch (position) {
+            case 0:
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(R.string.delete_db_cancel_toast),
+                        Toast.LENGTH_LONG).show();
+                break;
+            case 1:
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(R.string.import_cancel_alert),
+                        Toast.LENGTH_LONG).show();
+        }
     }
 
-    public void emailDB (Context ctx) {
+    //Custom class for restore/import dialog fragment
+    public static class ImportDBDialogFragment extends DialogFragment {
+        public static ImportDBDialogFragment newInstance(int title) {
+            ImportDBDialogFragment frag = new ImportDBDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("title", title);
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int title = getArguments().getInt("title");
+
+            return new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme)
+                    .setMessage(title)
+                    .setPositiveButton(R.string.import_positive_button,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MainActivity) getActivity())
+                                            .importDBFile(getActivity().getApplicationContext());
+                                }
+                            }
+                    )
+                    .setNegativeButton(R.string.button_cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MainActivity) getActivity()).doNegativeClick(1);
+                                }
+                            }
+                    ).create();
+        }
+
+    }
+
+    void showImportDialog() {
+        DialogFragment newFragment = ImportDBDialogFragment.newInstance(
+                R.string.import_alert_title);
+        newFragment.show(getFragmentManager(), "dialog");
+
+    }
+
+    public void copyDBtoStorage(Context ctx) {
         File backupDB = null;
         try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            Toast.makeText(getApplicationContext(), "Data dir is " + data, Toast.LENGTH_LONG)
-                    .show();
+            File storageDir = Environment.getExternalStorageDirectory();
+            String filename = getString(R.string.filename_sharedb);
 
-            if (sd.canWrite()) {
-                Log.d(TAG, "Path to sd is " + sd);
-                String currentDBPath = "//data//" + ctx.getPackageName()
-                        + "//databases//" + "dinnerData" + "";
-                Log.d(TAG, "currentDBPath = " + currentDBPath);
+            if (storageDir.canWrite()) {
+                Log.d(TAG, "Path to storageDir is " + storageDir);
+                File currentDB = ctx.getDatabasePath(getString(R.string.filename_sharedb));
+                Log.d(TAG, "currentDB = " + currentDB);
+                backupDB = new File(storageDir, filename);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    Log.d(TAG, "File copied to storage");
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.sharedb_copy_success), Toast.LENGTH_LONG).show();
+                } else {
+                    Log.d(TAG, "No file copied; currentDB does not exist");
+                }
             }
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+
     }
 
+    public void importDBFile(Context ctx) {
+        Log.d(TAG, "Import will happen now");
+    }
+
+    public void emailDB(Context ctx) {
+        try {
+            //Get path for readable database file
+            File storageDir = Environment.getExternalStorageDirectory();
+            String filename = getString(R.string.filename_sharedb);
+            File backupDB = new File(storageDir, filename);
+
+            //Make a readable backup copy if there isn't one already
+            if (!backupDB.exists()) {
+                Toast.makeText(ctx, "Backing up database", Toast.LENGTH_SHORT).show();
+                copyDBtoStorage(ctx);
+            }
+
+            //Create and launch email intent
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("*/*");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.intent_sharedb_subject));
+            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.intent_sharedb_message));
+            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(backupDB));
+            ctx.startActivity(Intent.createChooser(emailIntent, getString(R.string.sharedb_title)));
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
 }

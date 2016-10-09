@@ -35,14 +35,26 @@
         <item>Add</item>
         <item>View/edit/delete</item>
         <item>Delete all</item>
-        <item>Share database</item>
+        <item>Backup database file</item>
+        <item>Restore/import database file</item>
     </string-array>
 
+    <!--Delete database alert dialog  -->
     <string name="delete_db_alert_title">Delete all dinners? There\'s no turning back!</string>
+    <string name="delete_db_cancel_toast">Nothing was deleted</string>
 
-    <!--Strings for sharing database file; not implemented successfully yet  -->
-    <string name="filename_sharedb">/DinnerHalp/dinnerData.db</string>
-    <string name="filename_sharedb_test">/keepass/keepass.kdb</string>
+    <!--Import database alert dialog  -->
+    <string name="import_alert_title">Import a different database file? This will overwrite your
+        current file.</string>
+    <string name="import_positive_button">Import</string>
+    <string name="import_success_alert">File was imported successfully</string>
+    <string name="import_cancel_alert">Import was cancelled</string>
+
+    <!--Strings for sharing database file  -->
+    <string name="filename_sharedb">dinnerData</string>
+    <string name="sharedb_title">Share database</string>
+    <string name="sharedb_copy_success">File copied to storage</string>
+    <string name="sharedb_no_backup">The database must be backed up to enable sharing</string>
     <string name="intent_sharedb_subject">DinnerHalp database file</string>
     <string name="intent_sharedb_message">Here\'s the database file from my DinnerHalp app.</string>
 
@@ -74,10 +86,6 @@
     </string-array>
     <string name="title_activity_add_dinner">AddDinnerActivity</string>
 
-    <!--Keyword search dialog >
-    <string name="keyword_search_title">Search for &#8230;</string>
-    <string name="keyword_hint">Keyword</string>  -->
-
     <!--AddDinnerActivity  -->
     <string name="add_dinner_title">Add a dinner</string>
     <string name="update_dinner_title">Update dinner</string>
@@ -95,10 +103,9 @@
     <string name="button_save">Save</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_keyword_search">KeywordSearchActivity</string>
-    <string name="title_activity_dinner_list">DinnerListActivity</string>
 
     <!--DinnerListActivity  -->
+    <string name="title_activity_dinner_list">DinnerListActivity</string>
     <string name="dinner_list_title">Dinners</string>
     <string name="dinner_list_hint">Press and hold to select multiple dinners</string>
     <string name="button_help">\?</string>
@@ -119,7 +126,6 @@
     <string name="delete_alert_title">Delete this dinner?</string>
     <string name="alert_dialog_delete_ok">Delete</string>
     <string name="batch_delete_alert_title">Delete selected dinners?</string>
-    <string name="title_activity_about_app">AboutAppActivity</string>
 
     <!--PreferencesFragment  -->
     <string name="pref_change_method_title">Custom categories</string>
@@ -142,6 +148,7 @@
     <string name="pref_aboutapp_title">About DinnerHalp</string>
 
     <!--AboutAppActivity  -->
+    <string name="title_activity_about_app">AboutAppActivity</string>
     <string name="about_app_title">About DinnerHalp</string>
     <string name="about_app_class">com.example.marika.dinnerhalp.AboutAppActivity</string>
     <!--string name="text_about_app"><![CDATA[DinnerHalp by Marika Whaley <br>copyright 2015]]></string-->
