@@ -180,18 +180,6 @@ public class AddDinnerActivity extends AppCompatActivity {
                 } else {
                     setResult(RESULT_OK);
                     saveDinner();
-//                    //After adding new dinner, go to DinnerListActivity
-//                    //If updating existing dinner, reload ViewDinnerActivity to show update
-//                    if (mRowId == null) {
-//                        Intent intent1 = new Intent(this, DinnerListActivity.class);
-//                        this.startActivity(intent1);
-//                        finish();
-//                    } else {
-//                        Intent intent2 = new Intent(this, ViewDinnerActivity.class);
-//                        intent2.putExtra(DinnersDbAdapter.KEY_ROWID, mRowId);
-//                        this.startActivity(intent2);
-//                        finish();
-//                    }
                 }
                 return true;
 
