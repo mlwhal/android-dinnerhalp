@@ -67,7 +67,7 @@ public class DinnerListActivity extends AppCompatActivity {
         hintText.setVisibility(View.GONE);
         okButton.setVisibility(View.GONE);
 
-        //Todo: Check SharedPreferences for pro mode in order to show helpButton only if false
+        //Check SharedPreferences for pro mode in order to show helpButton only if false
         checkSharedPrefs();
 
         mDbHelper = new DinnersDbAdapter(this);
@@ -423,6 +423,9 @@ public class DinnerListActivity extends AppCompatActivity {
                 getResources().getText(R.string.intent_share_dialog_title));
         if (shareIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(chooser);
+        } else {
+            Toast.makeText(getApplicationContext(), "Please download an app before trying to share",
+                    Toast.LENGTH_SHORT).show();
         }
 
     }
