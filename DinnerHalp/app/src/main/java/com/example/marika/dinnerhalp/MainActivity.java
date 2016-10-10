@@ -573,15 +573,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         break;
                     //Delete all records in database
                     case 2:
-                        theActivity.showDeleteDialog();
+                        theActivity.showDeleteDBDialog();
                         break;
-                    //Todo: Share database file as attachment
+                    //Copy database file to storage
                     case 3:
                         theActivity.copyDBtoStorage(theActivity);
                         break;
+                    //Launch import alert dialog
                     case 4:
-                        //Launch import alert dialog;
-                        theActivity.showImportDialog();
+                        theActivity.showImportDBDialog();
+                        break;
+                    //Todo: Add share/email item
+                    case 5:
+                        theActivity.shareDB(theActivity);
+                        break;
                 }
 
             }
@@ -675,7 +680,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    void showDeleteDialog() {
+    void showDeleteDBDialog() {
         DialogFragment newFragment = DeleteDBDialogFragment.newInstance(
                 R.string.delete_db_alert_title);
         newFragment.show(getFragmentManager(), "dialog");
@@ -706,6 +711,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void doNegativeClick(int position) {
         //Go back to manage fragment
         Log.d(TAG, "Cancel button clicked");
+        //Two alert dialogs use cancel: 0-delete database; 1-import database file
         switch (position) {
             case 0:
                 Toast.makeText(getApplicationContext(),
@@ -756,7 +762,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    void showImportDialog() {
+    void showImportDBDialog() {
         DialogFragment newFragment = ImportDBDialogFragment.newInstance(
                 R.string.import_alert_title);
         newFragment.show(getFragmentManager(), "dialog");
@@ -764,6 +770,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public void copyDBtoStorage(Context ctx) {
+        //Todo: Add a date string onto backup filename? Could be handled as a preference.
         File backupDB = null;
         try {
             File storageDir = Environment.getExternalStorageDirectory();
@@ -796,11 +803,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
+    //Todo: Write method for importing database file
     public void importDBFile(Context ctx) {
         Log.d(TAG, "Import will happen now");
     }
 
-    public void emailDB(Context ctx) {
+    //Method to share/email database file
+    public void shareDB(Context ctx) {
         try {
             //Get path for readable database file
             File storageDir = Environment.getExternalStorageDirectory();

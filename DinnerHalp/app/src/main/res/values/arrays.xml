@@ -14,6 +14,7 @@
         <item>@drawable/ic_delete050</item>
         <item>@drawable/ic_copy050</item>
         <item>@drawable/ic_import050</item>
+        <item>@drawable/ic_share050</item>
     </array>
 
     <string-array name="pref_image_size_array">
