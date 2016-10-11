@@ -39,7 +39,7 @@ public class DinnersDbAdapter {
                     + "name text unique not null, method text not null, time text not null, "
                     + "servings text not null, picpath text, recipe text);";
 
-    private static final String DATABASE_NAME = "dinnerData";
+    private static final String DATABASE_NAME = "dinnerData.db";
     private static final String DATABASE_TABLE = "dinners";
     private static final int DATABASE_VERSION = 1;
 

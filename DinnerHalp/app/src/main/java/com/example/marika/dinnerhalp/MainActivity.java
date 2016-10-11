@@ -775,16 +775,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     public void copyDBtoStorage(Context ctx) {
         //Todo: Add a date string onto backup filename? Could be handled as a preference.
+        /*It would affect the shareDB method, though, which checks whether there's a backup file
+        * already there. Different dates would make it hard to check.
+        */
         File backupDB = null;
         try {
             File storageDir = Environment.getExternalStorageDirectory();
-            String filename = getString(R.string.filename_sharedb);
+            String filenameFull = getString(R.string.filename_full_sharedb);
 
             if (storageDir.canWrite()) {
                 Log.d(TAG, "Path to storageDir is " + storageDir);
-                File currentDB = ctx.getDatabasePath(getString(R.string.filename_sharedb));
+                //Create subdirectory for app if it doesn't already exist
+                File backupDir = new File(storageDir, getString(R.string.app_name));
+                if (!backupDir.exists()) {
+                    backupDir.mkdir();
+                }
+                File currentDB = ctx.getDatabasePath(getString(R.string.filename_full_sharedb));
                 Log.d(TAG, "currentDB = " + currentDB);
-                backupDB = new File(storageDir, filename);
+                backupDB = new File(backupDir, filenameFull);
 
                 if (currentDB.exists()) {
                     FileChannel src = new FileInputStream(currentDB).getChannel();
@@ -827,7 +835,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 try {
                     InputStream importDBStream = getContentResolver().openInputStream(uri);
                     File currentDB = getApplicationContext()
-                            .getDatabasePath(getString(R.string.filename_sharedb));
+                            .getDatabasePath(getString(R.string.filename_full_sharedb));
                     OutputStream os = new FileOutputStream(currentDB);
                     byte[] buffer = new byte[1024];
                     int bytesRead;
@@ -856,12 +864,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     //Method to share/email database file
+    //Todo: Right now the app sends the last backup if there is one, not the current state of the DB.
     public void shareDB(Context ctx) {
         try {
             //Get path for readable database file
             File storageDir = Environment.getExternalStorageDirectory();
-            String filename = getString(R.string.filename_sharedb);
-            File backupDB = new File(storageDir, filename);
+            String filename = getString(R.string.filename_full_sharedb);
+            File backupDB = new File(storageDir + "/" + getString(R.string.app_name), filename);
+            Log.d(TAG, "backupDB is " + backupDB.toString());
 
             //Make a readable backup copy if there isn't one already
             if (!backupDB.exists()) {
