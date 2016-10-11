@@ -3,6 +3,9 @@ package com.example.marika.dinnerhalp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
 
@@ -18,7 +21,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +28,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,7 +41,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
     //Todo: When launching other activities, track current fragment so that back/cancel
     //returns you to last fragment. Currently always returns to SearchFragment.
@@ -63,6 +66,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     //TAG String used for logging
     private static final String TAG = MainActivity.class.getSimpleName();
+    static final int PICK_IMPORT_FILE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -746,7 +750,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     ((MainActivity) getActivity())
-                                            .importDBFile(getActivity().getApplicationContext());
+                                            .importDBFileChooser();
                                 }
                             }
                     )
@@ -803,9 +807,52 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    //Todo: Write method for importing database file
-    public void importDBFile(Context ctx) {
+    //Method for importing database file from outside app
+    public void importDBFileChooser() {
         Log.d(TAG, "Import will happen now");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.import_chooser_title)),
+                PICK_IMPORT_FILE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //Check which request is being handled
+        if (requestCode == PICK_IMPORT_FILE_REQUEST) {
+            //Check for positive result from activity
+            if (resultCode == RESULT_OK) {
+                Uri uri = data.getData();
+                try {
+                    InputStream importDBStream = getContentResolver().openInputStream(uri);
+                    File currentDB = getApplicationContext()
+                            .getDatabasePath(getString(R.string.filename_sharedb));
+                    OutputStream os = new FileOutputStream(currentDB);
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    if (importDBStream != null) {
+                        while ((bytesRead = importDBStream.read(buffer)) != -1) {
+                            os.write(buffer, 0, bytesRead);
+                        }
+                        importDBStream.close();
+                    }
+                    os.flush();
+                    os.close();
+                    Toast.makeText(getApplicationContext(), R.string.import_success_alert,
+                            Toast.LENGTH_LONG).show();
+
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), R.string.import_cancel_alert,
+                            Toast.LENGTH_LONG).show();
+                }
+            } else {
+                //Handle negative result from activity
+                Toast.makeText(getApplicationContext(), R.string.import_cancel_alert,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     //Method to share/email database file
