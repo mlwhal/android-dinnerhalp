@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -587,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     case 4:
                         theActivity.showImportDBDialog();
                         break;
-                    //Todo: Add share/email item
+                    //Share/email item
                     case 5:
                         theActivity.shareDB(theActivity);
                         break;
@@ -773,15 +775,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-    public void copyDBtoStorage(Context ctx) {
-        //Todo: Add a date string onto backup filename? Could be handled as a preference.
-        /*It would affect the shareDB method, though, which checks whether there's a backup file
-        * already there. Different dates would make it hard to check.
-        */
-        File backupDB = null;
+    public String copyDBtoStorage(Context ctx) {
+        File backupDB;
+        String filenameFull = null;    //Declared outside of try block so the value can be returned
         try {
             File storageDir = Environment.getExternalStorageDirectory();
-            String filenameFull = getString(R.string.filename_full_sharedb);
+            //Add datestamp to backup file name
+            SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.date_format));
+            Date now = new Date();
+            filenameFull = getString(R.string.filename_sharedb) + formatter.format(now) + ".db";
 
             if (storageDir.canWrite()) {
                 Log.d(TAG, "Path to storageDir is " + storageDir);
@@ -812,6 +814,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+
+        return filenameFull; //Return name of backup file in case it's needed by shareDB()
 
     }
 
@@ -863,29 +867,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-    //Method to share/email database file
-    //Todo: Right now the app sends the last backup if there is one, not the current state of the DB.
+    //Method to share/email database file; makes a backup file first to ensure that the
+    //current version of the file is sent
     public void shareDB(Context ctx) {
         try {
             //Get path for readable database file
             File storageDir = Environment.getExternalStorageDirectory();
-            String filename = getString(R.string.filename_full_sharedb);
+
+            //Make a new copy of the database and set it as the file to be sent
+            String filename = copyDBtoStorage(ctx);
             File backupDB = new File(storageDir + "/" + getString(R.string.app_name), filename);
-            Log.d(TAG, "backupDB is " + backupDB.toString());
 
-            //Make a readable backup copy if there isn't one already
-            if (!backupDB.exists()) {
-                Toast.makeText(ctx, "Backing up database", Toast.LENGTH_SHORT).show();
-                copyDBtoStorage(ctx);
-            }
-
-            //Create and launch email intent
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("*/*");
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.intent_sharedb_subject));
-            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.intent_sharedb_message));
-            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(backupDB));
-            ctx.startActivity(Intent.createChooser(emailIntent, getString(R.string.sharedb_title)));
+            //Create and launch share intent
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("*/*");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.intent_sharedb_subject));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.intent_sharedb_message));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(backupDB));
+            ctx.startActivity(Intent.createChooser(shareIntent, getString(R.string.sharedb_title)));
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();

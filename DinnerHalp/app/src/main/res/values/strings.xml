@@ -55,6 +55,7 @@
     <!--Strings for sharing database file  -->
     <string name="filename_sharedb">dinnerData</string>
     <string name="filename_full_sharedb">dinnerData.db</string>
+    <string name="date_format">yyyyMMdd_HH-mm</string>
     <string name="sharedb_title">Share database</string>
     <string name="sharedb_copy_success">File copied to storage</string>
     <string name="sharedb_no_backup">The database must be backed up to enable sharing</string>

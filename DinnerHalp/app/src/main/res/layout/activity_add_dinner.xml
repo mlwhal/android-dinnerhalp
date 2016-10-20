@@ -74,40 +74,12 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
                     android:hint="@string/recipe_hint"
+                    android:inputType="textCapSentences"
                     />
             </ScrollView>
 
         </LinearLayout>
 
     </ScrollView>
-
-    <!--LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        style="?buttonBarStyle"
-        >
-
-        <Button android:id="@+id/button_cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:text="@string/button_cancel"
-            style="?buttonBarButtonStyle"/>
-
-        <Button android:id="@+id/button_save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:text="@string/button_save"
-            style="?buttonBarButtonStyle"
-            />
-
-    </LinearLayout-->
-
-
 
 </LinearLayout>
