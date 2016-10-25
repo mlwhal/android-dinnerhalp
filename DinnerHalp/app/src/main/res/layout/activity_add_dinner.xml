@@ -74,7 +74,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
                     android:hint="@string/recipe_hint"
-                    android:inputType="textCapSentences"
+                    android:inputType="textCapSentences|textMultiLine"
+
                     />
             </ScrollView>
 
