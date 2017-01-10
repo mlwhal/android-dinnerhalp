@@ -1,5 +1,6 @@
 package com.example.marika.dinnerhalp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -110,7 +111,8 @@ public class AddDinnerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent();
                 photoPickerIntent.setType("image/*");
-                photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+                photoPickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                photoPickerIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 startActivityForResult(Intent.createChooser(photoPickerIntent, "Select picture"),
                         PICK_IMAGE_REQUEST);
             }
@@ -224,6 +226,13 @@ public class AddDinnerActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     mSelectedImageUri = imageReturnedIntent.getData();
                     Log.d(TAG, "Uri is " + mSelectedImageUri);
+//                    this.grantUriPermission(this.getPackageName(), mSelectedImageUri,
+//                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    int takeFlags = imageReturnedIntent.getFlags();
+                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    //Check for the freshest data
+                    getContentResolver().takePersistableUriPermission(mSelectedImageUri, takeFlags);
+
                     //Show the image in the ImageView so the user knows this worked.
                     try {
                         mSetPicPath.setImageBitmap(decodeUri(mSelectedImageUri, 192));

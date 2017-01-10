@@ -195,14 +195,16 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 Log.d(TAG, "Scale factor is " + mImageScalePref);
                 Log.d(TAG, "Preferred image width is " + imageSizePref);
 
+                //Handle errors when retrieving images with picPath
                 try {
                     mDinnerImage.setImageBitmap(decodeUri(picUri, imageSizePref));
-                } catch (FileNotFoundException e) {
+                } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                     //Notify the user if image path is bad
                     Toast.makeText(getApplicationContext(),
                             "Image can't be shown until path is updated",
                             Toast.LENGTH_LONG).show();
+                    mDinnerImage.setVisibility(View.GONE);
                 }
             }
 
