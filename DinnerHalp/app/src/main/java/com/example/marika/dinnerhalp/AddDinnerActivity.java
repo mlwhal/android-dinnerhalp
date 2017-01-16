@@ -359,9 +359,14 @@ public class AddDinnerActivity extends AppCompatActivity {
             Metadata metadata = ImageMetadataReader.readMetadata(inStream);
             //Obtain the Exif directory
             ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            Log.d(TAG, "Directory is " + directory);
             //Query the tag's value
-            int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-            Log.d(TAG, "Rotation value of the image is " + rotation);
+            int rotation = 0;
+            //Don't try to read Exif info if it's missing (avoids NullPointerException)
+            if (directory != null) {
+                rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                Log.d(TAG, "Rotation value of the image is " + rotation);
+            }
 
             Matrix matrix = new Matrix();
             switch(rotation) {
@@ -382,7 +387,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                     scaledBitmap.getHeight(),
                     matrix, true);
 
-        } catch (ImageProcessingException | IOException | MetadataException e) {
+        } catch (ImageProcessingException | IOException | MetadataException | NullPointerException e) {
             Log.d(TAG, Log.getStackTraceString(e));
         }
 
