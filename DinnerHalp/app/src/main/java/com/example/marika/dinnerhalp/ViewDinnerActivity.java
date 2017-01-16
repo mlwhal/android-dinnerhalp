@@ -198,6 +198,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 //Handle errors when retrieving images with picPath
                 try {
                     mDinnerImage.setImageBitmap(decodeUri(picUri, imageSizePref));
+                    //Todo: Handle image rotation problems
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                     //Notify the user if image path is bad

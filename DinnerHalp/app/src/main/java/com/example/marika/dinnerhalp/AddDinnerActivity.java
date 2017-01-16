@@ -1,15 +1,14 @@
 package com.example.marika.dinnerhalp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,7 +23,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class AddDinnerActivity extends AppCompatActivity {
 
@@ -226,8 +233,8 @@ public class AddDinnerActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     mSelectedImageUri = imageReturnedIntent.getData();
                     Log.d(TAG, "Uri is " + mSelectedImageUri);
-//                    this.grantUriPermission(this.getPackageName(), mSelectedImageUri,
-//                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    //Take a persistent permission for the image file so the app doesn't lose it later
                     int takeFlags = imageReturnedIntent.getFlags();
                     takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     //Check for the freshest data
@@ -235,7 +242,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
                     //Show the image in the ImageView so the user knows this worked.
                     try {
-                        mSetPicPath.setImageBitmap(decodeUri(mSelectedImageUri, 192));
+                        mSetPicPath.setImageBitmap(processImage(mSelectedImageUri, 192));
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, Log.getStackTraceString(e));
                     }
@@ -278,7 +285,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                 Uri imageUri = Uri.parse(imageString);
                 Log.d(TAG, "Uri from db is " + imageUri);
                 try {
-                    mSetPicPath.setImageBitmap(decodeUri(imageUri, 192));
+                    mSetPicPath.setImageBitmap(processImage(imageUri, 192));
                 } catch (FileNotFoundException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
@@ -318,7 +325,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     //Method to downsample large images before loading into ImageView
     //http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
-    private Bitmap decodeUri(Uri selectedImage, int REQUIRED_SIZE) throws FileNotFoundException {
+    private Bitmap processImage(Uri selectedImage, int REQUIRED_SIZE) throws FileNotFoundException {
 
         //Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -340,9 +347,46 @@ public class AddDinnerActivity extends AppCompatActivity {
         //Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
+
+        Bitmap scaledBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
                 null, o2);
 
+        //Correct the rotation of the bitmap if needed
+        //Read rotation metadata from Uri stream
+        InputStream inStream = getContentResolver().openInputStream(selectedImage);
+        Bitmap rotatedBitmap = null;
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(inStream);
+            //Obtain the Exif directory
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            //Query the tag's value
+            int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            Log.d(TAG, "Rotation value of the image is " + rotation);
+
+            Matrix matrix = new Matrix();
+            switch(rotation) {
+                case 0:
+                    break;
+                case 3:
+                    matrix.postRotate(180);
+                    break;
+                case 6:
+                    matrix.postRotate(90);
+                    break;
+                case 8:
+                    matrix.postRotate(270);
+                    break;
+            }
+            rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                    scaledBitmap.getWidth(),
+                    scaledBitmap.getHeight(),
+                    matrix, true);
+
+        } catch (ImageProcessingException | IOException | MetadataException e) {
+            Log.d(TAG, Log.getStackTraceString(e));
+        }
+
+        return rotatedBitmap;
     }
 
     private void saveDinner() {
