@@ -184,7 +184,8 @@ public class AddDinnerActivity extends AppCompatActivity {
                 //Check whether name field is empty before allowing save
                 String nameText = mEditNameText.getText().toString();
                 if (nameText.matches("")) {
-                    Toast.makeText(getApplicationContext(), "Dinners gotta have names!",
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.toast_no_dinner_name),
                             Toast.LENGTH_LONG).show();
                 } else {
                     setResult(RESULT_OK);
@@ -325,6 +326,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     //Method to downsample large images before loading into ImageView
     //http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
+    //Todo: Replace this with methods from custom ImageHandler class
     private Bitmap processImage(Uri selectedImage, int REQUIRED_SIZE) throws FileNotFoundException {
 
         //Decode image size
@@ -491,7 +493,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     public void saveSuccessToast(CharSequence name) {
 
         Context context = getApplicationContext();
-        CharSequence text = name + " saved";
+        CharSequence text = name + getResources().getString(R.string.toast_dinner_saved);
         int duration = Toast.LENGTH_SHORT;
         Toast.makeText(context, text, duration).show();
 

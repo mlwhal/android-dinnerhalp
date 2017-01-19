@@ -100,6 +100,10 @@
     <string name="recipe_hint">Recipe or keywords</string>
     <!--String if user has not chosen unique dinner name  -->
     <string name="toast_not_unique">Dinner name must be unique to be saved!</string>
+    <!--String if user has not given any name to the dinner -->
+    <string name="toast_no_dinner_name">Dinners gotta have names!</string>
+    <!--String for successful save -->
+    <string name="toast_dinner_saved"> saved</string>
 
     <!--Action buttons-->
     <string name="button_cancel">Cancel</string>
@@ -160,5 +164,8 @@
     <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
 
     <string name="title_activity_settings">Settings</string>
+
+    <!--ImageHandler class  -->
+    <string name="toast_filenotfound">No image file was found, please pick a new one</string>
 
 </resources>
