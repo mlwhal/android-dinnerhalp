@@ -103,7 +103,7 @@
     <!--String if user has not given any name to the dinner -->
     <string name="toast_no_dinner_name">Dinners gotta have names!</string>
     <!--String for successful save -->
-    <string name="toast_dinner_saved"> saved</string>
+    <string name="toast_dinner_saved">\u0020saved</string>
 
     <!--Action buttons-->
     <string name="button_cancel">Cancel</string>
@@ -129,6 +129,9 @@
     <string name="image_dinner_picture">Picture of current dinner</string>
     <string name="text_no_recipe">No recipe or keywords</string>
     <string name="intent_share_recipe">Share recipe to &#8230;</string>
+
+    <!--Error message for toasts when handling image files throws an exception-->
+    <string name="toast_image_exception">Image can\'t be shown until path is updated</string>
 
     <!--Delete dinner alert dialogs  -->
     <string name="delete_alert_title">Delete this dinner?</string>
@@ -167,5 +170,6 @@
 
     <!--ImageHandler class  -->
     <string name="toast_filenotfound">No image file was found, please pick a new one</string>
+    <string name="toast_exception">Sorry, something went wrong with the image</string>
 
 </resources>

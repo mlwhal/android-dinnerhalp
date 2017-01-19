@@ -197,13 +197,17 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
                 //Handle errors when retrieving images with picPath
                 try {
-                    mDinnerImage.setImageBitmap(decodeUri(picUri, imageSizePref));
-                    //Todo: Handle image rotation problems
+                    Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
+                            picUri, imageSizePref);
+                    dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
+                            picUri, dinnerBitmap);
+                    mDinnerImage.setImageBitmap(dinnerBitmap);
+
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                     //Notify the user if image path is bad
                     Toast.makeText(getApplicationContext(),
-                            "Image can't be shown until path is updated",
+                            getResources().getString(R.string.toast_image_exception),
                             Toast.LENGTH_LONG).show();
                     mDinnerImage.setVisibility(View.GONE);
                 }
@@ -264,35 +268,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
         String imageScalePrefString = sharedPref.getString(getResources()
                 .getString(R.string.pref_image_size_key), "192");
         mImageScalePref = Integer.parseInt(imageScalePrefString);
-    }
-
-    //Method to downsample large images before loading into ImageView
-    //http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
-    private Bitmap decodeUri(Uri selectedImage, long REQUIRED_SIZE) throws FileNotFoundException {
-
-        //Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                break;
-            }
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        //Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
-                null, o2);
-
     }
 
     //Method to build an intent to share dinner names/recipes

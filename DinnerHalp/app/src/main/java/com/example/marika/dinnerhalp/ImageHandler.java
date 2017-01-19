@@ -3,11 +3,20 @@ package com.example.marika.dinnerhalp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by marika on 1/19/17.
@@ -15,16 +24,22 @@ import java.io.FileNotFoundException;
  * user and stored in the DinnerHalp user database.
  */
 
-public class ImageHandler {
+class ImageHandler {
 
     private static final String TAG = ImageHandler.class.getSimpleName();
 
-    public static Bitmap resizeImage(Context ctx, Uri selectedImage, int REQUIRED_SIZE)
+    //Method to downsample large images before loading into ImageView
+    static Bitmap resizeImage(Context ctx, Uri selectedImage, long REQUIRED_SIZE)
             throws FileNotFoundException {
 
+        Log.d(TAG, "Resizing image...");
         Bitmap scaledBitmap = null;
         try {
-            //Decode image size
+            /* Decode image size
+             * Helpful code was found here:
+             * http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
+             */
+
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(selectedImage), null, o);
@@ -56,6 +71,67 @@ public class ImageHandler {
 
         return scaledBitmap;
 
+    }
+
+    //Method to rotate images if needed before loading into ImageView
+    //Todo: Need to check whether rotation metadata exists to avoid MetadataException
+    static Bitmap rotateImage(Context ctx, Uri selectedImage, Bitmap selectedBitmap)
+            throws FileNotFoundException {
+
+        Log.d(TAG, "Rotating image...");
+        Bitmap rotatedBitmap = null;
+
+        try {
+            //Read rotation metadata from Uri stream
+            InputStream inStream = ctx.getContentResolver().openInputStream(selectedImage);
+            Metadata metadata = ImageMetadataReader.readMetadata(inStream);
+            //Obtain the Exif directory
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            Log.d(TAG, "Directory is " + directory);
+
+            //Check whether there is Exif metadata for the image
+            if (directory == null) {
+                //No need to run rotation calculation if Exif is missing (avoids NullPointerException)
+                return selectedBitmap;
+            } else {
+                //Get the tag's value
+                int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                Log.d(TAG, "Rotation value of the image is " + rotation);
+
+                //Rotate the matrix for the image based on Exif rotation value
+                Matrix matrix = new Matrix();
+                switch (rotation) {
+                    case 0:
+                        break;
+                    case 3:
+                        matrix.postRotate(180);
+                        break;
+                    case 6:
+                        matrix.postRotate(90);
+                        break;
+                    case 8:
+                        matrix.postRotate(270);
+                        break;
+                }
+
+                rotatedBitmap = Bitmap.createBitmap(selectedBitmap, 0, 0,
+                        selectedBitmap.getWidth(),
+                        selectedBitmap.getHeight(),
+                        matrix, true);
+            }
+
+        } catch (FileNotFoundException | ImageProcessingException e) {
+            Log.d(TAG, Log.getStackTraceString(e));
+            Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_filenotfound),
+                    Toast.LENGTH_LONG).show();
+        } catch (IOException | MetadataException e) {
+            Log.d(TAG, Log.getStackTraceString(e));
+            Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_exception),
+                    Toast.LENGTH_LONG).show();
+
+        }
+
+        return rotatedBitmap;
     }
 
 }
