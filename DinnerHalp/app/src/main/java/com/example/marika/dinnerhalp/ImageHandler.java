@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -20,13 +22,28 @@ import java.io.InputStream;
 
 /**
  * Created by marika on 1/19/17.
- * Written to hold static methods for downsampling and rotating image files picked by the
+ * Written to hold static methods for resizing, downsampling and rotating image files picked by the
  * user and stored in the DinnerHalp user database.
  */
 
 class ImageHandler {
 
     private static final String TAG = ImageHandler.class.getSimpleName();
+
+    static long getImageWidthPref(Context ctx, int imageScalePref) {
+        //Get width of current device window
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+
+        //Multiply device width by mImageScalePref to get preferred size for image
+        long imageWidthPref = Math.round(width * (imageScalePref * 0.01));
+        Log.d(TAG, "Screen width is " + width + " pixels");
+        Log.d(TAG, "Scale factor is " + imageScalePref);
+        Log.d(TAG, "Preferred image width is " + imageWidthPref);
+        return imageWidthPref;
+    }
 
     //Method to downsample large images before loading into ImageView
     static Bitmap resizeImage(Context ctx, Uri selectedImage, long REQUIRED_SIZE)
@@ -74,6 +91,7 @@ class ImageHandler {
     }
 
     //Method to rotate images if needed before loading into ImageView
+    //Thanks to the metadata-extractor library: https://github.com/drewnoakes/metadata-extractor
     //Todo: Need to check whether rotation metadata exists to avoid MetadataException
     static Bitmap rotateImage(Context ctx, Uri selectedImage, Bitmap selectedBitmap)
             throws FileNotFoundException {
@@ -90,10 +108,7 @@ class ImageHandler {
             Log.d(TAG, "Directory is " + directory);
 
             //Check whether there is Exif metadata for the image
-            if (directory == null) {
-                //No need to run rotation calculation if Exif is missing (avoids NullPointerException)
-                return selectedBitmap;
-            } else {
+            if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
                 //Get the tag's value
                 int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
                 Log.d(TAG, "Rotation value of the image is " + rotation);
@@ -118,6 +133,10 @@ class ImageHandler {
                         selectedBitmap.getWidth(),
                         selectedBitmap.getHeight(),
                         matrix, true);
+            } else {
+                //No need to run rotation calculation if Exif is missing (avoids NullPointerException)
+                //or rotation metadata is missing (avoids MetadataException)
+                return selectedBitmap;
             }
 
         } catch (FileNotFoundException | ImageProcessingException e) {

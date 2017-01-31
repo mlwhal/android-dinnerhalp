@@ -2,12 +2,14 @@ package com.example.marika.dinnerhalp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +51,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     private String mNameText;
     private String mRecipeText;
     private Long mRowId;
+    private int mImageScalePref;
 
     //TAG String used for logging
     private static final String TAG = AddDinnerActivity.class.getSimpleName();
@@ -56,6 +59,9 @@ public class AddDinnerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Check SharedPreferences to determine what size images to display
+        checkSharedPrefs();
 
         //Handle cases where this activity is getting content from another app
         Intent shareIntent = getIntent();
@@ -241,9 +247,16 @@ public class AddDinnerActivity extends AppCompatActivity {
                     //Check for the freshest data
                     getContentResolver().takePersistableUriPermission(mSelectedImageUri, takeFlags);
 
+                    //Get preferred size for image
+                    long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                            mImageScalePref);
                     //Show the image in the ImageView so the user knows this worked.
                     try {
-                        mSetPicPath.setImageBitmap(processImage(mSelectedImageUri, 192));
+                        Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
+                                mSelectedImageUri, imageSizePref);
+                        dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
+                                mSelectedImageUri, dinnerBitmap);
+                        mSetPicPath.setImageBitmap(dinnerBitmap);
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, Log.getStackTraceString(e));
                     }
@@ -286,10 +299,18 @@ public class AddDinnerActivity extends AppCompatActivity {
                 Uri imageUri = Uri.parse(imageString);
                 Log.d(TAG, "Uri from db is " + imageUri);
                 try {
-                    mSetPicPath.setImageBitmap(processImage(imageUri, 192));
-                } catch (FileNotFoundException e) {
+                    long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                            mImageScalePref);
+                    Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
+                            imageUri, imageSizePref);
+                    dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(), imageUri,
+                            dinnerBitmap);
+                    mSetPicPath.setImageBitmap(dinnerBitmap);
+                } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                 }
+                //Todo: Does the bad picpath need to be dealt with?
+                //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
             }
 
             mEditRecipe.setText(dinner.getString(
@@ -510,6 +531,17 @@ public class AddDinnerActivity extends AppCompatActivity {
         //Put user back into editText to rename dinner
         mEditNameText.setSelectAllOnFocus(true);
         mEditNameText.requestFocus();
+
+    }
+
+    //Method to check SharedPreferences to handle image size preference
+    private void checkSharedPrefs() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //Check preference for displaying the dinner image
+        String imageScalePrefString = sharedPref.getString(getResources()
+                .getString(R.string.pref_image_size_key), "192");
+        mImageScalePref = Integer.parseInt(imageScalePrefString);
 
     }
 }

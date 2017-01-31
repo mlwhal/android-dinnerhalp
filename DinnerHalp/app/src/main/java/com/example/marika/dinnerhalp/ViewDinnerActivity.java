@@ -180,20 +180,15 @@ public class ViewDinnerActivity extends AppCompatActivity {
             String picPath = dinner.getString(dinner.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_PICPATH));
             Log.d(TAG, "picPath value is " + picPath);
+            //Todo: Sometimes picPath is unexpectedly null even when an image has been picked
             if (picPath == null || picPath.equalsIgnoreCase("")) {
                 mDinnerImage.setVisibility(View.GONE);
             } else {
                 //Turn picPath into Uri and put downsampled bitmap in ImageView
                 Uri picUri = Uri.parse(picPath);
-                //Calculate display width and multiply by mImageScalePref to get
-                //preferred size for image
-                DisplayMetrics metrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                int width = metrics.widthPixels;
-                long imageSizePref = Math.round(width * (mImageScalePref * 0.01));
-                Log.d(TAG, "Screen width is " + width + " pixels");
-                Log.d(TAG, "Scale factor is " + mImageScalePref);
-                Log.d(TAG, "Preferred image width is " + imageSizePref);
+                //Get preferred size for image
+                long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                        mImageScalePref);
 
                 //Handle errors when retrieving images with picPath
                 try {
