@@ -1,6 +1,10 @@
 package com.example.marika.dinnerhalp;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -74,12 +78,10 @@ public class AddDinnerActivity extends AppCompatActivity {
                 Log.d(TAG, "Text sent to app!");
 //                Log.d(TAG, "mRowId is " + mRowId);
                 mSharedContent = true;
-                //Todo: Do I need to load mRecipeText with a value here, or can I just do it in
-                //handleShareString?
-                mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
                 Log.d(TAG, "Text sent is " + mRecipeText);
-
-                handleShareString(shareIntent);
+                //Show dialog to let user decide whether incoming text has a title to use as the
+                //dinner name
+                showShareDialog();
             }
         }
 
@@ -486,9 +488,13 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     }
 
+    //Method to handle when user wants first line of shared text to become dinner name
     private void handleShareString(Intent shareIntent) {
+        //Todo: shareString might be redundant with mRecipeText; or does scope matter?
         String shareString = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
-        //Todo: Experiment with sharing from different apps to test behavior
+        //Starting value for mRecipeText is the entire shareString
+        mRecipeText = shareString;
+
         if (shareString != null) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < 50; i++) {
@@ -502,12 +508,13 @@ public class AddDinnerActivity extends AppCompatActivity {
             }
             mNameText = builder.toString();
             Log.d(TAG, "Name text is " + mNameText);
-//        Log.d(TAG, "Recipe text is " + mRecipeText);
-        }
 
-        //Remove mNameText and line break from front of shareString to make mRecipeText.
-        mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
-        Log.d(TAG, "Truncated recipe is " + mRecipeText);
+            //Remove mNameText and line break from front of shareString to update mRecipeText.
+            //This is inside the if statement so that replaceFirst() isn't attempted if
+            //shareString is null.
+            mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
+            Log.d(TAG, "Truncated recipe is " + mRecipeText);
+        }
 
     }
 
@@ -543,5 +550,62 @@ public class AddDinnerActivity extends AppCompatActivity {
                 .getString(R.string.pref_image_size_key), "192");
         mImageScalePref = Integer.parseInt(imageScalePrefString);
 
+    }
+
+    //Class and methods for an alert dialog to let user decide whether shared text has a title
+    public static class ShareDialogFragment extends DialogFragment {
+        public static ShareDialogFragment newInstance(int title) {
+            ShareDialogFragment frag = new ShareDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("title", title);
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog (Bundle savedInstanceState) {
+            int title = getArguments().getInt("title");
+
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(title)
+                    .setPositiveButton(R.string.alert_dialog_share_ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((AddDinnerActivity)getActivity()).doPositiveClick();
+                                }
+                            }
+                    )
+                    .setNegativeButton(R.string.alert_dialog_share_no,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((AddDinnerActivity)getActivity()).doNegativeClick();
+                                }
+                            }
+                    )
+                    .create();
+        }
+    }
+
+    void showShareDialog() {
+        DialogFragment newFragment = ShareDialogFragment.newInstance(R.string.share_alert_title);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void doPositiveClick() {
+        Intent shareIntent = getIntent();
+        //User wants the first line of the shared text to go into the dinner name field
+        handleShareString(shareIntent);
+        //Refresh the fields to show updated name and recipe
+        populateFields();
+    }
+
+    public void doNegativeClick() {
+        //Grab shared text and put all of it into recipe field
+        Intent shareIntent = getIntent();
+        mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
+        //Refresh the fields to show updated recipe
+        populateFields();
     }
 }

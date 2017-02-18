@@ -105,6 +105,11 @@
     <!--String for successful save -->
     <string name="toast_dinner_saved">\u0020saved</string>
 
+    <!--Share text alert dialogs  -->
+    <string name="share_alert_title">Make the first line of shared text the dinner name?</string>
+    <string name="alert_dialog_share_ok">Yes</string>
+    <string name="alert_dialog_share_no">No</string>
+
     <!--Action buttons-->
     <string name="button_cancel">Cancel</string>
     <string name="button_search">Search</string>
