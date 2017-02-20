@@ -347,78 +347,6 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     }
 
-    //Method to downsample large images before loading into ImageView
-    //http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
-    //Todo: Replace this with methods from custom ImageHandler class
-    private Bitmap processImage(Uri selectedImage, int REQUIRED_SIZE) throws FileNotFoundException {
-
-        //Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                break;
-            }
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        //Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-
-        Bitmap scaledBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage),
-                null, o2);
-
-        //Correct the rotation of the bitmap if needed
-        //Read rotation metadata from Uri stream
-        InputStream inStream = getContentResolver().openInputStream(selectedImage);
-        Bitmap rotatedBitmap = null;
-        try {
-            Metadata metadata = ImageMetadataReader.readMetadata(inStream);
-            //Obtain the Exif directory
-            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            Log.d(TAG, "Directory is " + directory);
-            //Query the tag's value
-            int rotation = 0;
-            //Don't try to read Exif info if it's missing (avoids NullPointerException)
-            if (directory != null) {
-                rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-                Log.d(TAG, "Rotation value of the image is " + rotation);
-            }
-
-            Matrix matrix = new Matrix();
-            switch(rotation) {
-                case 0:
-                    break;
-                case 3:
-                    matrix.postRotate(180);
-                    break;
-                case 6:
-                    matrix.postRotate(90);
-                    break;
-                case 8:
-                    matrix.postRotate(270);
-                    break;
-            }
-            rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                    scaledBitmap.getWidth(),
-                    scaledBitmap.getHeight(),
-                    matrix, true);
-
-        } catch (ImageProcessingException | IOException | MetadataException | NullPointerException e) {
-            Log.d(TAG, Log.getStackTraceString(e));
-        }
-
-        return rotatedBitmap;
-    }
-
     private void saveDinner() {
 
         //Collect values from input fields
@@ -441,7 +369,6 @@ public class AddDinnerActivity extends AppCompatActivity {
         Log.d(TAG, "mRowId = " + mRowId);
 
         //Create dinner or update existing record depending on the value of mRowId
-//            mDbHelper.open();
         if (mRowId == null) {
             //Todo: Does it ever crash on a new dinner when name is not unique?
             mDbHelper.open();
