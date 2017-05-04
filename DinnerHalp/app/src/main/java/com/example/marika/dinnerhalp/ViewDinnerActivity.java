@@ -358,7 +358,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         super.onResume();
 //        Log.d(TAG, "onResume!");
         checkSharedPrefs();
-        //Todo: Do I need to re-run populateDinnerText() in case the image size has changed?
+        //Re-run populateDinnerText() in case the image size has changed
         populateDinnerText();
     }
 }

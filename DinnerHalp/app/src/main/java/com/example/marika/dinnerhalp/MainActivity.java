@@ -45,9 +45,6 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-    //Todo: When launching other activities, track current fragment so that back/cancel
-    //returns you to last fragment. Currently always returns to SearchFragment.
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -75,18 +72,20 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Get info from extras to determine which tab to show
+        //Get info from extras to determine which tab to show; mFragmentTracker is then used by
+        //mViewPager to select the initial tab
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 mFragmentTracker = 0;
+                Log.d(TAG, "onCreate: Extras are null");
             } else {
                 mFragmentTracker = extras.getInt("FRAGMENT_TRACKER");
-                Log.d(TAG, "Extras not null, mFragmentTracker = " + mFragmentTracker);
-                //Todo: mFragmentTracker gives correct value but is not used to create initial view
+                Log.d(TAG, "onCreate: Extras not null, mFragmentTracker = " + mFragmentTracker);
             }
         } else {
             mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
+            Log.d(TAG, "onCreate: savedInstanceState, mFragmentTracker = " + mFragmentTracker);
         }
 
         // Set up the action bar.
@@ -122,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+        Log.d(TAG, "onCreate: mViewPager set, mFragmentTracker = " + mFragmentTracker);
+        //Choose the correct tab based on info from saved state or extra, stored in mFragmentTracker
         mViewPager.setCurrentItem(mFragmentTracker);
 
         //Initialize PreferenceManager with default values (recommended by
@@ -172,10 +173,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        final int tabPosition = tab.getPosition();
-        Log.d(TAG, "onTabSelected");
-        Log.d(TAG, "tabPosition = " + tabPosition);
-        Log.d(TAG, "mFragmentTracker is " + mFragmentTracker);
+        Log.d(TAG, "onTabSelected, mFragmentTracker is " + mFragmentTracker);
     }
 
     @Override
@@ -250,9 +248,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onResume() {
         super.onResume();
 
-        //Todo: This next line doesn't seem to be working as hoped.
         mViewPager.setCurrentItem(mFragmentTracker);
-        Log.d(TAG, "onResume");
+        Log.d(TAG, "onResume; mFragmentTracker is " + mFragmentTracker);
     }
 
 
@@ -432,8 +429,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             int title = getArguments().getInt("title");
             //Create a string array to hold method values; these will be the db query terms.
             final String[] methods = getResources().getStringArray(R.array.method_array);
-
-//            Todo: Pull array of methods from SharedPreferences rather than hard coded array
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(title)
