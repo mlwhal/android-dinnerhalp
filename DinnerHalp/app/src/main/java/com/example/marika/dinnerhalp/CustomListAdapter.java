@@ -1,6 +1,7 @@
 package com.example.marika.dinnerhalp;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,13 @@ import android.widget.TextView;
  * See http://www.androidinterview.com/android-custom-listview-with-image-and-text-using-arrayadapter/
  */
 
-public class CustomListAdapter extends ArrayAdapter<String> {
+class CustomListAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
     private final String[] itemName;
     private final Integer[] imageId;
 
-    public CustomListAdapter(Activity context, String[] itemName, Integer[] imageId) {
+    CustomListAdapter(Activity context, String[] itemName, Integer[] imageId) {
         super(context, R.layout.list_item, itemName);
 
         this.context = context;
@@ -27,7 +28,9 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         this.imageId = imageId;
     }
 
-    public View getView(int position, View view, ViewGroup parent) {
+    @Override
+    @NonNull
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
 
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_item, null, true);

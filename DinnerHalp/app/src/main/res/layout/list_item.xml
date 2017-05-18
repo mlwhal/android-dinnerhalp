@@ -7,7 +7,8 @@
     <ImageView android:id="@+id/image_list_item"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:paddingRight="16dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp"
         android:contentDescription="@string/image_item_icon"
         />
 
