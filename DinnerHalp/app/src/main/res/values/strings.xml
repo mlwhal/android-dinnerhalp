@@ -124,6 +124,7 @@
     <string name="button_help">\?</string>
     <string name="button_ok">Got It</string>
     <string name="no_dinners">No dinners found! Tap to add.</string>
+    <string name="image_no_dinners">Tap to add a new dinner</string>
     <string name="title_activity_view_dinner">ViewDinnerActivity</string>
     <string name="intent_share_subject">Recipes from DinnerHalp</string>
     <string name="intent_share_dialog_title">Share to &#8230;</string>
