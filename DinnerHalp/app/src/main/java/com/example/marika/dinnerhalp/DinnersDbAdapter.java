@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.io.File;
 
 /**
  * Created by marika on 7/25/15.
@@ -16,15 +15,15 @@ import java.io.File;
  */
 
 
-public class DinnersDbAdapter {
+class DinnersDbAdapter {
 
-    public static final String KEY_NAME = "name";
-    public static final String KEY_METHOD = "method";
-    public static final String KEY_TIME = "time";
-    public static final String KEY_SERVINGS = "servings";
-    public static final String KEY_PICPATH = "picpath";
-    public static final String KEY_RECIPE = "recipe";
-    public static final String KEY_ROWID = "_id";
+    static final String KEY_NAME = "name";
+    static final String KEY_METHOD = "method";
+    static final String KEY_TIME = "time";
+    static final String KEY_SERVINGS = "servings";
+    static final String KEY_PICPATH = "picpath";
+    static final String KEY_RECIPE = "recipe";
+    static final String KEY_ROWID = "_id";
 
     private static final String TAG = "DinnersDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -72,7 +71,7 @@ public class DinnersDbAdapter {
      *
      * @param ctx the Context within which to work
      */
-    public DinnersDbAdapter(Context ctx) {
+    DinnersDbAdapter(Context ctx) {
         this.mCtx = ctx;
     }
 
@@ -86,13 +85,13 @@ public class DinnersDbAdapter {
      * @throws SQLException if the database could be neither opened or created
      */
 
-    public DinnersDbAdapter open() throws SQLException {
+    DinnersDbAdapter open() throws SQLException {
         mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
         return this;
     }
 
-    public void close() {
+    void close() {
         mDbHelper.close();
     }
 
@@ -109,7 +108,7 @@ public class DinnersDbAdapter {
      * @param recipe text of recipe
      * @return rowId or -1 if failed
      */
-    public long createDinner(String name, String method, String time, String servings,
+    long createDinner(String name, String method, String time, String servings,
                              String picpath, String recipe) {
         //If the user tries to create a dinner with no name, this is handled
         //in AddDinnerActivity
@@ -130,7 +129,7 @@ public class DinnersDbAdapter {
      * @param rowId id of dinner to delete
      * @return true if deleted, false otherwise
      */
-    public boolean deleteDinner(long rowId) {
+    boolean deleteDinner(long rowId) {
 
         return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
@@ -147,7 +146,7 @@ public class DinnersDbAdapter {
     //DinnerListActivity.
     //It's not recommended to return all columns because that loads more data than needed.
 
-    public Cursor fetchAllDinners() {
+    Cursor fetchAllDinners() {
 
         //Create string array to hold names of columns to be fetched
         String[] tableColumns = new String[] {
@@ -167,7 +166,7 @@ public class DinnersDbAdapter {
     //It's not recommended to return all columns because that loads more data than needed.
     //Todo: Also, shouldn't this throw SQLException?
 
-    public Cursor fetchDinnerSearch(boolean keywordSearch, String whereClause, String searchString) {
+    Cursor fetchDinnerSearch(boolean keywordSearch, String whereClause, String searchString) {
 
         //Create string array to hold names of columns to be fetched
         String[] tableColumns = new String[] {
@@ -205,7 +204,7 @@ public class DinnersDbAdapter {
     //fetchDinner returns all columns (third parameter of query) because all are needed for
     //ViewDinnerActivity.
 
-    public Cursor fetchDinner(long rowId) throws SQLException {
+    Cursor fetchDinner(long rowId) throws SQLException {
 
         Cursor mCursor =
                 mDb.query(true, DATABASE_TABLE, null, KEY_ROWID + "=" + rowId,
@@ -229,7 +228,7 @@ public class DinnersDbAdapter {
      * @return true if the dinner was successfully updated, false otherwise
      * mDb.update() returns the number of rows updated in an int. Anything > 0 returns true.
      */
-    public boolean updateDinner(long rowId, String name, String method, String time,
+    boolean updateDinner(long rowId, String name, String method, String time,
                                 String servings, String picpath, String recipe) {
         ContentValues args = new ContentValues();
         args.put(KEY_NAME, name);
@@ -243,7 +242,7 @@ public class DinnersDbAdapter {
     }
 
     //Method for deleting all rows in the database table
-    public int clearAllDinners() {
+    int clearAllDinners() {
 
         //Passing 1 as the whereClause returns the number of rows deleted
         return mDb.delete(DATABASE_TABLE, "1", null);
