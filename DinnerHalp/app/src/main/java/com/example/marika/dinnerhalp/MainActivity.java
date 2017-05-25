@@ -78,14 +78,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 mFragmentTracker = 0;
-                Log.d(TAG, "onCreate: Extras are null");
+//                Log.d(TAG, "onCreate: Extras are null");
             } else {
                 mFragmentTracker = extras.getInt("FRAGMENT_TRACKER");
-                Log.d(TAG, "onCreate: Extras not null, mFragmentTracker = " + mFragmentTracker);
+//                Log.d(TAG, "onCreate: Extras not null, mFragmentTracker = " + mFragmentTracker);
             }
         } else {
             mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
-            Log.d(TAG, "onCreate: savedInstanceState, mFragmentTracker = " + mFragmentTracker);
+//            Log.d(TAG, "onCreate: savedInstanceState, mFragmentTracker = " + mFragmentTracker);
         }
 
         // Set up the action bar.
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        Log.d(TAG, "onCreate: mViewPager set, mFragmentTracker = " + mFragmentTracker);
+//        Log.d(TAG, "onCreate: mViewPager set, mFragmentTracker = " + mFragmentTracker);
         //Choose the correct tab based on info from saved state or extra, stored in mFragmentTracker
         mViewPager.setCurrentItem(mFragmentTracker);
 
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 Intent intent = new Intent(this, AddDinnerActivity.class);
                 //intent.putExtra("FRAGMENT_TRACKER", 1);
                 //Log.d(TAG, "fragTracker is " + mFragmentTracker);
-                Log.d(TAG, "getSelNavIndx is " + getSupportActionBar().getSelectedNavigationIndex());
+//                Log.d(TAG, "getSelNavIndx is " + getSupportActionBar().getSelectedNavigationIndex());
                 this.startActivity(intent);
                 return true;
 
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        Log.d(TAG, "onTabSelected, mFragmentTracker is " + mFragmentTracker);
+//        Log.d(TAG, "onTabSelected, mFragmentTracker is " + mFragmentTracker);
     }
 
     @Override
@@ -188,9 +188,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         //Set mFragmentTracker to current tab in order to save info to outstate
         mFragmentTracker = mViewPager.getCurrentItem();
         outstate.putInt("FRAGMENT_TRACKER", mFragmentTracker);
-        Log.d(TAG, "Save state! mFragmentTracker = " + mFragmentTracker);
+//        Log.d(TAG, "Save state! mFragmentTracker = " + mFragmentTracker);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onRestoreInstanceState(savedInstanceState);
 
         mFragmentTracker = savedInstanceState.getInt("FRAGMENT_TRACKER");
-        Log.d(TAG, "Restore state! mFragmentTracker = " + mFragmentTracker);
+//        Log.d(TAG, "Restore state! mFragmentTracker = " + mFragmentTracker);
     }
 
     //Method to track which tab to load when navigating from other activities
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onResume();
 
         mViewPager.setCurrentItem(mFragmentTracker);
-        Log.d(TAG, "onResume; mFragmentTracker is " + mFragmentTracker);
+//        Log.d(TAG, "onResume; mFragmentTracker is " + mFragmentTracker);
     }
 
 
@@ -264,16 +264,16 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         //Custom click listener for ListView items
-        public static class SearchOnItemClickListener implements AdapterView.OnItemClickListener {
+        static class SearchOnItemClickListener implements AdapterView.OnItemClickListener {
 
-            public SearchOnItemClickListener(MainActivity activity, SearchFragment frag) {
+            SearchOnItemClickListener(MainActivity activity, SearchFragment frag) {
                 theActivity = activity;
                 theFragment = frag;
             }
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-                Log.d(TAG, "Position clicked " + position);
+//                Log.d(TAG, "Position clicked " + position);
                 switch (position) {
                     case 0:
                         theActivity.confirmKeyword();
@@ -381,10 +381,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                                             R.id.dialog_edittext_keyword);
                                     String keywordInput = keywordEditText.getText().toString();
                                     String whereClause = "name LIKE ? OR recipe LIKE ?";
-                                    Log.d(TAG, "Search column is " +
-                                            whereClause);
-                                    Log.d(TAG, "Search string is " +
-                                            "%" + keywordInput + "%");
+//                                    Log.d(TAG, "Search column is " + whereClause);
+//                                    Log.d(TAG, "Search string is " + "%" + keywordInput + "%");
                                     Intent intent = new Intent(getActivity(), DinnerListActivity.class);
                                     /*Flag this as a keyword search so that two WhereArgs are used
                                     * when the database is searched
@@ -434,12 +432,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             builder.setTitle(title)
                     .setItems(R.array.method_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int position) {
-                            Log.d(TAG, "Position clicked " + position);
+//                            Log.d(TAG, "Position clicked " + position);
                             //Query DB for selected method and display a list of dinners
                             Intent intent = new Intent(getActivity(), DinnerListActivity.class);
                             intent.putExtra("SEARCH_COLUMN", "method LIKE ?");
                             intent.putExtra("SEARCH_STRING", methods[position]);
-                            //intent.putExtra("SEARCH_STRING", "Oven");
                             startActivity(intent);
                         }
 
@@ -474,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             builder.setTitle(title)
                     .setItems(R.array.time_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int position) {
-                            Log.d(TAG, "Position clicked " + position);
+//                            Log.d(TAG, "Position clicked " + position);
                             Log.d(TAG, "Item clicked " + times[position]);
                             //Query DB for selected cook time and display a list of dinners
                             //Also pass in "time" as column to search
@@ -516,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     .setItems(R.array.servings_array, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            Log.d(TAG, "Position clicked " + position);
+//                            Log.d(TAG, "Position clicked " + position);
                             //Query DB for selected no. of servings and display a list of dinners
                             Intent intent = new Intent(getActivity(), DinnerListActivity.class);
                             intent.putExtra("SEARCH_COLUMN", "servings LIKE ?");
@@ -534,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     void confirmServings() {
         DialogFragment newFragment = ServingsDialogFragment.newInstance(R.string.servings_alert_title);
         newFragment.show(getFragmentManager(), "servingsConfirm");
-        Log.d(TAG, "Servings clicked!");
+//        Log.d(TAG, "Servings clicked!");
     }
 
     /**
@@ -547,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public static class ManageOnItemClickListener implements AdapterView.OnItemClickListener {
+        static class ManageOnItemClickListener implements AdapterView.OnItemClickListener {
 
             ManageOnItemClickListener(MainActivity activity,
                                       ManageDBFragment frag) {
@@ -557,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-                Log.d(TAG, "Position clicked " + position);
+//                Log.d(TAG, "Position clicked " + position);
 
                 switch (position) {
                     //Add dinner
@@ -690,7 +687,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     public void delAllDinners() {
         //Open a database object and delete all rows
-        Log.d(TAG, "Positive button clicked");
+//        Log.d(TAG, "Positive button clicked");
         DinnersDbAdapter mDbHelper;
         mDbHelper = new DinnersDbAdapter(this);
         mDbHelper.open();
@@ -711,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     public void doNegativeClick(int position) {
         //Go back to manage fragment
-        Log.d(TAG, "Cancel button clicked");
+//        Log.d(TAG, "Cancel button clicked");
         //Two alert dialogs use cancel: 0-delete database; 1-import database file
         switch (position) {
             case 0:
@@ -781,14 +778,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             filenameFull = getString(R.string.filename_sharedb) + formatter.format(now) + ".db";
 
             if (storageDir.canWrite()) {
-                Log.d(TAG, "Path to storageDir is " + storageDir);
+//                Log.d(TAG, "Path to storageDir is " + storageDir);
                 //Create subdirectory for app if it doesn't already exist
                 File backupDir = new File(storageDir, getString(R.string.app_name));
                 if (!backupDir.exists()) {
                     backupDir.mkdir();
                 }
                 File currentDB = ctx.getDatabasePath(getString(R.string.filename_full_sharedb));
-                Log.d(TAG, "currentDB = " + currentDB);
+//                Log.d(TAG, "currentDB = " + currentDB);
                 backupDB = new File(backupDir, filenameFull);
 
                 if (currentDB.exists()) {
@@ -797,7 +794,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
-                    Log.d(TAG, "File copied to storage");
+//                    Log.d(TAG, "File copied to storage");
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.sharedb_copy_success), Toast.LENGTH_LONG).show();
                 } else {
@@ -816,7 +813,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method for importing database file from outside app
     public void importDBFileChooser() {
-        Log.d(TAG, "Import will happen now");
+//        Log.d(TAG, "Import will happen now");
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
