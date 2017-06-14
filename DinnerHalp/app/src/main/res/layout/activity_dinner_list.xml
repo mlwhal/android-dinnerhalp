@@ -70,7 +70,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="64dp"
+            android:paddingStart="-32dp"
+            android:paddingEnd="0dp"
             android:src="@drawable/ic_add_dinner"
             style="?android:borderlessButtonStyle"
             />
@@ -78,8 +79,8 @@
         <TextView android:id="@+id/textview_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingTop="16dp"
+            android:layout_gravity="top|center"
+            android:paddingTop="64dp"
             android:clickable="true"
             android:text="@string/no_dinners"
             android:textColor="@color/colorDefaultText"/>
