@@ -124,6 +124,7 @@
     <string name="button_help">\?</string>
     <string name="button_ok">Got It</string>
     <string name="no_dinners">No dinners found! Tap to add.</string>
+    <string name="image_no_dinners">Tap to add a new dinner</string>
     <string name="title_activity_view_dinner">ViewDinnerActivity</string>
     <string name="intent_share_subject">Recipes from DinnerHalp</string>
     <string name="intent_share_dialog_title">Share to &#8230;</string>
@@ -131,6 +132,9 @@
     <!--ViewDinnerActivity-->
     <string name="view_dinner_title">Dinner name here</string>
     <string name="dinner_view_hint">Disable screen timeout in the \nSettings menu</string>
+    <string name="spinner_method">Cooking method</string>
+    <string name="spinner_time">Cooking time</string>
+    <string name="spinner_servings">Servings</string>
     <string name="image_dinner_picture">Picture of current dinner</string>
     <string name="text_no_recipe">No recipe or keywords</string>
     <string name="intent_share_recipe">Share recipe to &#8230;</string>
@@ -167,7 +171,7 @@
     <string name="title_activity_about_app">AboutAppActivity</string>
     <string name="about_app_title">About DinnerHalp</string>
     <string name="about_app_class">com.example.marika.dinnerhalp.AboutAppActivity</string>
-    <string name="text_about_app">DinnerHalp 1.0 by Marika Whaley \ncopyright 2015–2017</string>
+    <string name="text_about_app">DinnerHalp 1.1 by Marika Whaley \ncopyright 2015–2017</string>
     <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
 
     <string name="title_activity_settings">Settings</string>

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-//import com.gmail.mlwhal.dinnerhalp.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

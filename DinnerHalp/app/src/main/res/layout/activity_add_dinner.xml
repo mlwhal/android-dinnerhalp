@@ -23,7 +23,6 @@
         <LinearLayout android:id="@+id/section_dinner_details"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/section_label"
             android:orientation="vertical">
 
             <EditText android:id="@+id/edittext_name"
@@ -43,6 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:paddingStart="0dp"
                     android:paddingEnd="50dp"/>
 
                 <Spinner android:id="@+id/spinner_time"
@@ -64,20 +64,13 @@
                 android:contentDescription="@string/image_add_picture"
                 style="?android:borderlessButtonStyle"/>
 
-            <ScrollView
+            <EditText android:id="@+id/edittext_recipe"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                >
-
-                <EditText android:id="@+id/edittext_recipe"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:hint="@string/recipe_hint"
-                    android:inputType="textCapSentences|textMultiLine"
-
-                    />
-            </ScrollView>
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:hint="@string/recipe_hint"
+                android:inputType="textCapSentences|textMultiLine"
+                />
 
         </LinearLayout>
 

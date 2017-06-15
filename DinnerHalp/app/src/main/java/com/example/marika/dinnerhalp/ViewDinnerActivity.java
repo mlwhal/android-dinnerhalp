@@ -9,21 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-//import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,7 +86,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         checkSharedPrefs();
 
         populateDinnerText();
-        Log.d(TAG, "RowID onCreate is " + mRowId);
+//        Log.d(TAG, "RowID onCreate is " + mRowId);
 
     }
 
@@ -98,13 +95,12 @@ public class ViewDinnerActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_view_dinner, menu);
 
-        /** Get the actionprovider associated with the menu item whose id is share */
+        // Get the action provider associated with the menu item whose id is share
         MenuItem shareItem = menu.findItem(R.id.action_share);
         ShareActionProvider mShareActionProvider =
                 (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         mShareActionProvider.setShareIntent(getShareIntent());
 
-//        return true;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -179,7 +175,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
             //Show ImageView only if there is a uri value in the database
             String picPath = dinner.getString(dinner.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_PICPATH));
-            Log.d(TAG, "picPath value is " + picPath);
+//            Log.d(TAG, "picPath value is " + picPath);
             //Todo: Sometimes picPath is unexpectedly null even when an image has been picked
             if (picPath == null || picPath.equalsIgnoreCase("")) {
                 mDinnerImage.setVisibility(View.GONE);
@@ -225,10 +221,10 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 .getString(R.string.pref_checkbox_timeout_key), true);
         if (!timeoutPref) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            Log.d(TAG, "Screen timeout disabled");
+//            Log.d(TAG, "Screen timeout disabled");
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            Log.d(TAG, "Screen timeout enabled");
+//            Log.d(TAG, "Screen timeout enabled");
         }
 
         //Handle preference for pro mode being on or off
@@ -277,7 +273,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-//        shareIntent.setType("message/rfc822");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, dinnerTitle);
         shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerRecipe);
 
@@ -305,7 +300,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Log.d(TAG, "Delete button clicked!");
+//                                    Log.d(TAG, "Delete button clicked!");
                                     ((ViewDinnerActivity)getActivity()).doPositiveClick();
                                 }
                             }
@@ -348,7 +343,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
     }
 
     public void doNegativeClick() {
-        //Todo: Anything needed here? or just dismiss dialog within the click listener?
+        //Dialog is dismissed automatically
     }
 
     //Lifecycle onResume() method needed in case SharedPreferences have changed

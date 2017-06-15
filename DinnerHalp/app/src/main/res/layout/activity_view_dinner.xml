@@ -18,11 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/button_help"
             android:paddingBottom="8dp"
             android:text="@string/view_dinner_title"
             style="@style/HeaderText" />
 
-        <TextView android:id="@+id/button_help"
+        <TextView android:id="@id/button_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -39,6 +40,7 @@
         <TextView android:id="@+id/hint_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="0dp"
             android:paddingEnd="16dp"
             android:layout_gravity="center_vertical"
             android:text="@string/dinner_view_hint"
@@ -59,7 +61,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout android:id="@+id/section2"
@@ -71,14 +73,15 @@
                 <TextView android:id="@+id/textview_method"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="32dp"
-                    android:text="Cooking method"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="32dp"
+                    android:text="@string/spinner_method"
                     style="@style/ViewDinnerText"/>
 
                 <TextView android:id="@+id/textview_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cooking time"
+                    android:text="@string/spinner_time"
                     style="@style/ViewDinnerText"/>
 
             </LinearLayout>
@@ -92,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="32dp"
-                    android:text="Servings"
+                    android:text="@string/spinner_servings"
                     style="@style/ViewDinnerText"/>
 
                 <ImageView android:id="@+id/image_dinner_thumb"

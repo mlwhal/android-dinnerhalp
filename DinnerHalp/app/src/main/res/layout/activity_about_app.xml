@@ -47,13 +47,6 @@
 
             </LinearLayout>
 
-            <!--ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="32dp"
-                android:paddingBottom="32dp"
-                android:src="@drawable/ic_mw_logo192"/-->
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

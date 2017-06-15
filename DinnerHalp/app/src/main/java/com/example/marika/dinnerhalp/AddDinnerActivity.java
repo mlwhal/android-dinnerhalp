@@ -10,8 +10,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
@@ -29,15 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifIFD0Directory;
-
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class AddDinnerActivity extends AppCompatActivity {
 
@@ -75,10 +65,10 @@ public class AddDinnerActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 //go ahead and prepare to create a new dinner using incoming text as recipe
-                Log.d(TAG, "Text sent to app!");
+//                Log.d(TAG, "Text sent to app!");
 //                Log.d(TAG, "mRowId is " + mRowId);
                 mSharedContent = true;
-                Log.d(TAG, "Text sent is " + mRecipeText);
+//                Log.d(TAG, "Text sent is " + mRecipeText);
                 //Show dialog to let user decide whether incoming text has a title to use as the
                 //dinner name
                 showShareDialog();
@@ -179,12 +169,10 @@ public class AddDinnerActivity extends AppCompatActivity {
         switch (id) {
 
             case android.R.id.home:
-//                mCancelledState = true;
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
 
             case R.id.action_cancel:
-//                mCancelledState = true;
                 finish();
                 return true;
 
@@ -202,21 +190,18 @@ public class AddDinnerActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_search:
-//                mCancelledState = true;
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.putExtra("FRAGMENT_TRACKER", 0);
                 this.startActivity(intent);
                 return true;
 
             case R.id.action_manage:
-//                mCancelledState = true;
                 Intent intent2 = new Intent(this, MainActivity.class);
                 intent2.putExtra("FRAGMENT_TRACKER", 1);
                 this.startActivity(intent2);
                 return true;
 
             case R.id.action_settings:
-//                mCancelledState = true;
                 Intent intent3 = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent3);
                 return true;
@@ -241,7 +226,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             case PICK_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     mSelectedImageUri = imageReturnedIntent.getData();
-                    Log.d(TAG, "Uri is " + mSelectedImageUri);
+//                    Log.d(TAG, "Uri is " + mSelectedImageUri);
 
                     //Take a persistent permission for the image file so the app doesn't lose it later
                     int takeFlags = imageReturnedIntent.getFlags();
@@ -299,7 +284,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             //If there is a picpath in the database, downsample bitmap and display
             if (imageString != null) {
                 Uri imageUri = Uri.parse(imageString);
-                Log.d(TAG, "Uri from db is " + imageUri);
+//                Log.d(TAG, "Uri from db is " + imageUri);
                 try {
                     long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
                             mImageScalePref);
@@ -359,7 +344,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         //Set picpath depending on whether there is a selected image
         if (mSelectedImageUri != null) {
             picpath = mSelectedImageUri.toString();
-            Log.d(TAG, "Picpath will be " + picpath);
+//            Log.d(TAG, "Picpath will be " + picpath);
         } else {
             picpath = null;
         }
@@ -380,7 +365,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             if (id == -1) {
                 notUniqueName();
             } else if (id > 0) {
-                Log.d(TAG, "Dinner created");
+//                Log.d(TAG, "Dinner created");
                 mRowId = id;
                 saveSuccessToast(name);
 
@@ -434,13 +419,13 @@ public class AddDinnerActivity extends AppCompatActivity {
                 }
             }
             mNameText = builder.toString();
-            Log.d(TAG, "Name text is " + mNameText);
+//            Log.d(TAG, "Name text is " + mNameText);
 
             //Remove mNameText and line break from front of shareString to update mRecipeText.
             //This is inside the if statement so that replaceFirst() isn't attempted if
             //shareString is null.
             mRecipeText = mRecipeText.replaceFirst(mNameText + "\n", "");
-            Log.d(TAG, "Truncated recipe is " + mRecipeText);
+//            Log.d(TAG, "Truncated recipe is " + mRecipeText);
         }
 
     }

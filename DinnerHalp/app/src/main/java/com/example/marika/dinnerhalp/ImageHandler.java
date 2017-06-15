@@ -39,8 +39,8 @@ class ImageHandler {
 
         //Multiply device width by mImageScalePref to get preferred size for image
         long imageWidthPref = Math.round(width * (imageScalePref * 0.01));
-        Log.d(TAG, "Screen width is " + width + " pixels");
-        Log.d(TAG, "Scale factor is " + imageScalePref);
+//        Log.d(TAG, "Screen width is " + width + " pixels");
+//        Log.d(TAG, "Scale factor is " + imageScalePref);
         Log.d(TAG, "Preferred image width is " + imageWidthPref);
         return imageWidthPref;
     }
@@ -49,7 +49,7 @@ class ImageHandler {
     static Bitmap resizeImage(Context ctx, Uri selectedImage, long REQUIRED_SIZE)
             throws FileNotFoundException {
 
-        Log.d(TAG, "Resizing image...");
+//        Log.d(TAG, "Resizing image...");
         Bitmap scaledBitmap = null;
         try {
             /* Decode image size
@@ -92,11 +92,10 @@ class ImageHandler {
 
     //Method to rotate images if needed before loading into ImageView
     //Thanks to the metadata-extractor library: https://github.com/drewnoakes/metadata-extractor
-    //Todo: Need to check whether rotation metadata exists to avoid MetadataException
     static Bitmap rotateImage(Context ctx, Uri selectedImage, Bitmap selectedBitmap)
             throws FileNotFoundException {
 
-        Log.d(TAG, "Rotating image...");
+//        Log.d(TAG, "Rotating image...");
         Bitmap rotatedBitmap = null;
 
         try {
@@ -105,13 +104,13 @@ class ImageHandler {
             Metadata metadata = ImageMetadataReader.readMetadata(inStream);
             //Obtain the Exif directory
             ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            Log.d(TAG, "Directory is " + directory);
+//            Log.d(TAG, "Directory is " + directory);
 
             //Check whether there is Exif metadata for the image
             if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
                 //Get the tag's value
                 int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-                Log.d(TAG, "Rotation value of the image is " + rotation);
+//                Log.d(TAG, "Rotation value of the image is " + rotation);
 
                 //Rotate the matrix for the image based on Exif rotation value
                 Matrix matrix = new Matrix();
