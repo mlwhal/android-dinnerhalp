@@ -58,6 +58,7 @@
     <string name="date_format">yyyyMMdd_HH-mm</string>
     <string name="sharedb_title">Share database</string>
     <string name="sharedb_copy_success">File copied to storage</string>
+    <string name="sharedb_copy_fail">Couldn\'t copy file to storage</string>
     <string name="sharedb_no_backup">The database must be backed up to enable sharing</string>
     <string name="intent_sharedb_subject">DinnerHalp database file</string>
     <string name="intent_sharedb_message">Here\'s the database file from my DinnerHalp app.</string>
@@ -97,6 +98,12 @@
     <!--Label for keyboard completion button -->
     <string name="button_done">Done</string>
     <string name="image_add_picture">Add picture</string>
+    <string name="image_change_picture">Change picture</string>
+    <string name="image_remove_picture">Remove picture</string>
+    <string name="image_remove_alert_title">Remove the image? It will no longer be shown when you view
+    this dinner.</string>
+    <string name="alert_dialog_remove_img_ok">Remove</string>
+    <string name="toast_image_removed">Image has been removed</string>
     <string name="recipe_hint">Recipe or keywords</string>
     <!--String if user has not chosen unique dinner name  -->
     <string name="toast_not_unique">Dinner name must be unique to be saved!</string>

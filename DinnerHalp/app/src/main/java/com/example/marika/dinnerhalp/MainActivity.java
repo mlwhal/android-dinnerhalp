@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             final View dialogView = inflater.inflate(R.layout.dialog_keywordsearch, null);
             builder.setTitle(title)
                     .setView(dialogView)
-                            //Add action buttons
+                    //Add action buttons
                     .setPositiveButton(R.string.button_search,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                         break;
                     //Copy database file to storage
                     case 3:
-                        theActivity.copyDBtoStorage(theActivity);
+                        theActivity.copyDBtoStorage(theActivity, false);
                         break;
                     //Launch import alert dialog
                     case 4:
@@ -767,26 +767,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-    public String copyDBtoStorage(Context ctx) {
+    //Todo: When file is copied just to share, handle differently: don't toast the backup
+    public String copyDBtoStorage(Context ctx, Boolean shareStatus) {
         File backupDB;
         String filenameFull = null;    //Declared outside of try block so the value can be returned
         try {
-            File storageDir = Environment.getExternalStorageDirectory();
+//            File storageDir = Environment.getExternalStorageDirectory();
+            File storageDir = getApplicationContext().getExternalFilesDir(null);
+            Log.d(TAG, "FilesDir is " + storageDir);
             //Add datestamp to backup file name
             SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.date_format));
             Date now = new Date();
             filenameFull = getString(R.string.filename_sharedb) + formatter.format(now) + ".db";
 
             if (storageDir.canWrite()) {
-//                Log.d(TAG, "Path to storageDir is " + storageDir);
-                //Create subdirectory for app if it doesn't already exist
-                File backupDir = new File(storageDir, getString(R.string.app_name));
-                if (!backupDir.exists()) {
-                    backupDir.mkdir();
-                }
+                //Get current database file and write a backup file
                 File currentDB = ctx.getDatabasePath(getString(R.string.filename_full_sharedb));
-//                Log.d(TAG, "currentDB = " + currentDB);
-                backupDB = new File(backupDir, filenameFull);
+                Log.d(TAG, "currentDB = " + currentDB);
+                backupDB = new File(storageDir, filenameFull);
 
                 if (currentDB.exists()) {
                     FileChannel src = new FileInputStream(currentDB).getChannel();
@@ -794,12 +792,18 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
-//                    Log.d(TAG, "File copied to storage");
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.sharedb_copy_success), Toast.LENGTH_LONG).show();
+                    if (!shareStatus) {
+                        Log.d(TAG, "File copied to storage");
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.sharedb_copy_success), Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Log.d(TAG, "No file copied; currentDB does not exist");
                 }
+            } else {
+                Log.d(TAG, "Can't write to storageDir; storageDir is " + storageDir);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.sharedb_copy_fail), Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
@@ -861,14 +865,21 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method to share/email database file; makes a backup file first to ensure that the
     //current version of the file is sent
+    //Todo: Is it possible to backup the file to cache and then delete it once shared; use getCacheDir()?
     public void shareDB(Context ctx) {
         try {
             //Get path for readable database file
-            File storageDir = Environment.getExternalStorageDirectory();
+//            File storageDir = Environment.getExternalStorageDirectory();
+//            File cacheDir = ctx.getCacheDir();
+            File storageDir = ctx.getExternalFilesDir(null);
+            Log.d(TAG, "shareDB: storageDir is " + storageDir);
 
             //Make a new copy of the database and set it as the file to be sent
-            String filename = copyDBtoStorage(ctx);
-            File backupDB = new File(storageDir + "/" + getString(R.string.app_name), filename);
+            String filename = copyDBtoStorage(ctx, true);
+            Log.d(TAG, "filename is " + filename);
+//            File backupDB = new File(storageDir + "/" + getString(R.string.app_name), filename);
+            File backupDB = new File(storageDir, filename);
+            Log.d(TAG, "shareDB: backupDB is " + backupDB);
 
             //Create and launch share intent
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -877,6 +888,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.intent_sharedb_message));
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(backupDB));
             ctx.startActivity(Intent.createChooser(shareIntent, getString(R.string.sharedb_title)));
+
+            //Delete cached file once shared
+            //Todo: This gets called too soon; need another strategy
+//            backupDB.delete();
 
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
