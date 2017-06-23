@@ -328,7 +328,6 @@ public class AddDinnerActivity extends AppCompatActivity {
                     //Hide the add image button if the picPath is bad
                     mSetPicPath.setVisibility(View.GONE);
                 }
-                //Todo: Does the bad picpath need to be dealt with?
                 //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
             } else {
                 mChangePicPath.setVisibility(View.GONE);
@@ -560,7 +559,6 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     //Class and methods for an alert dialog to let user remove an image from a dinner
-    //Todo: Dialog is too small to accommodate all text
     public static class RemoveImgDialogFragment extends DialogFragment {
         public static RemoveImgDialogFragment newInstance(int title, int message) {
             RemoveImgDialogFragment frag = new RemoveImgDialogFragment();
