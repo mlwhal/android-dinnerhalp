@@ -57,12 +57,33 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"/>
 
-             <ImageButton android:id="@+id/button_add_image"
+            <ImageButton android:id="@+id/button_add_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_new_picture"
                 android:contentDescription="@string/image_add_picture"
                 style="?android:borderlessButtonStyle"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton android:id="@+id/button_change_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_change_picture"
+                    android:contentDescription="@string/image_change_picture"
+                    style="?android:borderlessButtonStyle"/>
+
+                <ImageButton android:id="@+id/button_remove_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_remove_picture"
+                    android:contentDescription="@string/image_remove_picture"
+                    style="?android:borderlessButtonStyle"/>
+
+             </LinearLayout>
 
             <EditText android:id="@+id/edittext_recipe"
                 android:layout_width="fill_parent"

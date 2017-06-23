@@ -41,7 +41,7 @@ class ImageHandler {
         long imageWidthPref = Math.round(width * (imageScalePref * 0.01));
 //        Log.d(TAG, "Screen width is " + width + " pixels");
 //        Log.d(TAG, "Scale factor is " + imageScalePref);
-        Log.d(TAG, "Preferred image width is " + imageWidthPref);
+//        Log.d(TAG, "Preferred image width is " + imageWidthPref);
         return imageWidthPref;
     }
 

@@ -37,6 +37,8 @@ public class AddDinnerActivity extends AppCompatActivity {
     private Spinner mTimeSpinner;
     private Spinner mServingsSpinner;
     private ImageButton mSetPicPath;
+    private ImageButton mChangePicPath;
+    private ImageButton mRemovePicPath;
     private Uri mSelectedImageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
     private EditText mEditRecipe;
@@ -120,6 +122,29 @@ public class AddDinnerActivity extends AppCompatActivity {
                 photoPickerIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 startActivityForResult(Intent.createChooser(photoPickerIntent, "Select picture"),
                         PICK_IMAGE_REQUEST);
+            }
+        });
+
+        //Initialize change image button but hide unless needed
+        mChangePicPath = (ImageButton) findViewById(R.id.button_change_image);
+        mChangePicPath.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent photoPickerIntent = new Intent();
+                photoPickerIntent.setType("image/*");
+                photoPickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                photoPickerIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                startActivityForResult(Intent.createChooser(photoPickerIntent, "Change picture"),
+                        PICK_IMAGE_REQUEST);
+            }
+        });
+        mChangePicPath.setVisibility(View.GONE);
+
+        //Initialize remove image button
+        mRemovePicPath = (ImageButton) findViewById(R.id.button_remove_image);
+        mRemovePicPath.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //Create dialog to confirm the removal of the image
+                showRemoveImgDialog();
             }
         });
 
@@ -281,8 +306,13 @@ public class AddDinnerActivity extends AppCompatActivity {
 
             String imageString = dinner.getString(dinner.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_PICPATH));
-            //If there is a picpath in the database, downsample bitmap and display
+            //If there is a picpath in the database, do a couple of things
             if (imageString != null) {
+
+                //Display change image button if there is an imageString
+                mChangePicPath.setVisibility(View.VISIBLE);
+
+                //Downsample bitmap and display
                 Uri imageUri = Uri.parse(imageString);
 //                Log.d(TAG, "Uri from db is " + imageUri);
                 try {
@@ -295,9 +325,13 @@ public class AddDinnerActivity extends AppCompatActivity {
                     mSetPicPath.setImageBitmap(dinnerBitmap);
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
+                    //Hide the add image button if the picPath is bad
+                    mSetPicPath.setVisibility(View.GONE);
                 }
                 //Todo: Does the bad picpath need to be dealt with?
                 //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
+            } else {
+                mChangePicPath.setVisibility(View.GONE);
             }
 
             mEditRecipe.setText(dinner.getString(
@@ -308,6 +342,10 @@ public class AddDinnerActivity extends AppCompatActivity {
             dinner.close();
 
         } else {
+            //If mRowId is null, hide change/remove image buttons since they're not relevant
+            mChangePicPath.setVisibility(View.GONE);
+            mRemovePicPath.setVisibility(View.GONE);
+
             mEditNameText.requestFocus();
 
             //If another app sent in text via an intent, put that in the name and recipe EditTexts
@@ -484,7 +522,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity)getActivity()).doPositiveClick();
+                                    ((AddDinnerActivity)getActivity()).doPositiveShareClick();
                                 }
                             }
                     )
@@ -492,7 +530,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity)getActivity()).doNegativeClick();
+                                    ((AddDinnerActivity)getActivity()).doNegativeShareClick();
                                 }
                             }
                     )
@@ -505,7 +543,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    public void doPositiveClick() {
+    public void doPositiveShareClick() {
         Intent shareIntent = getIntent();
         //User wants the first line of the shared text to go into the dinner name field
         handleShareString(shareIntent);
@@ -513,11 +551,72 @@ public class AddDinnerActivity extends AppCompatActivity {
         populateFields();
     }
 
-    public void doNegativeClick() {
+    public void doNegativeShareClick() {
         //Grab shared text and put all of it into recipe field
         Intent shareIntent = getIntent();
         mRecipeText = shareIntent.getExtras().getString(Intent.EXTRA_TEXT);
         //Refresh the fields to show updated recipe
         populateFields();
+    }
+
+    //Class and methods for an alert dialog to let user remove an image from a dinner
+    //Todo: Dialog is too small to accommodate all text
+    public static class RemoveImgDialogFragment extends DialogFragment {
+        public static RemoveImgDialogFragment newInstance(int title, int message) {
+            RemoveImgDialogFragment frag = new RemoveImgDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("title", title);
+            args.putInt("message", message);
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int title = getArguments().getInt("title");
+            int message = getArguments().getInt("message");
+
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.alert_dialog_remove_img_ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((AddDinnerActivity) getActivity()).doPositiveImgClick();
+                                }
+                            }
+                    )
+                    .setNegativeButton(R.string.button_cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((AddDinnerActivity) getActivity()).doNegativeImgClick();
+                                }
+                            }
+                    )
+                    .create();
+        }
+    }
+
+    void showRemoveImgDialog() {
+        DialogFragment newFragment = RemoveImgDialogFragment.newInstance(R.string.image_remove_alert_title,
+                R.string.image_remove_alert_message);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    //Remove path to image and reset image buttons
+    void doPositiveImgClick() {
+        mSelectedImageUri = null;
+        Log.d(TAG, "mSelectedImageUri now null");
+        Toast.makeText(getApplicationContext(), R.string.toast_image_removed, Toast.LENGTH_SHORT).show();
+        mSetPicPath.setImageResource(R.drawable.ic_new_picture);
+        mSetPicPath.setVisibility(View.VISIBLE);
+        mChangePicPath.setVisibility(View.GONE);
+        mRemovePicPath.setVisibility(View.GONE);
+    }
+
+    void doNegativeImgClick() {
+        //Dialog dismisses and nothing is changed
     }
 }
