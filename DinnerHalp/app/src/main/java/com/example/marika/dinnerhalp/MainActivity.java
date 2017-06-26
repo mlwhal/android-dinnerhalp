@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -17,6 +19,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
@@ -767,14 +770,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-    //Todo: When file is copied just to share, handle differently: don't toast the backup
+    //Method to write current DB file to storage and delete old backups if needed
+    //This is also called when user wants to share the DB so the file can be sent to other apps
     public String copyDBtoStorage(Context ctx, Boolean shareStatus) {
         File backupDB;
         String filenameFull = null;    //Declared outside of try block so the value can be returned
         try {
 //            File storageDir = Environment.getExternalStorageDirectory();
             File storageDir = getApplicationContext().getExternalFilesDir(null);
-            Log.d(TAG, "FilesDir is " + storageDir);
+//            Log.d(TAG, "FilesDir is " + storageDir);
             //Add datestamp to backup file name
             SimpleDateFormat formatter = new SimpleDateFormat(getString(R.string.date_format));
             Date now = new Date();
@@ -783,7 +787,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             if (storageDir.canWrite()) {
                 //Get current database file and write a backup file
                 File currentDB = ctx.getDatabasePath(getString(R.string.filename_full_sharedb));
-                Log.d(TAG, "currentDB = " + currentDB);
+//                Log.d(TAG, "currentDB = " + currentDB);
                 backupDB = new File(storageDir, filenameFull);
 
                 if (currentDB.exists()) {
@@ -792,23 +796,84 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
+                    //Toast the backup only when the user has clicked backup, not share
                     if (!shareStatus) {
-                        Log.d(TAG, "File copied to storage");
+//                        Log.d(TAG, "File copied to storage");
                         Toast.makeText(getApplicationContext(),
-                                getString(R.string.sharedb_copy_success), Toast.LENGTH_LONG).show();
+                                getString(R.string.backup_db_success), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.d(TAG, "No file copied; currentDB does not exist");
+//                    Log.d(TAG, "No file copied; currentDB does not exist");
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.backup_db_fail), Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Log.d(TAG, "Can't write to storageDir; storageDir is " + storageDir);
+//                Log.d(TAG, "Can't write to storageDir; storageDir is " + storageDir);
                 Toast.makeText(getApplicationContext(),
-                        getString(R.string.sharedb_copy_fail), Toast.LENGTH_SHORT).show();
+                        getString(R.string.backup_db_fail), Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.backup_db_fail),
+                    Toast.LENGTH_LONG).show();
             e.printStackTrace();
+        }
+
+        //Check shared preferences and delete any extra stored backup files
+        //This only happens when the user wants to backup, not share, the db
+        if (!shareStatus) {
+            int fileNumberPref = checkSharedPrefs();
+//            Log.d(TAG, "copyDBtoStorage: fileNumberPref = " + fileNumberPref);
+
+            try {
+                File storageDir = getApplicationContext().getExternalFilesDir(null);
+                if (storageDir.canRead()) {
+                    //Get current list of files in directory
+                    File[] files = storageDir.listFiles();
+                    int lngth = files.length;
+//                    Log.d(TAG, "copyDBtoStorage: Number of files is " + lngth);
+//                    for (int i = 0; i < lngth; i++) {
+//                        Log.d(TAG, "Presorted: URL is " + files[i].toString());
+//                    }
+                    //Sort the backup files by name
+                    Arrays.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File file1, File file2) {
+                            return file1.getName().compareTo(file2.getName());
+                        }
+                    });
+//                    for (int i = 0; i < lngth; i++) {
+//                        Log.d(TAG, "Postsorted: URL is " + files[i].toString());
+//                    }
+                    //Calculate how many files beyond the preferred number there are (if any)
+                    int extraFiles = lngth - fileNumberPref;
+                    Boolean filesDeleted;
+                    //Track how many files get deleted successfully
+                    int filesDeletedCount = 0;
+                    if (extraFiles > 0) {
+                        for (int i = 0; i < extraFiles; i++) {
+                            filesDeleted = files[i].delete();
+                            if (filesDeleted) {
+                                filesDeletedCount++;
+                            }
+                        }
+                        //Tell the user that files were deleted
+                        if (filesDeletedCount == 1) {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.backup_db_file_deleted),
+                                    Toast.LENGTH_LONG).show();
+                        } else if (filesDeletedCount > 1) {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.backup_db_files_deleted),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), getString(R.string.backup_db_fail),
+                        Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
         }
 
         return filenameFull; //Return name of backup file in case it's needed by shareDB()
@@ -872,14 +937,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //            File storageDir = Environment.getExternalStorageDirectory();
 //            File cacheDir = ctx.getCacheDir();
             File storageDir = ctx.getExternalFilesDir(null);
-            Log.d(TAG, "shareDB: storageDir is " + storageDir);
+//            Log.d(TAG, "shareDB: storageDir is " + storageDir);
 
             //Make a new copy of the database and set it as the file to be sent
             String filename = copyDBtoStorage(ctx, true);
-            Log.d(TAG, "filename is " + filename);
+//            Log.d(TAG, "filename is " + filename);
 //            File backupDB = new File(storageDir + "/" + getString(R.string.app_name), filename);
             File backupDB = new File(storageDir, filename);
-            Log.d(TAG, "shareDB: backupDB is " + backupDB);
+//            Log.d(TAG, "shareDB: backupDB is " + backupDB);
 
             //Create and launch share intent
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -894,8 +959,20 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //            backupDB.delete();
 
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Exception!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.sharedb_no_backup), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    //Check shared preferences to find out how many backup files to keep; returns the int
+    public int checkSharedPrefs() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        return Integer.parseInt(sharedPref.getString(getResources()
+                .getString(R.string.pref_backup_number_key),
+                getResources().getString(R.string.pref_backup_number_default)));
+//        Log.d(TAG, "checkSharedPrefs: Number of files to keep is " + fileNumberPref);
+//        return fileNumberPref;
     }
 }

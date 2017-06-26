@@ -29,4 +29,22 @@
         <item>60</item>
     </string-array>
 
+    <string-array name="pref_backup_number_array">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>No limit</item>
+    </string-array>
+
+    <string-array name="pref_backup_number_values">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>500</item>
+    </string-array>
+
 </resources>
