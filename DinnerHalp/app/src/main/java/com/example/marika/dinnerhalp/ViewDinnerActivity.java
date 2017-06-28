@@ -86,7 +86,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
         checkSharedPrefs();
 
         populateDinnerText();
-//        Log.d(TAG, "RowID onCreate is " + mRowId);
 
     }
 
@@ -176,7 +175,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
             String picPath = dinner.getString(dinner.getColumnIndexOrThrow(
                     DinnersDbAdapter.KEY_PICPATH));
 //            Log.d(TAG, "picPath value is " + picPath);
-            //Todo: Sometimes picPath is unexpectedly null even when an image has been picked
             if (picPath == null || picPath.equalsIgnoreCase("")) {
                 mDinnerImage.setVisibility(View.GONE);
             } else {
@@ -194,6 +192,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                             picUri, dinnerBitmap);
                     mDinnerImage.setImageBitmap(dinnerBitmap);
 
+                    //Sometimes the picPath exists but doesn't point to the image anymore
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                     //Notify the user if image path is bad

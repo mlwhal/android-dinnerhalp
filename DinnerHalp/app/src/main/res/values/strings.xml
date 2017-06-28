@@ -168,12 +168,12 @@
     <string name="pref_image_size_title">Image size</string>
     <string name="pref_image_size_sum">Set the size of images when viewing dinner</string>
     <string name="pref_image_size_key">pref_image_size</string>
-    <string name="pref_image_size_dialog_title">Set image size to &#8230;</string>
+    <string name="pref_image_size_dialog_title">Set image size to</string>
     <string name="pref_image_size_default">192</string>
 
     <string name="pref_backup_number_title">Keeping backup files</string>
-    <string name="pref_backup_number_sum">Set the number of backups to save; older files will be deleted
-    automatically</string>
+    <string name="pref_backup_number_sum">Set the number of backups to save; the oldest file will be deleted
+    automatically when a new backup is made</string>
     <string name="pref_backup_number_key">pref_backup_number</string>
     <string name="pref_backup_number_dialog_title">Number of files to keep</string>
     <string name="pref_backup_number_default">5</string>
@@ -191,8 +191,8 @@
     <!--AboutAppActivity  -->
     <string name="title_activity_about_app">AboutAppActivity</string>
     <string name="about_app_title">About DinnerHalp</string>
-    <string name="about_app_class">com.example.marika.dinnerhalp.AboutAppActivity</string>
-    <string name="text_about_app">DinnerHalp 1.1 by Marika Whaley \ncopyright 2015–2017</string>
+    <string name="about_app_class">com.gmail.mlwhal.dinnerhalp.AboutAppActivity</string>
+    <string name="text_about_app">DinnerHalp 1.2 by Marika Whaley \ncopyright 2015–2017</string>
     <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
 
     <string name="title_activity_settings">Settings</string>
