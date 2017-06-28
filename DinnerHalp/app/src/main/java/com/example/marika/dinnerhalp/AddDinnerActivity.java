@@ -392,7 +392,6 @@ public class AddDinnerActivity extends AppCompatActivity {
 
         //Create dinner or update existing record depending on the value of mRowId
         if (mRowId == null) {
-            //Todo: Does it ever crash on a new dinner when name is not unique?
             mDbHelper.open();
             long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
             mDbHelper.close();
@@ -496,7 +495,8 @@ public class AddDinnerActivity extends AppCompatActivity {
 
         //Check preference for displaying the dinner image
         String imageScalePrefString = sharedPref.getString(getResources()
-                .getString(R.string.pref_image_size_key), "192");
+                .getString(R.string.pref_image_size_key),
+                getResources().getString(R.string.pref_image_size_default));
         mImageScalePref = Integer.parseInt(imageScalePrefString);
 
     }
@@ -538,7 +538,8 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     void showShareDialog() {
-        DialogFragment newFragment = ShareDialogFragment.newInstance(R.string.share_alert_title);
+        DialogFragment newFragment = ShareDialogFragment
+                .newInstance(R.string.share_alert_title);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
@@ -606,7 +607,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     //Remove path to image and reset image buttons
     void doPositiveImgClick() {
         mSelectedImageUri = null;
-        Log.d(TAG, "mSelectedImageUri now null");
+//        Log.d(TAG, "mSelectedImageUri now null");
         Toast.makeText(getApplicationContext(), R.string.toast_image_removed, Toast.LENGTH_SHORT).show();
         mSetPicPath.setImageResource(R.drawable.ic_new_picture);
         mSetPicPath.setVisibility(View.VISIBLE);
