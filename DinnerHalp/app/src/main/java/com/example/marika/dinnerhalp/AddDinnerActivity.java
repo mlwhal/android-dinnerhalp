@@ -269,6 +269,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                         dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
                                 mSelectedImageUri, dinnerBitmap);
                         mSetPicPath.setImageBitmap(dinnerBitmap);
+                        mSetPicPath.setVisibility(View.VISIBLE);
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, Log.getStackTraceString(e));
                     }
@@ -323,6 +324,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                     dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(), imageUri,
                             dinnerBitmap);
                     mSetPicPath.setImageBitmap(dinnerBitmap);
+                    mSetPicPath.setVisibility(View.VISIBLE);
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
                     //Hide the add image button if the picPath is bad
