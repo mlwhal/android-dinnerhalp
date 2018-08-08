@@ -55,17 +55,17 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
         mDbHelper = new DinnersDbAdapter(this);
 
-        mTitleText = (TextView) findViewById(R.id.section_label);
-        mMethodText = (TextView) findViewById(R.id.textview_method);
-        mTimeText = (TextView) findViewById(R.id.textview_time);
-        mServingsText = (TextView) findViewById(R.id.textview_servings);
-        mDinnerImage = (ImageView) findViewById(R.id.image_dinner_thumb);
-        mRecipeText = (TextView) findViewById(R.id.textview_recipe);
+        mTitleText = findViewById(R.id.section_label);
+        mMethodText = findViewById(R.id.textview_method);
+        mTimeText = findViewById(R.id.textview_time);
+        mServingsText = findViewById(R.id.textview_servings);
+        mDinnerImage = findViewById(R.id.image_dinner_thumb);
+        mRecipeText = findViewById(R.id.textview_recipe);
 
         //Initialize hint TextView and buttons that show and dismiss it
-        helpButton = (TextView) findViewById(R.id.button_help);
-        hintText = (TextView) findViewById(R.id.hint_text);
-        okButton = (TextView) findViewById(R.id.button_ok);
+        helpButton = findViewById(R.id.button_help);
+        hintText = findViewById(R.id.hint_text);
+        okButton = findViewById(R.id.button_ok);
 
         //Hint text and button are never shown onCreate
         hintText.setVisibility(View.GONE);

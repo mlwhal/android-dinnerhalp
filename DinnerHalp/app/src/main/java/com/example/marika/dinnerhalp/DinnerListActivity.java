@@ -59,9 +59,9 @@ public class DinnerListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dinner_list);
 
         //Initialize hint TextView and buttons that show and dismiss it
-        helpButton = (TextView) findViewById(R.id.button_help);
-        hintText = (TextView) findViewById(R.id.hint_text);
-        okButton = (TextView) findViewById(R.id.button_ok);
+        helpButton = findViewById(R.id.button_help);
+        hintText = findViewById(R.id.hint_text);
+        okButton = findViewById(R.id.button_ok);
 
         //Hint text and button are never shown onCreate
         hintText.setVisibility(View.GONE);
@@ -187,8 +187,8 @@ public class DinnerListActivity extends AppCompatActivity {
 
         //Handle what to show when the database is empty or there are no search results
         View empty = findViewById(R.id.listview_empty);
-        final ImageButton addDinnerImgButton = (ImageButton)empty.findViewById(R.id.button_add_dinner);
-        final TextView addDinnerTextView = (TextView)empty.findViewById(R.id.textview_empty);
+        final ImageButton addDinnerImgButton = empty.findViewById(R.id.button_add_dinner);
+        final TextView addDinnerTextView = empty.findViewById(R.id.textview_empty);
         lv.setEmptyView(empty);
 
         addDinnerImgButton.setOnClickListener(new View.OnClickListener() {

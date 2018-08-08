@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // When swiping between different sections, select the corresponding
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
             //Create ListView and add ArrayAdapter to display search options
-            final ListView listView = (ListView) rootView.findViewById(R.id.list);
+            final ListView listView = rootView.findViewById(R.id.list);
 
             //Get list item names and image ids from array resources
             Resources res = getResources();
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {
                                     //Pull user input from EditText to construct db query
-                                    EditText keywordEditText = (EditText) dialogView.findViewById(
+                                    EditText keywordEditText = dialogView.findViewById(
                                             R.id.dialog_edittext_keyword);
                                     String keywordInput = keywordEditText.getText().toString();
                                     String whereClause = "name LIKE ? OR recipe LIKE ?";
@@ -617,7 +617,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
 
             //Create ListView and add CustomListAdapter to display manage dinner and DB options
-            ListView listView1 = (ListView) rootView.findViewById(R.id.list);
+            ListView listView1 = rootView.findViewById(R.id.list);
 
             Resources res = getResources();
             String[] itemName = res.getStringArray(R.array.manage_dinners_array);
