@@ -82,6 +82,7 @@
             android:layout_gravity="top|center"
             android:paddingTop="64dp"
             android:clickable="true"
+            android:focusable="true"
             android:text="@string/no_dinners"
             android:textColor="@color/colorDefaultText"/>
 

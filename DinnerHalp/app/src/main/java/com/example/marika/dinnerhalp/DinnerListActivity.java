@@ -25,8 +25,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 
@@ -178,7 +176,7 @@ public class DinnerListActivity extends AppCompatActivity {
                 this, R.layout.dinner_row, dinnerCursor, from, to
         );
 
-        final ListView lv = (ListView) findViewById(R.id.listview_dinners);
+        final ListView lv = findViewById(R.id.listview_dinners);
         lv.setAdapter(dinners);
 
         //Housekeeping: Close down dinnerCursor and mDbHelper
@@ -219,7 +217,6 @@ public class DinnerListActivity extends AppCompatActivity {
                 Intent i = new Intent(view.getContext(), ViewDinnerActivity.class);
                 i.putExtra(DinnersDbAdapter.KEY_ROWID, id);
                 i.putExtra("QUERY_DINNERS", queryDinnerList);
-                //Todo: Add info to track whether dinner list is all, or just a search result.
                 //Todo: Might not need queryDinnerList now that onSaveInstanceState is working.
                 //Right now the ViewDinnerActivity back button always goes back to fetchAllDinners().
                 //Or that might be the home button causing that trouble.

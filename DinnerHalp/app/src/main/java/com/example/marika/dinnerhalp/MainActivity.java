@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_search, container, false);
 
@@ -612,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
 

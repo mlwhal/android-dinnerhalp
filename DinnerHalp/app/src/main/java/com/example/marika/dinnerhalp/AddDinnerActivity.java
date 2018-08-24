@@ -83,7 +83,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_dinner);
 
         //EditText for dinner name
-        mEditNameText = (EditText) findViewById(R.id.edittext_name);
+        mEditNameText = findViewById(R.id.edittext_name);
         mEditNameText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -92,28 +92,28 @@ public class AddDinnerActivity extends AppCompatActivity {
         });
 
         //Cooking method spinner
-        mMethodSpinner = (Spinner) findViewById(R.id.spinner_method);
+        mMethodSpinner = findViewById(R.id.spinner_method);
         ArrayAdapter<CharSequence> methodAdapter = ArrayAdapter.createFromResource(
                 this, R.array.method_array, android.R.layout.simple_spinner_item);
         methodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mMethodSpinner.setAdapter(methodAdapter);
 
         //Cooking time spinner
-        mTimeSpinner = (Spinner) findViewById(R.id.spinner_time);
+        mTimeSpinner = findViewById(R.id.spinner_time);
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(
                 this, R.array.time_array, android.R.layout.simple_spinner_item);
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeSpinner.setAdapter(timeAdapter);
 
         //Servings spinner
-        mServingsSpinner = (Spinner) findViewById(R.id.spinner_servings);
+        mServingsSpinner = findViewById(R.id.spinner_servings);
         ArrayAdapter<CharSequence> servingsAdapter = ArrayAdapter.createFromResource(
                 this, R.array.servings_array, android.R.layout.simple_spinner_item);
         servingsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mServingsSpinner.setAdapter(servingsAdapter);
 
         //Initialize image button
-        mSetPicPath = (ImageButton) findViewById(R.id.button_add_image);
+        mSetPicPath = findViewById(R.id.button_add_image);
         mSetPicPath.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent();
@@ -126,7 +126,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         });
 
         //Initialize change image button but hide unless needed
-        mChangePicPath = (ImageButton) findViewById(R.id.button_change_image);
+        mChangePicPath = findViewById(R.id.button_change_image);
         mChangePicPath.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent();
@@ -140,7 +140,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         mChangePicPath.setVisibility(View.GONE);
 
         //Initialize remove image button
-        mRemovePicPath = (ImageButton) findViewById(R.id.button_remove_image);
+        mRemovePicPath = findViewById(R.id.button_remove_image);
         mRemovePicPath.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Create dialog to confirm the removal of the image
@@ -149,7 +149,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         });
 
         //EditText for recipe
-        mEditRecipe = (EditText) findViewById(R.id.edittext_recipe);
+        mEditRecipe = findViewById(R.id.edittext_recipe);
         mEditRecipe.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -291,7 +291,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             startManagingCursor(dinner);
 
             //Change section label if dinner is being updated rather than created
-            TextView sectionLabel = (TextView) findViewById(R.id.section_label);
+            TextView sectionLabel = findViewById(R.id.section_label);
             sectionLabel.setText(getResources().getString(R.string.update_dinner_title));
             mEditNameText.setText(dinner.getString(
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_NAME)));

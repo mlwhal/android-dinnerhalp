@@ -258,7 +258,7 @@ class DinnersDbAdapter {
                 DinnersDbContract.DinnerEntry.KEY_NAME
         };
 
-        ArrayList<String> dinnerList = null;
+        ArrayList<String> dinnerList = new ArrayList<>();
         Cursor dinnerCursor;
 
         dinnerCursor = mDb.query(DATABASE_TABLE, tableColumns, null, null,
