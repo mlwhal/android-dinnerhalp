@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by marika on 7/25/15.
@@ -246,6 +249,31 @@ class DinnersDbAdapter {
 
         //Passing 1 as the whereClause returns the number of rows deleted
         return mDb.delete(DATABASE_TABLE, "1", null);
+    }
+
+    ArrayList<String> fetchAllDinnersTest() {
+        //Create string array to hold names of columns to be fetched
+        String[] tableColumns = new String[] {
+                DinnersDbContract.DinnerEntry.KEY_ROWID,
+                DinnersDbContract.DinnerEntry.KEY_NAME
+        };
+
+        ArrayList<String> dinnerList = null;
+        Cursor dinnerCursor;
+
+        dinnerCursor = mDb.query(DATABASE_TABLE, tableColumns, null, null,
+                null, null, KEY_NAME + " ASC");
+
+        //Iterate through cursor to populate dinnerList
+        if (dinnerCursor != null) {
+            while (dinnerCursor.moveToNext()) {
+                String dinnerName = dinnerCursor.getString(dinnerCursor
+                        .getColumnIndexOrThrow(DinnersDbContract.DinnerEntry.KEY_ROWID));
+                dinnerList.add(dinnerName);
+            }
+            dinnerCursor.close();
+        }
+        return dinnerList;
     }
 
 }
