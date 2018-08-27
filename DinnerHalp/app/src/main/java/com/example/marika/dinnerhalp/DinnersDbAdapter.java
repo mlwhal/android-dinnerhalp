@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +40,11 @@ class DinnersDbAdapter {
     private static final String DATABASE_CREATE =
             "create table dinners (_id integer primary key autoincrement, "
                     + "name text unique not null, method text not null, time text not null, "
-                    + "servings text not null, picpath text, recipe text);";
+                    + "servings text not null, picpath text, picdata blob, recipe text);";
 
     private static final String DATABASE_NAME = "dinnerData.db";
-    private static final String DATABASE_TABLE = "dinners";
-    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_TABLE = DinnersDbContract.DinnerEntry.DATABASE_TABLE;
+    private static final int DATABASE_VERSION = 2;
 
     private final Context mCtx;
 
@@ -107,21 +108,23 @@ class DinnersDbAdapter {
      * @param method the cooking method of the dinner (stovetop, oven, slow cooker)
      * @param time the cook time
      * @param servings the number of servings
-     * @param picpath file path for photo (not implemented yet)
+     * @param picpath file path for photo
+     * @param picdata byte array for saving photo inside database
      * @param recipe text of recipe
      * @return rowId or -1 if failed
      */
     long createDinner(String name, String method, String time, String servings,
-                             String picpath, String recipe) {
+                      String picpath, byte[] picdata, String recipe) {
         //If the user tries to create a dinner with no name, this is handled
         //in AddDinnerActivity
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_NAME, name);
-        initialValues.put(KEY_METHOD, method);
-        initialValues.put(KEY_TIME, time);
-        initialValues.put(KEY_SERVINGS, servings);
-        initialValues.put(KEY_PICPATH, picpath);
-        initialValues.put(KEY_RECIPE, recipe);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_NAME, name);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_METHOD, method);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_TIME, time);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_SERVINGS, servings);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_PICPATH, picpath);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_PICDATA, picdata);
+        initialValues.put(DinnersDbContract.DinnerEntry.KEY_RECIPE, recipe);
 
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -134,7 +137,9 @@ class DinnersDbAdapter {
      */
     boolean deleteDinner(long rowId) {
 
-        return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.delete(DATABASE_TABLE,
+                DinnersDbContract.DinnerEntry.KEY_ROWID + "=" + rowId,
+                null) > 0;
     }
 
     /**
@@ -153,12 +158,12 @@ class DinnersDbAdapter {
 
         //Create string array to hold names of columns to be fetched
         String[] tableColumns = new String[] {
-                KEY_ROWID,
-                KEY_NAME
+                DinnersDbContract.DinnerEntry.KEY_ROWID,
+                DinnersDbContract.DinnerEntry.KEY_NAME
         };
 
         return mDb.query(DATABASE_TABLE, tableColumns, null, null,
-                null, null, KEY_NAME + " ASC");
+                null, null,  DinnersDbContract.DinnerEntry.KEY_NAME + " ASC");
     }
 
     /**
@@ -173,8 +178,8 @@ class DinnersDbAdapter {
 
         //Create string array to hold names of columns to be fetched
         String[] tableColumns = new String[] {
-                KEY_ROWID,
-                KEY_NAME
+                DinnersDbContract.DinnerEntry.KEY_ROWID,
+                DinnersDbContract.DinnerEntry.KEY_NAME
         };
 
         String[] whereArgs;
@@ -193,7 +198,7 @@ class DinnersDbAdapter {
         }
 
         return mDb.query(DATABASE_TABLE, tableColumns, whereClause, whereArgs, null, null,
-                KEY_NAME + " ASC");
+                 DinnersDbContract.DinnerEntry.KEY_NAME + " ASC");
     }
 
     /**
@@ -210,7 +215,8 @@ class DinnersDbAdapter {
     Cursor fetchDinner(long rowId) throws SQLException {
 
         Cursor mCursor =
-                mDb.query(true, DATABASE_TABLE, null, KEY_ROWID + "=" + rowId,
+                mDb.query(true, DATABASE_TABLE, null,
+                        DinnersDbContract.DinnerEntry.KEY_ROWID + "=" + rowId,
                         null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -232,16 +238,19 @@ class DinnersDbAdapter {
      * mDb.update() returns the number of rows updated in an int. Anything > 0 returns true.
      */
     boolean updateDinner(long rowId, String name, String method, String time,
-                                String servings, String picpath, String recipe) {
+                                String servings, String picpath, byte[] picdata, String recipe) {
         ContentValues args = new ContentValues();
-        args.put(KEY_NAME, name);
-        args.put(KEY_METHOD, method);
-        args.put(KEY_TIME, time);
-        args.put(KEY_SERVINGS, servings);
-        args.put(KEY_PICPATH, picpath);
-        args.put(KEY_RECIPE, recipe);
+        args.put(DinnersDbContract.DinnerEntry.KEY_NAME, name);
+        args.put(DinnersDbContract.DinnerEntry.KEY_METHOD, method);
+        args.put(DinnersDbContract.DinnerEntry.KEY_TIME, time);
+        args.put(DinnersDbContract.DinnerEntry.KEY_SERVINGS, servings);
+        args.put(DinnersDbContract.DinnerEntry.KEY_PICPATH, picpath);
+        args.put(DinnersDbContract.DinnerEntry.KEY_PICDATA, picdata);
+        args.put(DinnersDbContract.DinnerEntry.KEY_RECIPE, recipe);
 
-        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.update(DATABASE_TABLE, args,
+                DinnersDbContract.DinnerEntry.KEY_ROWID + "=" + rowId,
+                null) > 0;
     }
 
     //Method for deleting all rows in the database table
@@ -262,7 +271,8 @@ class DinnersDbAdapter {
         Cursor dinnerCursor;
 
         dinnerCursor = mDb.query(DATABASE_TABLE, tableColumns, null, null,
-                null, null, KEY_NAME + " ASC");
+                null, null,
+                DinnersDbContract.DinnerEntry.KEY_NAME + " ASC");
 
         //Iterate through cursor to populate dinnerList
         if (dinnerCursor != null) {
