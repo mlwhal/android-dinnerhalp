@@ -139,7 +139,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         });
         mChangePicPath.setVisibility(View.GONE);
 
-        //Initialize remove image button
+        //Initialize remove image button but hide unless needed
         mRemovePicPath = findViewById(R.id.button_remove_image);
         mRemovePicPath.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -147,6 +147,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                 showRemoveImgDialog();
             }
         });
+        mRemovePicPath.setVisibility(View.GONE);
 
         //EditText for recipe
         mEditRecipe = findViewById(R.id.edittext_recipe);
@@ -309,8 +310,9 @@ public class AddDinnerActivity extends AppCompatActivity {
             //If there is a picpath in the database, do a couple of things
             if (imageString != null) {
 
-                //Display change image button if there is an imageString
+                //Display change and remove image buttons if there is an imageString
                 mChangePicPath.setVisibility(View.VISIBLE);
+                mRemovePicPath.setVisibility(View.VISIBLE);
 
                 //Downsample bitmap and display
                 Uri imageUri = Uri.parse(imageString);
@@ -331,6 +333,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                 //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
             } else {
                 mChangePicPath.setVisibility(View.GONE);
+                mRemovePicPath.setVisibility(View.GONE);
             }
 
             mEditRecipe.setText(dinner.getString(
