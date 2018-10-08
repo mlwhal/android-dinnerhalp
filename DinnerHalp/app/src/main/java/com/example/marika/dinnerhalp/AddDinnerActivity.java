@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
@@ -27,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 public class AddDinnerActivity extends AppCompatActivity {
@@ -36,10 +38,11 @@ public class AddDinnerActivity extends AppCompatActivity {
     private Spinner mMethodSpinner;
     private Spinner mTimeSpinner;
     private Spinner mServingsSpinner;
-    private ImageButton mSetPicPath;
-    private ImageButton mChangePicPath;
-    private ImageButton mRemovePicPath;
+    private ImageButton mSetPicButton;
+    private ImageButton mChangePicButton;
+    private ImageButton mRemovePicButton;
     private Uri mSelectedImageUri;
+    private Bitmap mDinnerBitmap;
     private static final int PICK_IMAGE_REQUEST = 1;
     private EditText mEditRecipe;
     //Tracker variable in case activity is getting content from another app
@@ -113,8 +116,8 @@ public class AddDinnerActivity extends AppCompatActivity {
         mServingsSpinner.setAdapter(servingsAdapter);
 
         //Initialize image button
-        mSetPicPath = findViewById(R.id.button_add_image);
-        mSetPicPath.setOnClickListener(new View.OnClickListener() {
+        mSetPicButton = findViewById(R.id.button_add_image);
+        mSetPicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent();
                 photoPickerIntent.setType("image/*");
@@ -126,8 +129,8 @@ public class AddDinnerActivity extends AppCompatActivity {
         });
 
         //Initialize change image button but hide unless needed
-        mChangePicPath = findViewById(R.id.button_change_image);
-        mChangePicPath.setOnClickListener(new View.OnClickListener() {
+        mChangePicButton = findViewById(R.id.button_change_image);
+        mChangePicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent();
                 photoPickerIntent.setType("image/*");
@@ -137,17 +140,17 @@ public class AddDinnerActivity extends AppCompatActivity {
                         PICK_IMAGE_REQUEST);
             }
         });
-        mChangePicPath.setVisibility(View.GONE);
+        mChangePicButton.setVisibility(View.GONE);
 
         //Initialize remove image button but hide unless needed
-        mRemovePicPath = findViewById(R.id.button_remove_image);
-        mRemovePicPath.setOnClickListener(new View.OnClickListener() {
+        mRemovePicButton = findViewById(R.id.button_remove_image);
+        mRemovePicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Create dialog to confirm the removal of the image
                 showRemoveImgDialog();
             }
         });
-        mRemovePicPath.setVisibility(View.GONE);
+        mRemovePicButton.setVisibility(View.GONE);
 
         //EditText for recipe
         mEditRecipe = findViewById(R.id.edittext_recipe);
@@ -260,18 +263,30 @@ public class AddDinnerActivity extends AppCompatActivity {
                     //Check for the freshest data
                     getContentResolver().takePersistableUriPermission(mSelectedImageUri, takeFlags);
 
+                    //Get max preferred size for image
+                    //Todo: Pull imageScalePref directly from arrays.xml instead of hard coding
+                    long maxSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                            60);
                     //Get preferred size for image
                     long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
                             mImageScalePref);
-                    //Show the image in the ImageView so the user knows this worked.
                     try {
+                        //Store a bitmap at the largest allowed scale to save in the db
+                        mDinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
+                                mSelectedImageUri, maxSizePref);
+                        mDinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
+                                mSelectedImageUri, mDinnerBitmap);
+                        //Create bitmap matching current size preference
                         Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
                                 mSelectedImageUri, imageSizePref);
                         dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
                                 mSelectedImageUri, dinnerBitmap);
-                        mSetPicPath.setImageBitmap(dinnerBitmap);
+                        //Show the image in the ImageView so the user knows this worked
+                        mSetPicButton.setImageBitmap(dinnerBitmap);
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, Log.getStackTraceString(e));
+                        Toast.makeText(getApplicationContext(), R.string.toast_exception,
+                                Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -295,46 +310,81 @@ public class AddDinnerActivity extends AppCompatActivity {
             TextView sectionLabel = findViewById(R.id.section_label);
             sectionLabel.setText(getResources().getString(R.string.update_dinner_title));
             mEditNameText.setText(dinner.getString(
-                    dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_NAME)));
+                    dinner.getColumnIndexOrThrow(DinnersDbContract.DinnerEntry.KEY_NAME)));
             //Set spinners to correct index for existing dinner
             mMethodSpinner.setSelection(getSpinnerIndex(mMethodSpinner,
-                    dinner.getString(dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_METHOD))));
+                    dinner.getString(dinner.getColumnIndexOrThrow(
+                            DinnersDbContract.DinnerEntry.KEY_METHOD))));
             mTimeSpinner.setSelection(getSpinnerIndex(mTimeSpinner,
-                    dinner.getString(dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_TIME))));
+                    dinner.getString(dinner.getColumnIndexOrThrow(
+                            DinnersDbContract.DinnerEntry.KEY_TIME))));
             mServingsSpinner.setSelection(getSpinnerIndex(mServingsSpinner,
                     dinner.getString(dinner.getColumnIndexOrThrow(
-                            DinnersDbAdapter.KEY_SERVINGS))));
+                            DinnersDbContract.DinnerEntry.KEY_SERVINGS))));
 
-            String imageString = dinner.getString(dinner.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_PICPATH));
-            //If there is a picpath in the database, do a couple of things
-            if (imageString != null) {
-
-                //Display change and remove image buttons if there is an imageString
-                mChangePicPath.setVisibility(View.VISIBLE);
-                mRemovePicPath.setVisibility(View.VISIBLE);
-
-                //Downsample bitmap and display
-                Uri imageUri = Uri.parse(imageString);
-//                Log.d(TAG, "Uri from db is " + imageUri);
-                try {
-                    long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
-                            mImageScalePref);
-                    Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
-                            imageUri, imageSizePref);
-                    dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(), imageUri,
-                            dinnerBitmap);
-                    mSetPicPath.setImageBitmap(dinnerBitmap);
-                } catch (FileNotFoundException | SecurityException e) {
-                    Log.d(TAG, Log.getStackTraceString(e));
-                    //Hide the add image button if the picPath is bad
-                    mSetPicPath.setVisibility(View.GONE);
-                }
-                //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
+            //Todo: Handle new column picdata; forget about picpath for now
+//            String imageString = dinner.getString(dinner.getColumnIndexOrThrow(
+//                    DinnersDbContract.DinnerEntry.KEY_PICPATH));
+            byte[] imageByteArray = dinner.getBlob(dinner.getColumnIndexOrThrow(
+                    DinnersDbContract.DinnerEntry.KEY_PICDATA));
+            //Todo: Is there a case where imageByteArray is not null, but is empty?
+            if (imageByteArray != null) {
+                Log.d(TAG, "imageByteArray pulled from DB; length is " + imageByteArray.length);
             } else {
-                mChangePicPath.setVisibility(View.GONE);
-                mRemovePicPath.setVisibility(View.GONE);
+                Log.d(TAG, "imageByteArray pulled from DB and is null");
             }
+            if (imageByteArray != null) {
+                Log.d(TAG, "imageBitmap is not null");
+                //Set mDinnerBitmap to retrieved bitmap to ensure that the right image is used
+                //for saveDinner() and other methods that might use it later
+                mDinnerBitmap = BitmapFactory.decodeByteArray(imageByteArray,
+                        0, imageByteArray.length);
+
+                //Scale image for display according to current scale pref
+                long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                        mImageScalePref);
+                Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
+                            imageByteArray, imageSizePref);
+                mSetPicButton.setImageBitmap(scaledDinnerImage);
+
+                //Display change and remove image buttons
+                mChangePicButton.setVisibility(View.VISIBLE);
+                mRemovePicButton.setVisibility(View.VISIBLE);
+                } else {
+                mSetPicButton.setImageResource(R.drawable.ic_new_picture);
+                mChangePicButton.setVisibility(View.GONE);
+                mChangePicButton.setVisibility(View.GONE);
+                Log.d(TAG, "imageBitmap is null");
+            }
+
+            //If there is a picpath in the database, do a couple of things
+//            if (imageString != null) {
+//
+//                //Display change and remove image buttons if there is an imageString
+//                mChangePicButton.setVisibility(View.VISIBLE);
+//                mRemovePicButton.setVisibility(View.VISIBLE);
+//
+//                //Downsample bitmap and display
+//                Uri imageUri = Uri.parse(imageString);
+////                Log.d(TAG, "Uri from db is " + imageUri);
+//                try {
+//                    long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+//                            mImageScalePref);
+//                    Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
+//                            imageUri, imageSizePref);
+//                    dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(), imageUri,
+//                            dinnerBitmap);
+//                    mSetPicButton.setImageBitmap(dinnerBitmap);
+//                } catch (FileNotFoundException | SecurityException e) {
+//                    Log.d(TAG, Log.getStackTraceString(e));
+//                    //Hide the add image button if the picPath is bad
+//                    mSetPicButton.setVisibility(View.GONE);
+//                }
+//                //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
+//            } else {
+//                mChangePicButton.setVisibility(View.GONE);
+//                mRemovePicButton.setVisibility(View.GONE);
+//            }
 
             mEditRecipe.setText(dinner.getString(
                     dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_RECIPE)));
@@ -345,8 +395,8 @@ public class AddDinnerActivity extends AppCompatActivity {
 
         } else {
             //If mRowId is null, hide change/remove image buttons since they're not relevant
-            mChangePicPath.setVisibility(View.GONE);
-            mRemovePicPath.setVisibility(View.GONE);
+            mChangePicButton.setVisibility(View.GONE);
+            mRemovePicButton.setVisibility(View.GONE);
 
             mEditNameText.requestFocus();
 
@@ -380,13 +430,26 @@ public class AddDinnerActivity extends AppCompatActivity {
         String time = mTimeSpinner.getSelectedItem().toString();
         String servings = mServingsSpinner.getSelectedItem().toString();
         String picpath;
+        byte[] imageByteArray;
 
         //Set picpath depending on whether there is a selected image
+        //Todo: And process mDinnerBitmap into byte array to save in database
+        //Or should this happen in onActivityResult()?
+
         if (mSelectedImageUri != null) {
             picpath = mSelectedImageUri.toString();
 //            Log.d(TAG, "Picpath will be " + picpath);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            //Todo: Make sure mDinnerBitmap is current; did user want to delete the image?
+            //Compress bitmap to JPEG with maximum quality (100)
+            mDinnerBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            imageByteArray = bos.toByteArray();
+            Log.d(TAG, "imageByteArray saved; Length is " + imageByteArray.length);
+
         } else {
             picpath = null;
+            imageByteArray = null;
         }
 
         String recipe = mEditRecipe.getText().toString();
@@ -397,7 +460,8 @@ public class AddDinnerActivity extends AppCompatActivity {
         if (mRowId == null) {
             //Todo: Does it ever crash on a new dinner when name is not unique?
             mDbHelper.open();
-            long id = mDbHelper.createDinner(name, method, time, servings, picpath, recipe);
+            long id = mDbHelper.createDinner(name, method, time, servings, picpath,
+                    imageByteArray, recipe);
             mDbHelper.close();
             Log.d(TAG, "id = " + id);
             //If id == -1 the dinner hasn't been saved; toast this and remain
@@ -420,7 +484,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             try {
                 mDbHelper.open();
                 updateSuccess = mDbHelper.updateDinner(
-                        mRowId, name, method, time, servings, picpath, recipe);
+                        mRowId, name, method, time, servings, picpath, imageByteArray, recipe);
                 mDbHelper.close();
             } catch (SQLiteConstraintException e) {
                 Log.d(TAG, "Exception caught: " + e.toString());
@@ -611,10 +675,10 @@ public class AddDinnerActivity extends AppCompatActivity {
         mSelectedImageUri = null;
         Log.d(TAG, "mSelectedImageUri now null");
         Toast.makeText(getApplicationContext(), R.string.toast_image_removed, Toast.LENGTH_SHORT).show();
-        mSetPicPath.setImageResource(R.drawable.ic_new_picture);
-        mSetPicPath.setVisibility(View.VISIBLE);
-        mChangePicPath.setVisibility(View.GONE);
-        mRemovePicPath.setVisibility(View.GONE);
+        mSetPicButton.setImageResource(R.drawable.ic_new_picture);
+        mSetPicButton.setVisibility(View.VISIBLE);
+        mChangePicButton.setVisibility(View.GONE);
+        mRemovePicButton.setVisibility(View.GONE);
     }
 
     void doNegativeImgClick() {

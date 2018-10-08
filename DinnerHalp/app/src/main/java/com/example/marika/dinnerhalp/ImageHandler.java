@@ -45,7 +45,7 @@ class ImageHandler {
         return imageWidthPref;
     }
 
-    //Method to downsample large images before loading into ImageView
+    //Method to downsample large images read from Uri before loading into ImageView
     static Bitmap resizeImage(Context ctx, Uri selectedImage, long REQUIRED_SIZE)
             throws FileNotFoundException {
 
@@ -88,6 +88,36 @@ class ImageHandler {
 
         return scaledBitmap;
 
+    }
+
+    //Method to downsample large images read from byte array before loading into ImageView
+    static Bitmap resizeByteArray (Context ctx, byte[] imageByteArray, long REQUIRED_SIZE) {
+        Bitmap scaledBitmap = null;
+
+        //Todo: Does this need to be inside try block, as for Uri decoding?
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length, o);
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        //Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+
+        scaledBitmap = BitmapFactory.decodeByteArray(imageByteArray, 0,
+                imageByteArray.length, o2);
+        return scaledBitmap;
     }
 
     //Method to rotate images if needed before loading into ImageView
