@@ -108,7 +108,7 @@
     <string name="image_remove_picture">Remove picture</string>
     <string name="image_remove_alert_title">Remove the image?</string>
     <string name="image_remove_alert_message">It will no longer be shown when you view
-    this dinner. (The image itself is not deleted from your phone.)</string>
+    this dinner. (This doesn\'t delete the image from your phone, just from the database.)</string>
     <string name="alert_dialog_remove_img_ok">Remove</string>
     <string name="toast_image_removed">Image has been removed</string>
     <string name="recipe_hint">Recipe or keywords</string>

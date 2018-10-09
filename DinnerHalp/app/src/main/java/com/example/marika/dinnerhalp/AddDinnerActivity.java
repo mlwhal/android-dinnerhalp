@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -270,18 +271,21 @@ public class AddDinnerActivity extends AppCompatActivity {
                     //Get preferred size for image
                     long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
                             mImageScalePref);
+                    Log.d(TAG, "Max size is " + maxSizePref + ", pref size is " + imageSizePref);
                     try {
                         //Store a bitmap at the largest allowed scale to save in the db
                         mDinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
                                 mSelectedImageUri, maxSizePref);
                         mDinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
                                 mSelectedImageUri, mDinnerBitmap);
-                        //Create bitmap matching current size preference
+                        Log.d(TAG, "mDinnerBitmap set to large size");
+                        //Create bitmap matching current size preference for display
                         Bitmap dinnerBitmap = ImageHandler.resizeImage(getApplicationContext(),
                                 mSelectedImageUri, imageSizePref);
                         dinnerBitmap = ImageHandler.rotateImage(getApplicationContext(),
                                 mSelectedImageUri, dinnerBitmap);
-                        //Show the image in the ImageView so the user knows this worked
+                        Log.d(TAG, "Bitmap for viewing has been processed");
+                        //Show the image in the ImageView so the user knows the image selection worked
                         mSetPicButton.setImageBitmap(dinnerBitmap);
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, Log.getStackTraceString(e));
@@ -323,8 +327,11 @@ public class AddDinnerActivity extends AppCompatActivity {
                             DinnersDbContract.DinnerEntry.KEY_SERVINGS))));
 
             //Todo: Handle new column picdata; forget about picpath for now
-//            String imageString = dinner.getString(dinner.getColumnIndexOrThrow(
-//                    DinnersDbContract.DinnerEntry.KEY_PICPATH));
+            String imageString = dinner.getString(dinner.getColumnIndexOrThrow(
+                    DinnersDbContract.DinnerEntry.KEY_PICPATH));
+            if (imageString != null) {
+                mSelectedImageUri = Uri.parse(imageString);
+            }
             byte[] imageByteArray = dinner.getBlob(dinner.getColumnIndexOrThrow(
                     DinnersDbContract.DinnerEntry.KEY_PICDATA));
             //Todo: Is there a case where imageByteArray is not null, but is empty?
@@ -333,19 +340,30 @@ public class AddDinnerActivity extends AppCompatActivity {
             } else {
                 Log.d(TAG, "imageByteArray pulled from DB and is null");
             }
+            //Todo: Add to if statement: && imageStorePref == true
+            //If image is stored in db, make a bitmap from imageByteArray
             if (imageByteArray != null) {
                 Log.d(TAG, "imageBitmap is not null");
                 //Set mDinnerBitmap to retrieved bitmap to ensure that the right image is used
                 //for saveDinner() and other methods that might use it later
+                //Todo: Not sure this is working right.
                 mDinnerBitmap = BitmapFactory.decodeByteArray(imageByteArray,
                         0, imageByteArray.length);
+                int bitmapHeight = mDinnerBitmap.getHeight();
+                Log.d(TAG, "mDinnerBitmap has been updated; height is " + bitmapHeight);
 
+                //Todo: Does resizing and rotating need to be inside a try/catch block?
                 //Scale image for display according to current scale pref
                 long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
                         mImageScalePref);
                 Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
                             imageByteArray, imageSizePref);
+                //Rotate image if needed
+                //Todo: EXIF data seems to be lost when image is saved in db; this might never be needed
+//                Bitmap rotatedDinnerImage = ImageHandler.rotateByteArray(getApplicationContext(),
+//                            imageByteArray, scaledDinnerImage);
                 mSetPicButton.setImageBitmap(scaledDinnerImage);
+//                mSetPicButton.setImageBitmap(rotatedDinnerImage);
 
                 //Display change and remove image buttons
                 mChangePicButton.setVisibility(View.VISIBLE);
@@ -357,8 +375,8 @@ public class AddDinnerActivity extends AppCompatActivity {
                 Log.d(TAG, "imageBitmap is null");
             }
 
-            //If there is a picpath in the database, do a couple of things
-//            if (imageString != null) {
+            //If there is a picpath in the database AND prefs are set to use it, do a couple of things
+//            if (imageString != null && imageStorePref == false) {
 //
 //                //Display change and remove image buttons if there is an imageString
 //                mChangePicButton.setVisibility(View.VISIBLE);
@@ -380,7 +398,6 @@ public class AddDinnerActivity extends AppCompatActivity {
 //                    //Hide the add image button if the picPath is bad
 //                    mSetPicButton.setVisibility(View.GONE);
 //                }
-//                //Todo: Also, picpath is not being remembered consistently; becomes null unexpectedly
 //            } else {
 //                mChangePicButton.setVisibility(View.GONE);
 //                mRemovePicButton.setVisibility(View.GONE);
@@ -432,23 +449,23 @@ public class AddDinnerActivity extends AppCompatActivity {
         String picpath;
         byte[] imageByteArray;
 
-        //Set picpath depending on whether there is a selected image
-        //Todo: And process mDinnerBitmap into byte array to save in database
-        //Or should this happen in onActivityResult()?
-
+        //Set picpath if there is a known image path (FYI: might come from old data pulled from db)
         if (mSelectedImageUri != null) {
             picpath = mSelectedImageUri.toString();
-//            Log.d(TAG, "Picpath will be " + picpath);
+            Log.d(TAG, "saveDinner: Picpath will be " + picpath);
+        } else {
+            picpath = null;
+            Log.d(TAG, "saveDinner: Picpath is null");
+        }
 
+        //Process mDinnerBitmap into byte array to save in database
+        if (mDinnerBitmap != null) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            //Todo: Make sure mDinnerBitmap is current; did user want to delete the image?
             //Compress bitmap to JPEG with maximum quality (100)
             mDinnerBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             imageByteArray = bos.toByteArray();
             Log.d(TAG, "imageByteArray saved; Length is " + imageByteArray.length);
-
         } else {
-            picpath = null;
             imageByteArray = null;
         }
 
@@ -670,10 +687,12 @@ public class AddDinnerActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    //Remove path to image and reset image buttons
+    //Remove path to image, clear mDinnerBitmap, and reset image buttons
     void doPositiveImgClick() {
         mSelectedImageUri = null;
         Log.d(TAG, "mSelectedImageUri now null");
+        mDinnerBitmap = null;
+        Log.d(TAG, "mDinnerBitmap now null");
         Toast.makeText(getApplicationContext(), R.string.toast_image_removed, Toast.LENGTH_SHORT).show();
         mSetPicButton.setImageResource(R.drawable.ic_new_picture);
         mSetPicButton.setVisibility(View.VISIBLE);
