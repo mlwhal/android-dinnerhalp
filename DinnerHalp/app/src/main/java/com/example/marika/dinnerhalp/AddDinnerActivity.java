@@ -34,6 +34,11 @@ import java.io.FileNotFoundException;
 
 public class AddDinnerActivity extends AppCompatActivity {
 
+    //TextViews for help button and hint text
+    private TextView helpButton;
+    private TextView hintText;
+    private TextView okButton;
+
     private DinnersDbAdapter mDbHelper;
     private EditText mEditNameText;
     private Spinner mMethodSpinner;
@@ -59,9 +64,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Check SharedPreferences to determine what size images to display
-        checkSharedPrefs();
+        setContentView(R.layout.activity_add_dinner);
 
         //Handle cases where this activity is getting content from another app
         Intent shareIntent = getIntent();
@@ -83,8 +86,18 @@ public class AddDinnerActivity extends AppCompatActivity {
 
         mDbHelper = new DinnersDbAdapter(this);
 
-        //setContentView(R.layout.activity_add_dinner_noscroll);
-        setContentView(R.layout.activity_add_dinner);
+        //Initialize hint TextView and buttons that show and dismiss it
+        helpButton = findViewById(R.id.button_help);
+        hintText = findViewById(R.id.hint_text);
+        okButton = findViewById(R.id.button_ok);
+
+        //Hint text and button are never shown onCreate
+        hintText.setVisibility(View.GONE);
+        okButton.setVisibility(View.GONE);
+
+        //Check SharedPreferences to determine what size images to display and whether pro mode
+        //is active
+        checkSharedPrefs();
 
         //EditText for dinner name
         mEditNameText = findViewById(R.id.edittext_name);
@@ -577,6 +590,34 @@ public class AddDinnerActivity extends AppCompatActivity {
     //Method to check SharedPreferences to handle image size preference
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //Handle preference for pro mode being on or off
+        Boolean proModePref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_switch_promode_key), true);
+        if (proModePref) {
+            helpButton.setVisibility(View.GONE);
+        } else {
+            helpButton.setVisibility(View.VISIBLE);
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Show hint and OK button; hide help button
+                    hintText.setVisibility(View.VISIBLE);
+                    okButton.setVisibility(View.VISIBLE);
+                    helpButton.setVisibility(View.GONE);
+                }
+            });
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Hide hint and OK button; show help button
+                    hintText.setVisibility(View.GONE);
+                    okButton.setVisibility(View.GONE);
+                    helpButton.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
         //Check preference for displaying the dinner image
         String imageScalePrefString = sharedPref.getString(getResources()

@@ -100,7 +100,7 @@
     <!--AddDinnerActivity  -->
     <string name="add_dinner_title">Add a dinner</string>
     <string name="update_dinner_title">Update dinner</string>
-    <string name="dinner_add_hint">You can choose how to save images in the \nSettings menu</string>
+    <string name="dinner_add_hint">You can choose how to save \nimages in the Settings menu</string>
     <string name="dinner_name_hint">Dinner name</string>
     <!--Label for keyboard completion button -->
     <string name="button_done">Done</string>
