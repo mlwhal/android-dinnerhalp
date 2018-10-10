@@ -100,6 +100,7 @@
     <!--AddDinnerActivity  -->
     <string name="add_dinner_title">Add a dinner</string>
     <string name="update_dinner_title">Update dinner</string>
+    <string name="dinner_add_hint">You can choose how to save images in the \nSettings menu</string>
     <string name="dinner_name_hint">Dinner name</string>
     <!--Label for keyboard completion button -->
     <string name="button_done">Done</string>
@@ -145,7 +146,7 @@
 
     <!--ViewDinnerActivity-->
     <string name="view_dinner_title">Dinner name here</string>
-    <string name="dinner_view_hint">Disable screen timeout in the \nSettings menu</string>
+    <string name="dinner_view_hint">You can disable screen timeout in the \nSettings menu</string>
     <string name="spinner_method">Cooking method</string>
     <string name="spinner_time">Cooking time</string>
     <string name="spinner_servings">Servings</string>
@@ -166,25 +167,38 @@
     <string name="pref_change_method_sum">Change the list of cooking methods</string>
 
     <string name="pref_image_size_title">Image size</string>
-    <string name="pref_image_size_sum">Set the size of images when viewing dinner</string>
+    <string name="pref_image_size_sum">Set the size of images when viewing dinner \nCurrently
+    showing %s size</string>
     <string name="pref_image_size_key">pref_image_size</string>
     <string name="pref_image_size_dialog_title">Set image size to</string>
     <string name="pref_image_size_default">192</string>
 
+    <string name="pref_switch_image_storage_title">Save images inside the database</string>
+    <string name="pref_switch_image_storage_sum_off">Images will be linked, not saved; this
+    takes up less space but sometimes links get lost</string>
+    <string name="pref_switch_image_storage_sum_on">Images will be stored in the dinner
+    database; this takes up more space but images won\'t ever get lost</string>
+
+    <string name="pref_switch_image_storage_key">pref_image_storage</string>
+
     <string name="pref_backup_number_title">Keeping backup files</string>
     <string name="pref_backup_number_sum">Set the number of backups to save; the oldest file will be deleted
-    automatically when a new backup is made</string>
+    automatically when a new backup is made \nCurrently saving %s</string>
     <string name="pref_backup_number_key">pref_backup_number</string>
     <string name="pref_backup_number_dialog_title">Number of files to keep</string>
     <string name="pref_backup_number_default">5</string>
 
-    <string name="pref_checkbox_timeout_title">Screen timeout</string>
-    <string name="pref_checkbox_timeout_sum">Allow screen to timeout when viewing a dinner</string>
-    <string name="pref_checkbox_timeout_key">pref_checkbox_timeout</string>
+    <string name="pref_switch_timeout_title">Screen timeout</string>
+    <string name="pref_switch_timeout_sum">Allow screen to timeout when viewing a dinner</string>
+    <string name="pref_switch_timeout_sum_on">Screen will turn off as usual when viewing a dinner</string>
+    <string name="pref_switch_timeout_sum_off">Screen will stay on when viewing a dinner</string>
+    <string name="pref_switch_timeout_key">pref_switch_timeout</string>
 
-    <string name="pref_checkbox_promode_title">Pro user mode</string>
-    <string name="pref_checkbox_promode_sum">Hide all on-screen tips</string>
-    <string name="pref_checkbox_promode_key">pref_checkbox_promode</string>
+    <string name="pref_switch_promode_title">Pro user mode</string>
+    <string name="pref_switch_promode_sum">Hide all on-screen tips</string>
+    <string name="pref_switch_promode_sum_on">On-screen tips are hidden</string>
+    <string name="pref_switch_promode_sum_off">On-screen tips are shown</string>
+    <string name="pref_switch_promode_key">pref_switch_promode</string>
 
     <string name="pref_aboutapp_title">About DinnerHalp</string>
 

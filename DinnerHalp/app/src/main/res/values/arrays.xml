@@ -18,9 +18,9 @@
     </array>
 
     <string-array name="pref_image_size_array">
-        <item>Small</item>
-        <item>Medium</item>
-        <item>Large</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
     </string-array>
 
     <string-array name="pref_image_size_values">

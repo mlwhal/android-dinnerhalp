@@ -218,7 +218,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
         //Handle preference for screen timeout
         Boolean timeoutPref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_checkbox_timeout_key), true);
+                .getString(R.string.pref_switch_timeout_key), true);
         if (!timeoutPref) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //            Log.d(TAG, "Screen timeout disabled");
@@ -229,7 +229,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
         //Handle preference for pro mode being on or off
         Boolean proModePref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_checkbox_promode_key), true);
+                .getString(R.string.pref_switch_promode_key), true);
         if (proModePref) {
             helpButton.setVisibility(View.GONE);
         } else {

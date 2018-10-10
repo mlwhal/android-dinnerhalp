@@ -324,7 +324,7 @@ public class DinnerListActivity extends AppCompatActivity {
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean proModePref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_checkbox_promode_key), true);
+                .getString(R.string.pref_switch_promode_key), true);
         if (proModePref) {
             helpButton.setVisibility(View.GONE);
         } else {

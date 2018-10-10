@@ -17,6 +17,14 @@
         android:defaultValue="@string/pref_image_size_default">
     </ListPreference>
 
+    <SwitchPreference
+        android:key="@string/pref_switch_image_storage_key"
+        android:title="@string/pref_switch_image_storage_title"
+        android:summaryOff="@string/pref_switch_image_storage_sum_off"
+        android:summaryOn="@string/pref_switch_image_storage_sum_on"
+        android:defaultValue="false">
+    </SwitchPreference>
+
     <ListPreference
         android:key="@string/pref_backup_number_key"
         android:title="@string/pref_backup_number_title"
@@ -27,19 +35,23 @@
         android:defaultValue="@string/pref_backup_number_default">
     </ListPreference>
 
-    <CheckBoxPreference
-        android:key="@string/pref_checkbox_timeout_key"
-        android:title="@string/pref_checkbox_timeout_title"
-        android:summary="@string/pref_checkbox_timeout_sum"
+    <SwitchPreference
+        android:key="@string/pref_switch_timeout_key"
+        android:title="@string/pref_switch_timeout_title"
+        android:summary="@string/pref_switch_timeout_sum"
+        android:summaryOff="@string/pref_switch_timeout_sum_off"
+        android:summaryOn="@string/pref_switch_timeout_sum_on"
         android:defaultValue="true">
-    </CheckBoxPreference>
+    </SwitchPreference>
 
-    <CheckBoxPreference
-        android:key="@string/pref_checkbox_promode_key"
-        android:title="@string/pref_checkbox_promode_title"
-        android:summary="@string/pref_checkbox_promode_sum"
+    <SwitchPreference
+        android:key="@string/pref_switch_promode_key"
+        android:title="@string/pref_switch_promode_title"
+        android:summary="@string/pref_switch_promode_sum"
+        android:summaryOff="@string/pref_switch_promode_sum_off"
+        android:summaryOn="@string/pref_switch_promode_sum_on"
         android:defaultValue="false">
-    </CheckBoxPreference>
+    </SwitchPreference>
 
     <Preference
         android:key="pref_aboutapp"
