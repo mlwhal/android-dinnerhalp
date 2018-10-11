@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -37,6 +38,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
     private TextView mServingsText;
     private ImageView mDinnerImage;
     private int mImageScalePref;
+    private boolean mImageStorePref;
     private TextView mRecipeText;
     private Long mRowId;
 
@@ -74,10 +76,10 @@ public class ViewDinnerActivity extends AppCompatActivity {
         mRowId =
                 (savedInstanceState == null) ?
                         null :
-                        (Long) savedInstanceState.getSerializable(DinnersDbAdapter.KEY_ROWID);
+                        (Long) savedInstanceState.getSerializable(DinnersDbContract.DinnerEntry.KEY_ROWID);
         if (mRowId == null) {
             Bundle extras = getIntent().getExtras();
-            mRowId = extras != null ? extras.getLong(DinnersDbAdapter.KEY_ROWID)
+            mRowId = extras != null ? extras.getLong(DinnersDbContract.DinnerEntry.KEY_ROWID)
                     : null;
         }
 
@@ -116,7 +118,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
             case R.id.action_edit:
                 Intent intent1 = new Intent(this, AddDinnerActivity.class);
-                intent1.putExtra(DinnersDbAdapter.KEY_ROWID, mRowId);
+                intent1.putExtra(DinnersDbContract.DinnerEntry.KEY_ROWID, mRowId);
                 startActivity(intent1);
                 finish();
                 return true;
@@ -161,25 +163,33 @@ public class ViewDinnerActivity extends AppCompatActivity {
             startManagingCursor(dinner);
 
             mTitleText.setText(dinner.getString(
-                    dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_NAME)));
+                    dinner.getColumnIndexOrThrow(DinnersDbContract.DinnerEntry.KEY_NAME)));
 
             mMethodText.setText(dinner.getString(dinner.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_METHOD)));
+                    DinnersDbContract.DinnerEntry.KEY_METHOD)));
 
             mTimeText.setText(dinner.getString(dinner.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_TIME)));
+                    DinnersDbContract.DinnerEntry.KEY_TIME)));
 
             mServingsText.setText(dinner.getString(dinner.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_SERVINGS)));
+                    DinnersDbContract.DinnerEntry.KEY_SERVINGS)));
 
-            //Show ImageView only if there is a uri value in the database
             String picPath = dinner.getString(dinner.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_PICPATH));
-//            Log.d(TAG, "picPath value is " + picPath);
-            //Todo: Sometimes picPath is unexpectedly null even when an image has been picked
-            if (picPath == null || picPath.equalsIgnoreCase("")) {
-                mDinnerImage.setVisibility(View.GONE);
-            } else {
+                    DinnersDbContract.DinnerEntry.KEY_PICPATH));
+            byte[] imageByteArray = dinner.getBlob(dinner.getColumnIndexOrThrow(
+                    DinnersDbContract.DinnerEntry.KEY_PICDATA));
+
+            //Handle image if there's one stored in the database, either as byte array or URI value
+            //Priority goes to images stored in database; check there first
+            if (imageByteArray != null) {
+                //Scale image for display according to current scale pref
+                long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
+                        mImageScalePref);
+                Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
+                        imageByteArray, imageSizePref);
+                mDinnerImage.setImageBitmap(scaledDinnerImage);
+            } else if (picPath != null && !mImageStorePref) {
+                //If there isn't an image stored in the db but there is a picpath
                 //Turn picPath into Uri and put downsampled bitmap in ImageView
                 Uri picUri = Uri.parse(picPath);
                 //Get preferred size for image
@@ -202,10 +212,13 @@ public class ViewDinnerActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     mDinnerImage.setVisibility(View.GONE);
                 }
+            } else if (picPath == null || picPath.equalsIgnoreCase("")) {
+                //Show no image if picPath is null or empty
+                mDinnerImage.setVisibility(View.GONE);
             }
 
             mRecipeText.setText(dinner.getString(
-                    dinner.getColumnIndexOrThrow(DinnersDbAdapter.KEY_RECIPE)));
+                    dinner.getColumnIndexOrThrow(DinnersDbContract.DinnerEntry.KEY_RECIPE)));
             stopManagingCursor(dinner);
             dinner.close();
         }
@@ -259,6 +272,13 @@ public class ViewDinnerActivity extends AppCompatActivity {
         String imageScalePrefString = sharedPref.getString(getResources()
                 .getString(R.string.pref_image_size_key), "192");
         mImageScalePref = Integer.parseInt(imageScalePrefString);
+
+        //Check preference to see where images are stored
+        //False: stored in picpath; true: stored in picdata
+        mImageStorePref = sharedPref.getBoolean(getResources()
+                .getString(R.string.pref_switch_image_storage_key), false);
+
+        Log.d(TAG, "mImageStorePref is " + mImageStorePref);
     }
 
     //Method to build an intent to share dinner names/recipes
