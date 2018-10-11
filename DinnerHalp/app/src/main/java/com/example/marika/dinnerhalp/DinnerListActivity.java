@@ -165,7 +165,7 @@ public class DinnerListActivity extends AppCompatActivity {
         }
 
         // Create an array to specify the fields we want to display in the list (only NAME)
-        String[] from = new String[] {DinnersDbAdapter.KEY_NAME};
+        String[] from = new String[] {DinnersDbContract.DinnerEntry.KEY_NAME};
 
         // and an array of the fields we want to bind those fields to (in this case dinner_row)
         //(Note I have no idea why to bind to a TextView here!)
@@ -215,7 +215,7 @@ public class DinnerListActivity extends AppCompatActivity {
 //                Log.d(TAG, "Position clicked " + position +
 //                        " and id " + id);
                 Intent i = new Intent(view.getContext(), ViewDinnerActivity.class);
-                i.putExtra(DinnersDbAdapter.KEY_ROWID, id);
+                i.putExtra(DinnersDbContract.DinnerEntry.KEY_ROWID, id);
                 i.putExtra("QUERY_DINNERS", queryDinnerList);
                 //Todo: Might not need queryDinnerList now that onSaveInstanceState is working.
                 //Right now the ViewDinnerActivity back button always goes back to fetchAllDinners().
@@ -287,7 +287,7 @@ public class DinnerListActivity extends AppCompatActivity {
                     case R.id.cab_edit:
                         //Launch AddDinnerActivity with id passed in as extra
                         Intent i = new Intent(getApplicationContext(), AddDinnerActivity.class);
-                        i.putExtra(DinnersDbAdapter.KEY_ROWID, itemId);
+                        i.putExtra(DinnersDbContract.DinnerEntry.KEY_ROWID, itemId);
                         i.putExtra("QUERY_DINNERS", queryDinnerList);
                         nr = 0;
                         startActivity(i);
@@ -371,9 +371,9 @@ public class DinnerListActivity extends AppCompatActivity {
             dinnerCursor = mDbHelper.fetchDinner(mIdList.get(0));
             startManagingCursor(dinnerCursor);
             dinnerTitle = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_NAME));
+                    DinnersDbContract.DinnerEntry.KEY_NAME));
             dinnerRecipe = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
-                    DinnersDbAdapter.KEY_RECIPE));
+                    DinnersDbContract.DinnerEntry.KEY_RECIPE));
             stopManagingCursor(dinnerCursor);
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, dinnerTitle);
             shareIntent.putExtra(Intent.EXTRA_TEXT, dinnerRecipe);
@@ -389,9 +389,9 @@ public class DinnerListActivity extends AppCompatActivity {
                 dinnerCursor = mDbHelper.fetchDinner(mIdList.get(i));
                 startManagingCursor(dinnerCursor);
                 dinnerTitle = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
-                        DinnersDbAdapter.KEY_NAME));
+                        DinnersDbContract.DinnerEntry.KEY_NAME));
                 dinnerRecipe = dinnerCursor.getString(dinnerCursor.getColumnIndexOrThrow(
-                        DinnersDbAdapter.KEY_RECIPE));
+                        DinnersDbContract.DinnerEntry.KEY_RECIPE));
                 stopManagingCursor(dinnerCursor);
                 builder.append("-----\n")
                         .append(dinnerTitle)
@@ -530,7 +530,7 @@ public class DinnerListActivity extends AppCompatActivity {
     }
 
     public void doNegativeClick() {
-        //Todo: Anything needed here? or just dismiss dialog within the click listener?
+        //Action is cancelled
     }
 
 }
