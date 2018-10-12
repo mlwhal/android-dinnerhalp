@@ -22,7 +22,7 @@
         android:title="@string/pref_switch_image_storage_title"
         android:summaryOff="@string/pref_switch_image_storage_sum_off"
         android:summaryOn="@string/pref_switch_image_storage_sum_on"
-        android:defaultValue="false">
+        android:defaultValue="true">
     </SwitchPreference>
 
     <ListPreference

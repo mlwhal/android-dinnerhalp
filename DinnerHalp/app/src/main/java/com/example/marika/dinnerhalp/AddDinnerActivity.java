@@ -368,11 +368,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                         mImageScalePref);
                 Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
                             imageByteArray, imageSizePref);
-                //Rotate image if needed
-                //Todo: EXIF data seems to be lost when image is saved in db; this might never be needed
-//                Bitmap rotatedDinnerImage = ImageHandler.rotateByteArray(getApplicationContext(),
-//                            imageByteArray, scaledDinnerImage);
-//                mSetPicButton.setImageBitmap(rotatedDinnerImage);
+                //EXIF data is lost when image is saved in db; no need to rotate the image
                 mSetPicButton.setImageBitmap(scaledDinnerImage);
 
                 //Display change and remove image buttons
@@ -385,7 +381,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                 mChangePicButton.setVisibility(View.VISIBLE);
                 mRemovePicButton.setVisibility(View.VISIBLE);
 
-                //Downsample bitmap and display
+                //Downsample bitmap, rotate, and display
                 Uri imageUri = Uri.parse(imageString);
 //                Log.d(TAG, "Uri from db is " + imageUri);
                 try {
@@ -622,7 +618,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         //Check preference to see where images are stored
         //False: stored in picpath; true: stored in picdata
         mImageStorePref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_switch_image_storage_key), false);
+                .getString(R.string.pref_switch_image_storage_key), true);
     }
 
     //Class and methods for an alert dialog to let user decide whether shared text has a title

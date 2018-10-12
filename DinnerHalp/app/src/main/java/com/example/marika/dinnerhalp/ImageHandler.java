@@ -16,6 +16,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,7 +126,7 @@ class ImageHandler {
     static Bitmap rotateImage(Context ctx, Uri selectedImage, Bitmap selectedBitmap)
             throws FileNotFoundException {
 
-//        Log.d(TAG, "Rotating image...");
+        Log.d(TAG, "rotateImage: Rotating image...");
         Bitmap rotatedBitmap = null;
 
         try {
@@ -134,27 +135,31 @@ class ImageHandler {
             Metadata metadata = ImageMetadataReader.readMetadata(inStream);
             //Obtain the Exif directory
             ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-//            Log.d(TAG, "Directory is " + directory);
+            Log.d(TAG, "Directory is " + directory);
 
             //Check whether there is Exif metadata for the image
             if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
                 //Get the tag's value
                 int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-//                Log.d(TAG, "Rotation value of the image is " + rotation);
+                Log.d(TAG, "Rotation value of the image is " + rotation);
 
                 //Rotate the matrix for the image based on Exif rotation value
                 Matrix matrix = new Matrix();
                 switch (rotation) {
-                    case 0:
+                    case 1:
+//                        Log.d(TAG, "Matrix doesn't need to be rotated");
                         break;
                     case 3:
                         matrix.postRotate(180);
+//                        Log.d(TAG, "Matrix rotated 180 degrees");
                         break;
                     case 6:
                         matrix.postRotate(90);
+//                        Log.d(TAG, "Matrix rotated 90 degrees");
                         break;
                     case 8:
                         matrix.postRotate(270);
+//                        Log.d(TAG, "Matrix rotated 270 degrees");
                         break;
                 }
 
@@ -165,6 +170,7 @@ class ImageHandler {
             } else {
                 //No need to run rotation calculation if Exif is missing (avoids NullPointerException)
                 //or rotation metadata is missing (avoids MetadataException)
+                Log.d(TAG, "No rotation calc run; bitmap returned unchanged");
                 return selectedBitmap;
             }
 
@@ -181,5 +187,67 @@ class ImageHandler {
 
         return rotatedBitmap;
     }
+
+    //Todo: Looks like the metadata directory is not there anymore; this method isn't needed
+    //Thanks to the metadata-extractor library: https://github.com/drewnoakes/metadata-extractor
+//    static Bitmap rotateByteArray(Context ctx, byte[] imageByteArray, Bitmap selectedBitmap) {
+//
+//        Log.d(TAG, "rotateByteArray: Rotating image...");
+//        Bitmap rotatedBitmap = null;
+//
+//        try {
+//            //Read rotation metadata from Uri stream
+//            ByteArrayInputStream inStream = new ByteArrayInputStream(imageByteArray);
+//            Metadata metadata = ImageMetadataReader.readMetadata(inStream);
+//            //Obtain the Exif directory
+//            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+//            Log.d(TAG, "Directory is " + directory);
+//
+//            //Check whether there is Exif metadata for the image
+//            if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+//                //Get the tag's value
+//                int rotation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+//                Log.d(TAG, "Rotation value of the image is " + rotation);
+//
+//                //Rotate the matrix for the image based on Exif rotation value
+//                Matrix matrix = new Matrix();
+//                switch (rotation) {
+//                    case 0:
+//                        break;
+//                    case 3:
+//                        matrix.postRotate(180);
+//                        break;
+//                    case 6:
+//                        matrix.postRotate(90);
+//                        break;
+//                    case 8:
+//                        matrix.postRotate(270);
+//                        break;
+//                }
+//
+//                rotatedBitmap = Bitmap.createBitmap(selectedBitmap, 0, 0,
+//                        selectedBitmap.getWidth(),
+//                        selectedBitmap.getHeight(),
+//                        matrix, true);
+//            } else {
+//                //No need to run rotation calculation if Exif is missing (avoids NullPointerException)
+//                //or rotation metadata is missing (avoids MetadataException)
+//                Log.d(TAG, "No rotation calc run; bitmap returned unchanged");
+//                return selectedBitmap;
+//            }
+//
+//        } catch (FileNotFoundException | ImageProcessingException e) {
+//            Log.d(TAG, Log.getStackTraceString(e));
+//            Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_filenotfound),
+//                    Toast.LENGTH_LONG).show();
+//        } catch (IOException | MetadataException e) {
+//            Log.d(TAG, Log.getStackTraceString(e));
+//            Toast.makeText(ctx, ctx.getResources().getString(R.string.toast_exception),
+//                    Toast.LENGTH_LONG).show();
+//
+//        }
+//
+//        return rotatedBitmap;
+//    }
 
 }

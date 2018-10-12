@@ -178,7 +178,6 @@
     takes up less space but sometimes links get lost</string>
     <string name="pref_switch_image_storage_sum_on">Images will be stored in the dinner
     database; this takes up more space but images won\'t ever get lost</string>
-
     <string name="pref_switch_image_storage_key">pref_image_storage</string>
 
     <string name="pref_backup_number_title">Keeping backup files</string>

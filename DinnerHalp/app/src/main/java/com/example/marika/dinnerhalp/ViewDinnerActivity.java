@@ -187,7 +187,12 @@ public class ViewDinnerActivity extends AppCompatActivity {
                         mImageScalePref);
                 Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
                         imageByteArray, imageSizePref);
+                //No need to rotate; EXIF metadata is not stored in the db
+//                Bitmap rotatedDinnerImage = ImageHandler.rotateByteArray(getApplicationContext(),
+//                            imageByteArray, scaledDinnerImage);
+//                mDinnerImage.setImageBitmap(rotatedDinnerImage);
                 mDinnerImage.setImageBitmap(scaledDinnerImage);
+
             } else if (picPath != null && !mImageStorePref) {
                 //If there isn't an image stored in the db but there is a picpath
                 //Turn picPath into Uri and put downsampled bitmap in ImageView
@@ -276,7 +281,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         //Check preference to see where images are stored
         //False: stored in picpath; true: stored in picdata
         mImageStorePref = sharedPref.getBoolean(getResources()
-                .getString(R.string.pref_switch_image_storage_key), false);
+                .getString(R.string.pref_switch_image_storage_key), true);
 
         Log.d(TAG, "mImageStorePref is " + mImageStorePref);
     }
