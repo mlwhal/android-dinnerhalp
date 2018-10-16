@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ class DinnersDbAdapter {
     private static final String DATABASE_CREATE =
             "create table dinners (_id integer primary key autoincrement, "
                     + "name text unique not null, method text not null, time text not null, "
-                    + "servings text not null, picpath text, picdata blob, recipe text);";
+                    + "servings text not null, picpath text, recipe text, picdata blob);";
 
     private static final String DATABASE_NAME = "dinnerData.db";
     private static final String DATABASE_TABLE = DinnersDbContract.DinnerEntry.DATABASE_TABLE;
@@ -61,10 +62,14 @@ class DinnersDbAdapter {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS dinners");
-            onCreate(db);
+            //If database is being upgraded, add the picdata column
+            Log.d(TAG, "onUpgrade is running");
+            if (newVersion > oldVersion) {
+                String alterString = "ALTER TABLE " + DATABASE_TABLE + " ADD COLUMN " +
+                        DinnersDbContract.DinnerEntry.KEY_PICDATA + " BLOB";
+                db.execSQL(alterString);
+                Log.d(TAG, "Database has been upgraded");
+            }
         }
 
     }
