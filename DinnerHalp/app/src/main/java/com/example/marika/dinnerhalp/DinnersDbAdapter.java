@@ -22,14 +22,6 @@ import java.util.List;
 
 class DinnersDbAdapter {
 
-//    static final String KEY_NAME = "name";
-//    static final String KEY_METHOD = "method";
-//    static final String KEY_TIME = "time";
-//    static final String KEY_SERVINGS = "servings";
-//    static final String KEY_PICPATH = "picpath";
-//    static final String KEY_RECIPE = "recipe";
-//    static final String KEY_ROWID = "_id";
-
     private static final String TAG = "DinnersDbAdapter";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
