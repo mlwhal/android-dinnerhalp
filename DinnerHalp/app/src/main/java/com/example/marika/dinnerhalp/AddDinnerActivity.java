@@ -267,6 +267,7 @@ public class AddDinnerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
+        //This code handles when the user chooses an image to save as part of a dinner
         switch(requestCode) {
             case PICK_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
@@ -279,11 +280,15 @@ public class AddDinnerActivity extends AppCompatActivity {
                     //Check for the freshest data
                     getContentResolver().takePersistableUriPermission(mSelectedImageUri, takeFlags);
 
-                    //Get max preferred size for image
-                    //Todo: Pull imageScalePref directly from arrays.xml instead of hard coding
+                    //Scale the image to the preferred size for the device
+                    //First, get the max preferred size for image from arrays.xml
+                    //This will be saved in the database in case the user ever wants the largest size
+                    String[] imageScalePrefArray = getResources().getStringArray(R.array.pref_image_size_values);
+                    int imageScaleMax = Integer.parseInt(imageScalePrefArray[imageScalePrefArray.length - 1]);
+                    Log.d(TAG, "imageScaleMax is " + imageScalePrefArray[imageScalePrefArray.length - 1]);
                     long maxSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
-                            60);
-                    //Get preferred size for image
+                            imageScaleMax);
+                    //Then get the user's preferred size for image
                     long imageSizePref = ImageHandler.getImageWidthPref(getApplicationContext(),
                             mImageScalePref);
                     Log.d(TAG, "Max size is " + maxSizePref + ", pref size is " + imageSizePref);

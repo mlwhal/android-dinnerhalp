@@ -171,7 +171,7 @@
     showing %s size</string>
     <string name="pref_image_size_key">pref_image_size</string>
     <string name="pref_image_size_dialog_title">Set image size to</string>
-    <string name="pref_image_size_default">192</string>
+    <string name="pref_image_size_default">40</string>
 
     <string name="pref_switch_image_storage_title">Save images inside the database</string>
     <string name="pref_switch_image_storage_sum_off">Images will be linked, not saved; this
