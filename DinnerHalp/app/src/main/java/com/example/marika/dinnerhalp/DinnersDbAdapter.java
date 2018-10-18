@@ -55,12 +55,12 @@ class DinnersDbAdapter {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             //If database is being upgraded, add the picdata column
-            Log.d(TAG, "onUpgrade is running");
+//            Log.d(TAG, "onUpgrade is running");
             if (newVersion > oldVersion) {
                 String alterString = "ALTER TABLE " + DATABASE_TABLE + " ADD COLUMN " +
                         DinnersDbContract.DinnerEntry.KEY_PICDATA + " BLOB";
                 db.execSQL(alterString);
-                Log.d(TAG, "Database has been upgraded");
+//                Log.d(TAG, "Database has been upgraded");
             }
         }
 

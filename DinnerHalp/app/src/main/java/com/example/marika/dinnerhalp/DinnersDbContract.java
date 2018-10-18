@@ -5,7 +5,7 @@ package com.example.marika.dinnerhalp;
 
 import android.provider.BaseColumns;
 
-public final class DinnersDbContract {
+final class DinnersDbContract {
     // To prevent someone from accidentally instantiating the contract class,
     // the constructor is private
 
@@ -13,16 +13,16 @@ public final class DinnersDbContract {
     }
 
     /* Inner class that defines the table contents */
-    public static class DinnerEntry implements BaseColumns {
-        public static final String DATABASE_TABLE = "dinners";
-        public static final String KEY_NAME = "name";
-        public static final String KEY_METHOD = "method";
-        public static final String KEY_TIME = "time";
-        public static final String KEY_SERVINGS = "servings";
-        public static final String KEY_PICPATH = "picpath";
-        public static final String KEY_PICDATA = "picdata";
-        public static final String KEY_RECIPE = "recipe";
-        public static final String KEY_ROWID = "_id";
+    static class DinnerEntry implements BaseColumns {
+        static final String DATABASE_TABLE = "dinners";
+        static final String KEY_NAME = "name";
+        static final String KEY_METHOD = "method";
+        static final String KEY_TIME = "time";
+        static final String KEY_SERVINGS = "servings";
+        static final String KEY_PICPATH = "picpath";
+        static final String KEY_PICDATA = "picdata";
+        static final String KEY_RECIPE = "recipe";
+        static final String KEY_ROWID = "_id";
 
         private static final String TAG = "DinnersDbContract";
     }

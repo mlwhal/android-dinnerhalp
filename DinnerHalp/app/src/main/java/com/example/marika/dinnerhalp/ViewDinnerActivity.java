@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -188,9 +187,6 @@ public class ViewDinnerActivity extends AppCompatActivity {
                 Bitmap scaledDinnerImage = ImageHandler.resizeByteArray(getApplicationContext(),
                         imageByteArray, imageSizePref);
                 //No need to rotate; EXIF metadata is not stored in the db
-//                Bitmap rotatedDinnerImage = ImageHandler.rotateByteArray(getApplicationContext(),
-//                            imageByteArray, scaledDinnerImage);
-//                mDinnerImage.setImageBitmap(rotatedDinnerImage);
                 mDinnerImage.setImageBitmap(scaledDinnerImage);
 
             } else if (picPath != null && !mImageStorePref) {
@@ -283,7 +279,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         mImageStorePref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_switch_image_storage_key), true);
 
-        Log.d(TAG, "mImageStorePref is " + mImageStorePref);
+//        Log.d(TAG, "mImageStorePref is " + mImageStorePref);
     }
 
     //Method to build an intent to share dinner names/recipes

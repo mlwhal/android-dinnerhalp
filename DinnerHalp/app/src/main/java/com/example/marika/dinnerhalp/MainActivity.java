@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     .setItems(R.array.time_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int position) {
 //                            Log.d(TAG, "Position clicked " + position);
-                            Log.d(TAG, "Item clicked " + times[position]);
+//                            Log.d(TAG, "Item clicked " + times[position]);
                             //Query DB for selected cook time and display a list of dinners
                             //Also pass in "time" as column to search
                             Intent intent = new Intent(getActivity(), DinnerListActivity.class);
@@ -971,7 +971,5 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return Integer.parseInt(sharedPref.getString(getResources()
                 .getString(R.string.pref_backup_number_key),
                 getResources().getString(R.string.pref_backup_number_default)));
-//        Log.d(TAG, "checkSharedPrefs: Number of files to keep is " + fileNumberPref);
-//        return fileNumberPref;
     }
 }
