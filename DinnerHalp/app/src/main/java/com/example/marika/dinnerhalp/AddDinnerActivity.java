@@ -744,4 +744,11 @@ public class AddDinnerActivity extends AppCompatActivity {
     void doNegativeImgClick() {
         //Dialog dismisses and nothing is changed
     }
+
+    //Lifecycle onResume() method needed in case SharedPreferences have changed
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkSharedPrefs();
+    }
 }
