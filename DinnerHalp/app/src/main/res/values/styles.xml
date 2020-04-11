@@ -1,22 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:actionModeBackground">@color/colorPrimaryHighlight</item>
-        <item name="android:actionModeShareDrawable" tools:targetApi="lollipop">@drawable/ic_action_share</item>
-        <!--item name="homeAsUpIndicator">@drawable/ic_dinnerhalp096</item-->
-        <item name="homeAsUpIndicator">@drawable/ic_action_previous_item</item>
-        <item name="android:colorMultiSelectHighlight">@color/colorCABHighlight</item>
-        <item name="android:colorLongPressedHighlight">@color/colorCABHighlight</item>
-        <item name="android:textColorHighlight">@color/colorCABHighlight</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/colorKnockout</item>
+        <item name="colorOnSecondary">@color/colorKnockout</item>
 
         <item name="android:alertDialogTheme">@style/CustomAlertDialogTheme</item>
     </style>
 
         <style name="HeaderText">
             <item name="android:textSize">25sp</item>
-            <item name="android:textColor">@color/colorPrimaryHighlight</item>
+            <item name="android:textColor">@color/colorPrimary</item>
             <item name="android:textIsSelectable">true</item>
             <item name="android:clickable">false</item>
         </style>
@@ -52,7 +49,7 @@
     </style>
 
     <style name="MedButton">
-        <item name="android:background">@color/colorCABHighlight</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
         <item name="android:padding">4dp</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/colorKnockout</item>
@@ -69,12 +66,12 @@
         <item name="android:textIsSelectable">true</item>
     </style>
 
-    <style name="CustomAlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+    <style name="CustomAlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:borderlessButtonStyle">@style/Widget.Custom.Button.Borderless</item>
     </style>
 
-    <style name="Widget.Custom.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textAppearanceMedium">@color/colorCABHighlight</item>
+    <style name="Widget.Custom.Button.Borderless" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textAppearance">@color/colorPrimary</item>
     </style>
 
 </resources>

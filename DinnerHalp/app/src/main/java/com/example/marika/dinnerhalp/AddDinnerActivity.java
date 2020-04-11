@@ -582,7 +582,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     }
 
-    //Method to check SharedPreferences to handle image size preference
+    //Method to check SharedPreferences to handle image size preference and pro mode
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 

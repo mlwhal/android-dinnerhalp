@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.marika.dinnerhalp.AddDinnerActivity">
 
@@ -13,19 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView android:id="@+id/section_label"
+        <TextView
+            android:id="@+id/section_label"
+            style="@style/HeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="@string/add_dinner_title"
-            style="@style/HeaderText" />
+            android:text="@string/add_dinner_title" />
 
-        <TextView android:id="@id/button_help"
+        <TextView
+            android:id="@id/button_help"
+            style="@style/MedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="@string/button_help"
-            style="@style/MedButton"/>
+            android:text="@string/button_help" />
 
     </RelativeLayout>
 
@@ -34,21 +36,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView android:id="@+id/hint_text"
+        <TextView
+            android:id="@+id/hint_text"
+            style="@style/HintText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:paddingStart="0dp"
             android:paddingEnd="16dp"
-            android:layout_gravity="center_vertical"
-            android:text="@string/dinner_add_hint"
-            style="@style/HintText"/>
+            android:text="@string/dinner_add_hint" />
 
-        <TextView android:id="@+id/button_ok"
+        <TextView
+            android:id="@+id/button_ok"
+            style="@style/SmallButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/button_ok"
-            style="@style/SmallButton"/>
+            android:text="@string/button_ok" />
 
     </LinearLayout>
 
@@ -56,78 +60,86 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout android:id="@+id/section_dinner_details"
+        <LinearLayout
+            android:id="@+id/section_dinner_details"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText android:id="@+id/edittext_name"
+            <EditText
+                android:id="@+id/edittext_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
                 android:hint="@string/dinner_name_hint"
+                android:imeActionLabel="@string/button_done"
                 android:inputType="textCapSentences|textAutoCorrect"
-                android:imeActionLabel="@string/button_done"/>
+                android:paddingBottom="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Spinner android:id="@+id/spinner_method"
+                <Spinner
+                    android:id="@+id/spinner_method"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="0dp"
-                    android:paddingEnd="50dp"/>
+                    android:paddingEnd="50dp" />
 
-                <Spinner android:id="@+id/spinner_time"
+                <Spinner
+                    android:id="@+id/spinner_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
-            <Spinner android:id="@+id/spinner_servings"
+            <Spinner
+                android:id="@+id/spinner_servings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"/>
+                android:paddingBottom="16dp" />
 
-            <ImageButton android:id="@+id/button_add_image"
+            <ImageButton
+                android:id="@+id/button_add_image"
+                style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_new_picture"
                 android:contentDescription="@string/image_add_picture"
-                style="?android:borderlessButtonStyle"/>
+                android:src="@drawable/ic_new_picture" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageButton android:id="@+id/button_change_image"
+                <ImageButton
+                    android:id="@+id/button_change_image"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_change_picture"
                     android:contentDescription="@string/image_change_picture"
-                    style="?android:borderlessButtonStyle"/>
+                    android:src="@drawable/ic_change_picture" />
 
-                <ImageButton android:id="@+id/button_remove_image"
+                <ImageButton
+                    android:id="@+id/button_remove_image"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_remove_picture"
                     android:contentDescription="@string/image_remove_picture"
-                    style="?android:borderlessButtonStyle"/>
+                    android:src="@drawable/ic_remove_picture" />
 
-             </LinearLayout>
+            </LinearLayout>
 
-            <EditText android:id="@+id/edittext_recipe"
+            <EditText
+                android:id="@+id/edittext_recipe"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
                 android:hint="@string/recipe_hint"
                 android:inputType="textCapSentences|textMultiLine"
-                />
+                android:paddingTop="16dp" />
 
         </LinearLayout>
 
