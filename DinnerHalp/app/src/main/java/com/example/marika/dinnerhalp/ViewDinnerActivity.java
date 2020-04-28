@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import androidx.core.view.MenuItemCompat;
@@ -211,7 +212,8 @@ public class ViewDinnerActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.toast_image_exception),
                             Toast.LENGTH_LONG).show();
-                    mDinnerImage.setVisibility(View.GONE);
+                    //Show the missing image icon
+                    mDinnerImage.setImageResource(R.drawable.ic_missing_image);
                 }
             } else if (picPath == null || picPath.equalsIgnoreCase("")) {
                 //Show no image if picPath is null or empty

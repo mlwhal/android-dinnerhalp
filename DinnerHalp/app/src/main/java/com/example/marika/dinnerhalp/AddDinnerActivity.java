@@ -398,8 +398,8 @@ public class AddDinnerActivity extends AppCompatActivity {
                     mSetPicButton.setImageBitmap(dinnerBitmap);
                 } catch (FileNotFoundException | SecurityException e) {
                     Log.d(TAG, Log.getStackTraceString(e));
-                    //Hide the add image button if the picPath is bad
-                    mSetPicButton.setVisibility(View.GONE);
+                    //Show the missing image icon if the picPath is bad
+                    mSetPicButton.setImageResource(R.drawable.ic_missing_image);
                 }
             } else {
                     //Handle cases where there are no images stored
