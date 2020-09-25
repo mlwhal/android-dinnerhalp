@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+//import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -199,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
@@ -231,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Add an onSaveInstanceState() method to save currently selected tab
     @Override
-    public void onSaveInstanceState(Bundle outstate) {
+    public void onSaveInstanceState(@NonNull Bundle outstate) {
         super.onSaveInstanceState(outstate);
 
         //Set mFragmentTracker to current tab in order to save info to outstate
@@ -312,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static SearchFragment newInstance(int sectionNumber) {
+        static SearchFragment newInstance(int sectionNumber) {
             SearchFragment fragment = new SearchFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -353,8 +355,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-    public static class KeywordDialogFragment extends DialogFragment {
-        public static KeywordDialogFragment newInstance(int title) {
+    public static class KeywordDialogFragment extends AppCompatDialogFragment {
+        static KeywordDialogFragment newInstance(int title) {
             KeywordDialogFragment frag = new KeywordDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -362,13 +364,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomAlertDialogTheme);
             //Get the layout inflater
-            LayoutInflater inflater = getActivity().getLayoutInflater();
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
             //Cast the Dialog as a View so I can get text out of the EditText
             //http://stackoverflow.com/questions/12799751/android-how-do-i-retrieve-edittext-gettext-in-custom-alertdialog
             //Inflate and set the layout
@@ -412,14 +415,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method to invoke keyword search dialog fragment; called in click listener
     void confirmKeyword() {
-        DialogFragment newFragment = KeywordDialogFragment.newInstance(R.string.keyword_alert_title);
-        newFragment.show(getFragmentManager(), "keywordConfirm");
+        AppCompatDialogFragment newFragment = KeywordDialogFragment.newInstance(R.string.keyword_alert_title);
+        newFragment.show(getSupportFragmentManager(), "keywordConfirm");
     }
 
-
     //Custom class for cooking method Alert Dialog
-    public static class CookMethodDialogFragment extends DialogFragment {
-        public static CookMethodDialogFragment newInstance(int title) {
+    public static class CookMethodDialogFragment extends AppCompatDialogFragment {
+        static CookMethodDialogFragment newInstance(int title) {
             CookMethodDialogFragment frag = new CookMethodDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -427,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -452,13 +455,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method to invoke cooking method dialog fragment; called in click listener
     void confirmMethod() {
-        DialogFragment newFragment = CookMethodDialogFragment.newInstance(R.string.method_alert_title);
-        newFragment.show(getFragmentManager(), "methodConfirm");
+        AppCompatDialogFragment newFragment = CookMethodDialogFragment.newInstance(R.string.method_alert_title);
+        newFragment.show(getSupportFragmentManager(), "methodConfirm");
     }
 
     //Custom class for cooking time Alert Dialog
-    public static class CookTimeDialogFragment extends DialogFragment {
-        public static CookTimeDialogFragment newInstance(int title) {
+    public static class CookTimeDialogFragment extends AppCompatDialogFragment {
+        static CookTimeDialogFragment newInstance(int title) {
             CookTimeDialogFragment frag = new CookTimeDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -466,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -493,13 +497,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method to invoke cooking time dialog fragment; called in click listener
     void confirmTime() {
-        DialogFragment newFragment = CookTimeDialogFragment.newInstance(R.string.time_alert_title);
-        newFragment.show(getFragmentManager(), "timeConfirm");
+        AppCompatDialogFragment newFragment = CookTimeDialogFragment.newInstance(R.string.time_alert_title);
+        newFragment.show(getSupportFragmentManager(), "timeConfirm");
     }
 
     //Custom class for servings Alert Dialog
-    public static class ServingsDialogFragment extends DialogFragment {
-        public static ServingsDialogFragment newInstance(int title) {
+    public static class ServingsDialogFragment extends AppCompatDialogFragment {
+        static ServingsDialogFragment newInstance(int title) {
             ServingsDialogFragment frag = new ServingsDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -507,6 +511,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -534,8 +539,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     //Method to invoke servings dialog fragment; called in click listener
     void confirmServings() {
-        DialogFragment newFragment = ServingsDialogFragment.newInstance(R.string.servings_alert_title);
-        newFragment.show(getFragmentManager(), "servingsConfirm");
+        AppCompatDialogFragment newFragment = ServingsDialogFragment.newInstance(R.string.servings_alert_title);
+        newFragment.show(getSupportFragmentManager(), "servingsConfirm");
 //        Log.d(TAG, "Servings clicked!");
     }
 
@@ -603,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static ManageDBFragment newInstance(int sectionNumber) {
+        static ManageDBFragment newInstance(int sectionNumber) {
             ManageDBFragment fragment = new ManageDBFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -647,9 +652,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     //Dialog fragment to handle confirming that the user wants to delete the DB file
-    public static class DeleteDBDialogFragment extends DialogFragment {
+    public static class DeleteDBDialogFragment extends AppCompatDialogFragment {
 
-        public static DeleteDBDialogFragment newInstance(int title) {
+        static DeleteDBDialogFragment newInstance(int title) {
             DeleteDBDialogFragment frag = new DeleteDBDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -657,6 +662,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -667,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity()).delAllDinners();
+                                    ((MainActivity) requireActivity()).delAllDinners();
                                 }
                             }
                     )
@@ -675,7 +681,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity()).doNegativeClick(0);
+                                    ((MainActivity) requireActivity()).doNegativeClick(0);
                                 }
                             }
                     )
@@ -684,10 +690,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     void showDeleteDBDialog() {
-        DialogFragment newFragment = DeleteDBDialogFragment.newInstance(
+        AppCompatDialogFragment newFragment = DeleteDBDialogFragment.newInstance(
                 R.string.delete_db_alert_title);
-        newFragment.show(getFragmentManager(), "dialog");
-
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     public void delAllDinners() {
@@ -729,8 +734,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     //Custom class for restore/import dialog fragment
-    public static class ImportDBDialogFragment extends DialogFragment {
-        public static ImportDBDialogFragment newInstance(int title) {
+    public static class ImportDBDialogFragment extends AppCompatDialogFragment {
+        static ImportDBDialogFragment newInstance(int title) {
             ImportDBDialogFragment frag = new ImportDBDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -738,6 +743,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -748,7 +754,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity())
+                                    ((MainActivity) requireActivity())
                                             .importDBFileChooser();
                                 }
                             }
@@ -757,7 +763,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MainActivity) getActivity()).doNegativeClick(1);
+                                    ((MainActivity) requireActivity()).doNegativeClick(1);
                                 }
                             }
                     ).create();
@@ -766,9 +772,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     void showImportDBDialog() {
-        DialogFragment newFragment = ImportDBDialogFragment.newInstance(
+        AppCompatDialogFragment newFragment = ImportDBDialogFragment.newInstance(
                 R.string.import_alert_title);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
 
     }
 
@@ -849,7 +855,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //                    }
                     //Calculate how many files beyond the preferred number there are (if any)
                     int extraFiles = lngth - fileNumberPref;
-                    Boolean filesDeleted;
+                    boolean filesDeleted;
                     //Track how many files get deleted successfully
                     int filesDeletedCount = 0;
                     if (extraFiles > 0) {
@@ -895,6 +901,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //Check which request is being handled
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMPORT_FILE_REQUEST) {
             //Check for positive result from activity
             if (resultCode == RESULT_OK) {

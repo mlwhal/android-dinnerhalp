@@ -2,18 +2,21 @@ package com.example.marika.dinnerhalp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+//import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+//import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import androidx.core.view.MenuItemCompat;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.widget.ShareActionProvider;
 import android.os.Bundle;
 import android.util.Log;
@@ -233,7 +236,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Handle preference for screen timeout
-        Boolean timeoutPref = sharedPref.getBoolean(getResources()
+        boolean timeoutPref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_switch_timeout_key), true);
         if (!timeoutPref) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -244,7 +247,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
         }
 
         //Handle preference for pro mode being on or off
-        Boolean proModePref = sharedPref.getBoolean(getResources()
+        boolean proModePref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_switch_promode_key), true);
         if (proModePref) {
             helpButton.setVisibility(View.GONE);
@@ -303,9 +306,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
 
     }
 
-    public static class DeleteDialogFragment extends DialogFragment {
+    public static class DeleteDialogFragment extends AppCompatDialogFragment {
 
-        public static DeleteDialogFragment newInstance(int title) {
+        static DeleteDialogFragment newInstance(int title) {
             DeleteDialogFragment frag = new DeleteDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -313,6 +316,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog (Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -324,7 +328,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
 //                                    Log.d(TAG, "Delete button clicked!");
-                                    ((ViewDinnerActivity)getActivity()).doPositiveClick();
+                                    ((ViewDinnerActivity)requireActivity()).doPositiveClick();
                                 }
                             }
                     )
@@ -332,7 +336,7 @@ public class ViewDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((ViewDinnerActivity)getActivity()).doNegativeClick();
+                                    ((ViewDinnerActivity)requireActivity()).doNegativeClick();
                                 }
                             }
                     )
@@ -341,9 +345,9 @@ public class ViewDinnerActivity extends AppCompatActivity {
     }
 
     void showDeleteDialog() {
-        DialogFragment newFragment = DeleteDialogFragment.newInstance(
+        AppCompatDialogFragment newFragment = DeleteDialogFragment.newInstance(
                 R.string.delete_alert_title);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
 
     }
 

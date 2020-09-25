@@ -34,6 +34,7 @@ class ImageHandler {
         //Get width of current device window
         DisplayMetrics metrics = new DisplayMetrics();
         WindowManager windowManager = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+        assert windowManager != null;
         windowManager.getDefaultDisplay().getMetrics(metrics);
         int width = metrics.widthPixels;
 
@@ -64,10 +65,7 @@ class ImageHandler {
             // Find the correct scale value. It should be the power of 2.
             int width_tmp = o.outWidth, height_tmp = o.outHeight;
             int scale = 1;
-            while (true) {
-                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                    break;
-                }
+            while (width_tmp / 2 >= REQUIRED_SIZE && height_tmp / 2 >= REQUIRED_SIZE) {
                 width_tmp /= 2;
                 height_tmp /= 2;
                 scale *= 2;
@@ -92,7 +90,7 @@ class ImageHandler {
 
     //Method to downsample large images read from byte array before loading into ImageView
     static Bitmap resizeByteArray (Context ctx, byte[] imageByteArray, long REQUIRED_SIZE) {
-        Bitmap scaledBitmap = null;
+        Bitmap scaledBitmap;
 
         //Todo: Does this need to be inside try block, as for Uri decoding?
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -102,10 +100,7 @@ class ImageHandler {
         // Find the correct scale value. It should be the power of 2.
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
-        while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                break;
-            }
+        while (width_tmp / 2 >= REQUIRED_SIZE && height_tmp / 2 >= REQUIRED_SIZE) {
             width_tmp /= 2;
             height_tmp /= 2;
             scale *= 2;

@@ -9,14 +9,14 @@ android {
             storePassword '[6Mf8b1dmeAe'
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion 29
 //    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId 'com.gmail.mlwhal.dinnerhalp'
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 5
-        versionName '1.5'
+        targetSdkVersion 29
+        versionCode 6
+        versionName '1.6'
     }
     buildTypes {
         release {
@@ -30,6 +30,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation files('libs/metadata-extractor-2.9.1.jar')
 }

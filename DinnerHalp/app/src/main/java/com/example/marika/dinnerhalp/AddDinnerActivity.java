@@ -2,7 +2,7 @@ package com.example.marika.dinnerhalp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+//import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.core.app.NavUtils;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 
 public class AddDinnerActivity extends AppCompatActivity {
 
@@ -258,7 +262,7 @@ public class AddDinnerActivity extends AppCompatActivity {
 
     //Lifecycle handling methods
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(DinnersDbContract.DinnerEntry.KEY_ROWID, mRowId);
     }
@@ -587,7 +591,7 @@ public class AddDinnerActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Handle preference for pro mode being on or off
-        Boolean proModePref = sharedPref.getBoolean(getResources()
+        boolean proModePref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_switch_promode_key), true);
         if (proModePref) {
             helpButton.setVisibility(View.GONE);
@@ -626,8 +630,8 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     //Class and methods for an alert dialog to let user decide whether shared text has a title
-    public static class ShareDialogFragment extends DialogFragment {
-        public static ShareDialogFragment newInstance(int title) {
+    public static class ShareDialogFragment extends AppCompatDialogFragment {
+        static ShareDialogFragment newInstance(int title) {
             ShareDialogFragment frag = new ShareDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -635,6 +639,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog (Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -645,7 +650,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity)getActivity()).doPositiveShareClick();
+                                    ((AddDinnerActivity) requireActivity()).doPositiveShareClick();
                                 }
                             }
                     )
@@ -653,7 +658,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity)getActivity()).doNegativeShareClick();
+                                    ((AddDinnerActivity) requireActivity()).doNegativeShareClick();
                                 }
                             }
                     )
@@ -662,8 +667,8 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     void showShareDialog() {
-        DialogFragment newFragment = ShareDialogFragment.newInstance(R.string.share_alert_title);
-        newFragment.show(getFragmentManager(), "dialog");
+        AppCompatDialogFragment newFragment = ShareDialogFragment.newInstance(R.string.share_alert_title);
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     public void doPositiveShareClick() {
@@ -683,8 +688,8 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     //Class and methods for an alert dialog to let user remove an image from a dinner
-    public static class RemoveImgDialogFragment extends DialogFragment {
-        public static RemoveImgDialogFragment newInstance(int title, int message) {
+    public static class RemoveImgDialogFragment extends AppCompatDialogFragment {
+        static RemoveImgDialogFragment newInstance(int title, int message) {
             RemoveImgDialogFragment frag = new RemoveImgDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -693,6 +698,7 @@ public class AddDinnerActivity extends AppCompatActivity {
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -705,7 +711,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity) getActivity()).doPositiveImgClick();
+                                    ((AddDinnerActivity) requireActivity()).doPositiveImgClick();
                                 }
                             }
                     )
@@ -713,7 +719,7 @@ public class AddDinnerActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((AddDinnerActivity) getActivity()).doNegativeImgClick();
+                                    ((AddDinnerActivity) requireActivity()).doNegativeImgClick();
                                 }
                             }
                     )
@@ -722,9 +728,9 @@ public class AddDinnerActivity extends AppCompatActivity {
     }
 
     void showRemoveImgDialog() {
-        DialogFragment newFragment = RemoveImgDialogFragment.newInstance(R.string.image_remove_alert_title,
+        AppCompatDialogFragment newFragment = RemoveImgDialogFragment.newInstance(R.string.image_remove_alert_title,
                 R.string.image_remove_alert_message);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     //Remove path to image, clear mDinnerBitmap, and reset image buttons

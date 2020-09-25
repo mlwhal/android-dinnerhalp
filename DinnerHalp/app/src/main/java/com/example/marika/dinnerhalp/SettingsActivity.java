@@ -2,8 +2,10 @@ package com.example.marika.dinnerhalp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+//import android.preference.PreferenceFragment;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,7 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         //Display SettingsFragment as main content
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
@@ -60,13 +62,18 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
             //Load preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences);
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
         }
 
     }

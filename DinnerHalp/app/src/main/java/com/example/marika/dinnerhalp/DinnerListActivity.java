@@ -2,7 +2,8 @@ package com.example.marika.dinnerhalp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+//import android.app.DialogFragment;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class DinnerListActivity extends AppCompatActivity {
@@ -323,7 +325,7 @@ public class DinnerListActivity extends AppCompatActivity {
     //Method to find out whether Pro User Mode is on and handle help text accordingly
     private void checkSharedPrefs() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean proModePref = sharedPref.getBoolean(getResources()
+        boolean proModePref = sharedPref.getBoolean(getResources()
                 .getString(R.string.pref_switch_promode_key), true);
         if (proModePref) {
             helpButton.setVisibility(View.GONE);
@@ -464,9 +466,9 @@ public class DinnerListActivity extends AppCompatActivity {
         checkSharedPrefs();
     }
 
-    public static class DeleteDialogFragment extends DialogFragment {
+    public static class DeleteDialogFragment extends AppCompatDialogFragment {
 
-        public static DeleteDialogFragment newInstance(int title) {
+        static DeleteDialogFragment newInstance(int title) {
             DeleteDialogFragment frag = new DeleteDialogFragment();
             Bundle args = new Bundle();
             args.putInt("title", title);
@@ -474,6 +476,7 @@ public class DinnerListActivity extends AppCompatActivity {
             return frag;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog (Bundle savedInstanceState) {
             int title = getArguments().getInt("title");
@@ -485,7 +488,7 @@ public class DinnerListActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
 //                                    Log.d(TAG, "Delete button clicked!");
-                                    ((DinnerListActivity)getActivity()).doPositiveClick();
+                                    ((DinnerListActivity) requireActivity()).doPositiveClick();
                                 }
                             }
                     )
@@ -493,7 +496,7 @@ public class DinnerListActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((DinnerListActivity)getActivity()).doNegativeClick();
+                                    ((DinnerListActivity) requireActivity()).doNegativeClick();
                                 }
                             }
                     )
@@ -502,9 +505,9 @@ public class DinnerListActivity extends AppCompatActivity {
     }
 
     void showDeleteDialog() {
-        DialogFragment newFragment = DeleteDialogFragment.newInstance(
+        AppCompatDialogFragment newFragment = DeleteDialogFragment.newInstance(
                 R.string.batch_delete_alert_title);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
 
     }
 
