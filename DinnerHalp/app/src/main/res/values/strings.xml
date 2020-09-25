@@ -204,7 +204,7 @@
     <string name="title_activity_about_app">AboutAppActivity</string>
     <string name="about_app_title">About DinnerHalp</string>
     <string name="about_app_class">com.example.marika.dinnerhalp.AboutAppActivity</string>
-    <string name="text_about_app">DinnerHalp 1.5 by Marika Whaley \ncopyright 2015–2020</string>
+    <string name="text_about_app">DinnerHalp 1.6 by Marika Whaley \ncopyright 2015–2020</string>
     <string name="image_dinnerhalp_icon">DinnerHalp app icon</string>
 
     <string name="title_activity_settings">Settings</string>
