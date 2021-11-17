@@ -1,7 +1,7 @@
 # android-dinnerhalp
 By Marika Whaley
-<br>copyright 2017
-<br>This app lets you create, manage, and search a database of dinner recipes. Tested on KitKat (4.4.x), Lollipop (5.1), and Marshmallow (6.0).
+<br>copyright 2017-2021
+<br>This app lets you create, manage, and search a local database of dinner recipes. Tested on KitKat (4.4.x) through Android11.
 
 Features:
 <br>Search by keyword or category (cook time, number of servings, cooking method)
